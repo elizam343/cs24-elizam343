@@ -1,0 +1,4 @@
+origin  git@github.com:elizam343/cs24-elizam343.git (fetch)
+origin  git@github.com:elizam343/cs24-elizam343.git (push)
+upstream        git@github.com:boyland-pf/cs24.git (fetch)
+upstream        git@github.com:boyland-pf/cs24.git (push)
