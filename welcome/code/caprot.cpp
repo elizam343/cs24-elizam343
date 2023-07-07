@@ -20,31 +20,30 @@ string caprot(long int num, const string& passcode) {
     
     for (long int i = 0; i < string_size; ++i) {
         if (num < 0) { // Check if we reached the end of the passcode going forward
-        if (isalpha(edited_pass[edited_pass.size() + backwards_counter])) {
             if (isupper(edited_pass[edited_pass.size() + backwards_counter])) {
                 if ((string_size + backwards_counter + num) < 0) {
-                    edited_pass[0] = toupper(edited_pass[0]);
-                    edited_pass[edited_pass.size() + backwards_counter - num] = tolower(edited_pass[edited_pass.size() - backwards_counter - num]);
+                    long int tempVal = -(string_size + backwards_counter + num);
+                    edited_pass[tempVal] = toupper(edited_pass[tempVal]);
+                    edited_pass[tempVal] = tolower(edited_pass[edited_pass.size() - backwards_counter - num]);
                 }
                 else {
-                    edited_pass[edited_pass.size() + backwards_counter - num - 1] = toupper(edited_pass[edited_pass.size() - backwards_counter - num - 1]);
-                    edited_pass[edited_pass.size() + backwards_counter - num] = tolower(edited_pass[edited_pass.size() - backwards_counter - num]);
+                    edited_pass[edited_pass.size() + backwards_counter + num - 1] = toupper(edited_pass[edited_pass.size() - backwards_counter - num - 1]);
+                    edited_pass[edited_pass.size() + backwards_counter + num] = tolower(edited_pass[edited_pass.size() - backwards_counter - num]);
                 }  
+                
             }
-        }
-        backwards_counter -= 1;
+            backwards_counter -= 1;
         }
         else {
-            if (isalpha(passcode[forward_counter])) {
-                if (isupper(passcode[forward_counter])) {
-                    if ((forward_counter + num) > string_size) {
-                        edited_pass[edited_pass.size() -1] = toupper(edited_pass[edited_pass.size() -1]);
-                        edited_pass[forward_counter] = tolower(edited_pass[forward_counter]);
-                    }
-                    else {
-                        edited_pass[forward_counter + num] = toupper(edited_pass[forward_counter + num]);
-                        edited_pass[forward_counter] = tolower(edited_pass[forward_counter]);
-                    }
+            if (isupper(passcode[forward_counter])) {
+                if ((forward_counter + num) > string_size) {
+                    long int tempVal = (forward_counter + num) - string_size - 1;
+                    edited_pass[tempVal] = toupper(edited_pass[tempVal]);
+                    edited_pass[forward_counter] = tolower(edited_pass[forward_counter]);
+                }
+                else {
+                    edited_pass[forward_counter + num] = toupper(edited_pass[forward_counter + num]);
+                    edited_pass[forward_counter] = tolower(edited_pass[forward_counter]);
                 }
             }
             forward_counter += 1;
