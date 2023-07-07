@@ -18,29 +18,40 @@ string caprot(long int num, const string& passcode) {
     long int forward_counter = 0; //we add to this counter
     long int backwards_counter = -1; // we subtract from this counter
     
-    
-    
     for (long int i = 0; i < string_size; ++i) {
-        if (forward_counter == string_size) { // Check if we reached the end of the passcode going forward
-            if (isalpha(edited_pass[edited_pass.size() + backwards_counter])) {
-                if (isupper(edited_pass[edited_pass.size() + backwards_counter])) {
-                    edited_pass[edited_pass.size() + backwards_counter - num - 1] = toupper(edited_pass[edited_pass.size() - backwards_counter - num - 1]);
+        if (num < 0) { // Check if we reached the end of the passcode going forward
+        if (isalpha(edited_pass[edited_pass.size() + backwards_counter])) {
+            if (isupper(edited_pass[edited_pass.size() + backwards_counter])) {
+                if ((string_size + backwards_counter + num) < 0) {
+                    edited_pass[0] = toupper(edited_pass[0]);
                     edited_pass[edited_pass.size() + backwards_counter - num] = tolower(edited_pass[edited_pass.size() - backwards_counter - num]);
                 }
+                else {
+                    edited_pass[edited_pass.size() + backwards_counter - num - 1] = toupper(edited_pass[edited_pass.size() - backwards_counter - num - 1]);
+                    edited_pass[edited_pass.size() + backwards_counter - num] = tolower(edited_pass[edited_pass.size() - backwards_counter - num]);
+                }  
             }
-            backwards_counter -= 1;
+        }
+        backwards_counter -= 1;
         }
         else {
             if (isalpha(passcode[forward_counter])) {
                 if (isupper(passcode[forward_counter])) {
-                    edited_pass[forward_counter + num] = toupper(edited_pass[forward_counter + num]);
-                    edited_pass[forward_counter] = tolower(edited_pass[forward_counter]);
+                    if ((forward_counter + num) > string_size) {
+                        edited_pass[edited_pass.size() -1] = toupper(edited_pass[edited_pass.size() -1]);
+                        edited_pass[forward_counter] = tolower(edited_pass[forward_counter]);
+                    }
+                    else {
+                        edited_pass[forward_counter + num] = toupper(edited_pass[forward_counter + num]);
+                        edited_pass[forward_counter] = tolower(edited_pass[forward_counter]);
+                    }
                 }
             }
             forward_counter += 1;
         }
     }
     return edited_pass;
+      
 }
 
 
