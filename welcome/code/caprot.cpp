@@ -62,8 +62,14 @@ int main(int argc, char* argv[]) {
         long int num = stoi(argv[1]);
         string pass;
         getline(cin, pass);
-        string new_pass = caprot(num, pass);
-        cout << new_pass << endl;
+        long int size = pass.size();
+        if ((num > size) || (-num > size)) {
+            cout << pass << endl;
+        }
+        else {
+            string new_pass = caprot(num, pass);
+            cout << new_pass << endl;
+        }
     }
 
     return 0;
