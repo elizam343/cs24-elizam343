@@ -3,8 +3,12 @@
 #include <cctype>
 using namespace std;
 
-string caprot(long int num, const string& passcode) {
-    string edited_pass = passcode;
+string caprot(long int num, const string& passcode) {\
+    /*
+  The user inputs an integer number and a string passcode. The passcode can have numbers and letters and symbols. The importance is   the letters that are capitlized. When the program finds a letter that is capitlized a counter begins and find the next letter to  
+  capitlized. shifting the capitlization by the number the user inputed. The program needs the passcode from left to right first      and then right to left completing a loop and also shifting the cap the other way.
+  */
+    string edited_pass = passcode; //copies the string. the copied string will have the new changes
     long int string_size = passcode.size();
 
     for (long int i = 0; i < string_size; ++i) {
