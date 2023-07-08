@@ -8,7 +8,7 @@ string caprot(long int num, const string& passcode) {
     long int string_size = passcode.size();
 
     for (long int i = 0; i < string_size; ++i) {
-        if (isupper(edited_pass[i])) {
+        if (isupper(passcode[i])) {
             long int rotated_index = (i + num) % string_size;
             edited_pass[rotated_index] = toupper(edited_pass[rotated_index]);
         }
