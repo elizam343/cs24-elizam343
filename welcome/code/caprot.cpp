@@ -17,9 +17,9 @@ string caprot(long int num, const string& passcode) {
         }
         else { // for negative indexing
             if (isupper(passcode[i])) {
-                long int rotated_index = (i + num) % string_size;
+                long int rotated_index = (i - (-num % string_size) + string_size) % string_size;
                 edited_pass[i] = tolower(edited_pass[i]);
-                edited_pass[rotated_index + string_size] = toupper(edited_pass[rotated_index + string_size]);
+                edited_pass[rotated_index] = toupper(edited_pass[rotated_index]);
             }
         }
     }
