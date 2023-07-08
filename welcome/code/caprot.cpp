@@ -8,10 +8,19 @@ string caprot(long int num, const string& passcode) {
     long int string_size = passcode.size();
 
     for (long int i = 0; i < string_size; ++i) {
-        if (isupper(passcode[i])) {
-            long int rotated_index = (i + num) % string_size;
-            edited_pass[i] = tolower(edited_pass[i]);
-            edited_pass[rotated_index] = toupper(edited_pass[rotated_index]);
+        if (num > 0) { // postive indexing
+            if (isupper(passcode[i])) {
+                long int rotated_index = (i + num) % string_size;
+                edited_pass[i] = tolower(edited_pass[i]);
+                edited_pass[rotated_index] = toupper(edited_pass[rotated_index]);
+            }
+        }
+        else { // for negative indexing
+            if (isupper(passcode[i])) {
+                long int rotated_index = (i + num) % string_size;
+                edited_pass[i] = tolower(edited_pass[i]);
+                edited_pass[rotated_index + string_size] = toupper(edited_pass[rotated_index + string_size]);
+            }
         }
     }
 
