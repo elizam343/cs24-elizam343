@@ -1,4 +1,4 @@
-caprot: caprot.cpp
+pausevec: PauseVec.cpp
 	g++ -std=c++17 -Wall -Wextra -Werror -o $@ $+
 clean:
 	rm -f pausevec
