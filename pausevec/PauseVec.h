@@ -15,9 +15,11 @@ public:
     int remove(size_t index);
     void remove_val(int value);
 
+    static PauseVec create_pausevec();
+
 private:
-    int* size;  // renamed from buffer
-    size_t size_capacity;  // renamed from buffer_size
+    int* size;  
+    size_t size_capacity;  
     size_t count_elements;
     size_t last_resize_index;
 

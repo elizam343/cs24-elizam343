@@ -11,6 +11,15 @@ PauseVec::~PauseVec() {
     delete[] size;  
 }
 
+PauseVec PauseVec::create_pausevec() {
+    PauseVec vec;
+    vec.push(1);
+    vec.push(2);
+    vec.push(3);
+    vec.push(4);
+    return vec;
+}
+
 size_t PauseVec::capacity() const {
     return size_capacity;  
 }
@@ -83,7 +92,7 @@ void PauseVec::resize(size_t new_size) {
 void PauseVec::compact() {
     if (last_resize_index < count_elements) {
         for (size_t i = last_resize_index; i < count_elements - 1; i++)
-            size[i] = size[i + 1];  // renamed from buffer
+            size[i] = size[i + 1];  
 
         last_resize_index = count_elements;
     }
