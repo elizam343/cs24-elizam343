@@ -1,38 +1,28 @@
 #ifndef PAUSEVEC_H
 #define PAUSEVEC_H
 
-// This provides the size_t type:
-#include <cstddef>
+#include <stdexcept>
 
 class PauseVec {
-  
-private:
-  int* array = NULL;
-  size_t size;
-  size_t counter;
-
 public:
-  // Constructor
-  PauseVec();
-  void grow () const;
-  int capacity ();
-  int count (int counter);
-  void push (int val);
-  int lookup (int index);
-  void shrink() const;
-  void mutate (int index, int val) const;
-  void remove (int index) const;
-  void remove_val (int val) const;
+    PauseVec();
+    ~PauseVec();
+    size_t capacity() const;
+    size_t count() const;
+    void push(int value);
+    int lookup(size_t index) const;
+    void mutate(size_t index, int value);
+    int remove(size_t index);
+    void remove_val(int value);
 
-  // Member Functions
+private:
+    int* size;  // renamed from buffer
+    size_t size_capacity;  // renamed from buffer_size
+    size_t count_elements;
+    size_t last_resize_index;
 
+    void resize(size_t new_size);
+    void compact();
 };
-
-// Used by the autograder:
-PauseVec* create_pausevec();
-
-PauseVec* create_pausevec() {
-  return new PauseVec();
-}
 
 #endif

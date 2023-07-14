@@ -1,116 +1,90 @@
 #include "PauseVec.h"
-#include <iostream>
 
 PauseVec::PauseVec() {
-    size = 1;
-    size = 0;
-    array = new int[size];
+    size_capacity = 1;  
+    count_elements = 0;
+    last_resize_index = 0;
+    size = new int[size_capacity];  
 }
 
-// Taking size from the user
-PauseVec::PauseVec(int size)
-{
-    this -> size = size;
-    array = new int[size];
-    size = 0;
-}
-void PauseVec::grow () const{
-    
-
+PauseVec::~PauseVec() {
+    delete[] size;  
 }
 
-int PauseVec::capacity () {
-    if (size % 2 == 0) {
-        return size;
+size_t PauseVec::capacity() const {
+    return size_capacity;  
+}
+
+size_t PauseVec::count() const {
+    return count_elements;
+}
+
+void PauseVec::push(int value) {
+    if (count_elements == size_capacity)
+        resize(size_capacity * 2);
+
+    size[count_elements++] = value;  
+}
+
+int PauseVec::lookup(size_t index) const {
+    if (index >= count_elements)
+        throw std::out_of_range("Index out of range");
+
+    return size[index];
+}
+
+void PauseVec::mutate(size_t index, int value) {
+    if (index >= count_elements)
+        throw std::out_of_range("Index out of range");
+
+    size[index] = value;  
+}
+
+int PauseVec::remove(size_t index) {
+    if (index >= count_elements)
+        throw std::out_of_range("Index out of range");
+
+    int value = size[index];  
+    for (size_t i = index; i < count_elements - 1; i++)
+        size[i] = size[i + 1];  
+
+    count_elements--;
+
+    if (count_elements <= size_capacity / 4)
+        resize(size_capacity / 2);
+
+    return value;
+}
+
+void PauseVec::remove_val(int value) {
+    for (size_t i = 0; i < count_elements; i++) {
+        if (size[i] == value)  
+        {
+            remove(i);
+            i--;  
         }
-    else {
-        size += 1;
-        grow()
-        return size;
     }
 }
 
-int PauseVec::count (int counter) {
-    for (int i = 0; i < size; i++) {
-        if (array[i] != -1) {
-            // If element found return its index
-            counter += 1;
-            }
-        }
-    return counter;
+void PauseVec::resize(size_t new_size) {
+    int* new_buffer = new int[new_size];
+
+    for (size_t i = 0; i < count_elements; i++)
+        new_buffer[i] = size[i];
+
+    delete[] size;
+    size = new_buffer;
+    size_capacity = new_size;
+
+    if (last_resize_index >= count_elements)
+        last_resize_index = 0;
 }
 
-void PauseVec::push (int val) {
-    // check is array having size to store element or
-    // not
-    if (size == count) {
+void PauseVec::compact() {
+    if (last_resize_index < count_elements) {
+        for (size_t i = last_resize_index; i < count_elements - 1; i++)
+            size[i] = size[i + 1];  // renamed from buffer
 
-        // if not then grow the array by double
-        grow();
+        last_resize_index = count_elements;
     }
-    // insert element
-    array[size] = val;
-    // increment the size or last_index+1
-    size++;
-}
-
-int PauseVec::lookup (int index) {
-    for (int i = 0; i < size; i++) {
-            if (array[index] != NULL) {
-                // If element found return its index
-                return array[index];
-            }
-        }
-    // Return -1 if element not found;
-    return -1;
-}
-
-
-PauseVec::shrink() {
-        // Creating new array of half size
-        size = count;
-        int* temp = new int[size];
- 
-        // copy element of old array in newly created array
-        for (int i = 0; i < count; i++) {
-            temp[i] = array[i];
-        }
- 
-        // Delete old array
-        delete[] array;
- 
-        // Assign newly created temp array to original array
-        array = temp;
-    
-}
-void PauseVec::mutate (int index, int val) const {
-
-}
-void PauseVec::remove (int index) const{
-    for (int i = index; i < size; i++) {
-            array[i] = array[i + 1];
-        }
- 
-        // Replace the last index by 0
-        array[size - 1] = 0;
- 
-        // Decrement the array size
-        size--;
- 
-        // Reduce if the container half element of its
-        // capacity
-        if (size == (capacity / 2)) {
-            shrink();
-        }
-}
-void PauseVec::remove_val (int val) const {
-    for (int i = 0; i < size; i++) {
-            if (array[i] == val) {
-                // If element found return its index
-                return array[index];
-            }
-        }
-    // Return -1 if element not found;
-    return -1;
-
 }
