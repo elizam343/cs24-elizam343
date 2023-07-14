@@ -26,7 +26,7 @@ void PauseVec::push(int value) {
     size[count_elements++] = value;  
 }
 
-int PauseVec::lookup(size_t index) const {
+int PauseVec::lookup(size_t index) {
     if (index >= count_elements)
         throw std::out_of_range("Index out of range");
 

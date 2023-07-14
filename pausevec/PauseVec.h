@@ -10,7 +10,7 @@ public:
     size_t capacity() const;
     size_t count() const;
     void push(int value);
-    int lookup(size_t index) const;
+    int lookup(size_t index);
     void mutate(size_t index, int value);
     int remove(size_t index);
     void remove_val(int value);
