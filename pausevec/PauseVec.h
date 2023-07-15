@@ -1,7 +1,6 @@
 #ifndef PAUSEVEC_H
 #define PAUSEVEC_H
 
-#include <stdexcept>
 
 class PauseVec {
 public:
