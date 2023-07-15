@@ -23,7 +23,7 @@ private:
     size_t last_resize_index;
 
     void resize(size_t new_size);
-    void compact();
+    void shrink();
 };
 
 PauseVec* create_pausevec();

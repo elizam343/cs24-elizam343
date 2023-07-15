@@ -42,7 +42,7 @@ void PauseVec::mutate(size_t index, int value) {
 
 int PauseVec::remove(size_t index) {
     if (index >= count_elements)
-        throw std::out_of_range("Index out of range");
+        return -1;
 
     int value = size[index];  
     for (size_t i = index; i < count_elements - 1; i++)
@@ -67,20 +67,20 @@ void PauseVec::remove_val(int value) {
 }
 
 void PauseVec::resize(size_t new_size) {
-    int* new_buffer = new int[new_size];
+    int* new_cap = new int[new_size];
 
     for (size_t i = 0; i < count_elements; i++)
-        new_buffer[i] = size[i];
+        new_cap[i] = size[i];
 
     delete[] size;
-    size = new_buffer;
+    size = new_cap;
     size_capacity = new_size;
 
     if (last_resize_index >= count_elements)
         last_resize_index = 0;
 }
 
-void PauseVec::compact() {
+void PauseVec::shrink() {
     if (last_resize_index < count_elements) {
         for (size_t i = last_resize_index; i < count_elements - 1; i++)
             size[i] = size[i + 1];  
@@ -88,3 +88,4 @@ void PauseVec::compact() {
         last_resize_index = count_elements;
     }
 }
+
