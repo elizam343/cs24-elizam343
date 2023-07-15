@@ -28,15 +28,14 @@ void PauseVec::push(int value) {
 
 int PauseVec::lookup(size_t index) {
     if (index >= count_elements)
-    size[index] = "index out of range";
-        return size[index]; //index out of range
+        return -1; //index out of range
 
     return size[index];
 }
 
 void PauseVec::mutate(size_t index, int value) {
     if (index >= count_elements)
-        return -1; //index out of range
+        size[index] = -2; //index out of range
 
     size[index] = value;  
 }
