@@ -15,7 +15,6 @@ public:
     int remove(size_t index);
     void remove_val(int value);
 
-    static PauseVec create_pausevec();
 
 private:
     int* size;  
@@ -26,5 +25,11 @@ private:
     void resize(size_t new_size);
     void compact();
 };
+
+PauseVec* create_pausevec();
+
+PauseVec* create_pausevec() {
+    return new PauseVec();
+}
 
 #endif

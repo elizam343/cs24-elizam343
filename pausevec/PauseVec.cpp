@@ -11,15 +11,6 @@ PauseVec::~PauseVec() {
     delete[] size;  
 }
 
-PauseVec PauseVec::create_pausevec() {
-    PauseVec vec;
-    vec.push(1);
-    vec.push(2);
-    vec.push(3);
-    vec.push(4);
-    return vec;
-}
-
 size_t PauseVec::capacity() const {
     return size_capacity;  
 }
