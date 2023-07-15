@@ -36,7 +36,7 @@ int PauseVec::lookup(size_t index) {
 
 void PauseVec::mutate(size_t index, int value) {
     if (index >= count_elements)
-        size[index] = -2; //index out of range
+        return -1; //index out of range
 
     size[index] = value;  
 }
