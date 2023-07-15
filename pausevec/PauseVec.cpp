@@ -28,21 +28,21 @@ void PauseVec::push(int value) {
 
 int PauseVec::lookup(size_t index) {
     if (index >= count_elements)
-        return -1; //index out of range
+        throw std::out_of_range("Index out of range");
 
     return size[index];
 }
 
 void PauseVec::mutate(size_t index, int value) {
     if (index >= count_elements)
-        size[index] = -2; //index out of range
+        throw std::out_of_range("Index out of range");
 
     size[index] = value;  
 }
 
 int PauseVec::remove(size_t index) {
     if (index >= count_elements)
-        return -3; //index out of range
+        return -1;
 
     int value = size[index];  
     for (size_t i = index; i < count_elements - 1; i++)
@@ -88,4 +88,3 @@ void PauseVec::shrink() {
         last_resize_index = count_elements;
     }
 }
-
