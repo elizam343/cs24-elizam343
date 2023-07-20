@@ -6,6 +6,11 @@
 
 class MyChunkyList: public ChunkyList {
   // TODO: Add any member variables you need.
+private:
+   int chunkSize;
+    MyChunkyNode* headNode;
+    MyChunkyNode* tailNode;
+    int itemCount;
 public:
   MyChunkyList(int chunksize);
   ~MyChunkyList();
