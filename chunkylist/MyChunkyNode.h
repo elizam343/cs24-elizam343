@@ -1,21 +1,20 @@
 #ifndef MYCHUNKYNODE_H
 #define MYCHUNKYNODE_H
+using namespace std;
 
 #include "ChunkyNode.h"
-#include <string>
 
 class MyChunkyNode: public ChunkyNode {
-  // TODO: Add any member variables you need.
 private:
-  int chunkSize;
-  int itemCount;
-  std::string* itemList;
-  MyChunkyNode* prevNode;
-  MyChunkyNode* nextNode;
+  string* itemsArray;   
+  MyChunkyNode* prevNode;   
+  MyChunkyNode* nextNode;   
+  int chunkyNodeSize;        
 
 public:
-  // TODO: Constructor(s)
-  // TODO: Destructor
+  MyChunkyNode(int chunksize);
+  ~MyChunkyNode();
+
 
   // These functions are needed by the autograder.
   // See ChunkyNode.h for their descriptions.
@@ -23,11 +22,11 @@ public:
   std::string*  items() const;
   MyChunkyNode* prev()  const;
   MyChunkyNode* next()  const;
+
+  void setPrev(MyChunkyNode* prev);
+  void setNext(MyChunkyNode* next);
   void insert(int index, const std::string& item);
   void remove(int index);
-  ~MyChunkyNode() override;
-
-  // TODO: Add any other member functions you need.
 };
 
 #endif

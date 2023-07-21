@@ -1,120 +1,96 @@
 #include "MyChunkyNode.h"
 
-// TODO: Member Function Implementation
-MyChunkyNode::MyChunkyNode(int chunkSize) : chunkSize(chunkSize), itemCount(0), itemList(nullptr), prevNode(nullptr), nextNode(nullptr) {
-    itemList = new std::string[chunkSize];
+MyChunkyNode::MyChunkyNode(int chunksize)
+    : itemsArray(new std::string[chunksize]),
+      prevNode(nullptr),
+      nextNode(nullptr),
+      chunkyNodeSize(chunksize) {}
+
+MyChunkyNode::~MyChunkyNode() {
+  delete[] itemsArray;
 }
 
 int MyChunkyNode::count() const {
-    return itemCount;
+  int count = 0;
+  while (count < chunkyNodeSize && !itemsArray[count].empty())
+    count++;
+  return count;
 }
 
 std::string* MyChunkyNode::items() const {
-    return itemList;
+  return itemsArray;
 }
 
-ChunkyNode* MyChunkyNode::prev() const {
-    return prevNode;
+MyChunkyNode* MyChunkyNode::prev() const {
+  return prevNode;
 }
 
-ChunkyNode* MyChunkyNode::next() const {
-    return nextNode;
+MyChunkyNode* MyChunkyNode::next() const {
+  return nextNode;
+}
+
+void MyChunkyNode::setPrev(MyChunkyNode* prev) {
+  prevNode = prev;
+}
+
+void MyChunkyNode::setNext(MyChunkyNode* next) {
+  nextNode = next;
 }
 
 void MyChunkyNode::insert(int index, const std::string& item) {
-    if (index < 0 || index > itemCount) {
-        throw std::out_of_range("Invalid index.");
+  int current_count = count();
+
+  if (current_count < chunkyNodeSize) {
+    for (int i = current_count; i > index; i--) {
+      itemsArray[i] = itemsArray[i - 1];
+    }
+    itemsArray[index] = item;
+  } else {
+    int new_chunksize = chunkyNodeSize / 2;
+    MyChunkyNode* new_node = new MyChunkyNode(new_chunksize);
+
+    for (int i = 0; i < new_chunksize; i++) {
+      new_node->itemsArray[i] = itemsArray[chunkyNodeSize - new_chunksize + i];
+      itemsArray[chunkyNodeSize - new_chunksize + i].clear();
     }
 
-    if (itemCount < chunkSize) {
-        for (int i = itemCount; i > index; --i) {
-            itemList[i] = itemList[i - 1];
-        }
-        itemList[index] = item;
-        itemCount++;
+    new_node->setNext(nextNode);
+    new_node->setPrev(this);
+    if (nextNode) {
+      nextNode->setPrev(new_node);
+    }
+    setNext(new_node);
+
+    if (index >= new_chunksize) {
+      new_node->insert(index - new_chunksize, item);
     } else {
-        MyChunkyNode* newNode = new MyChunkyNode(chunkSize);
-
-        if (index == itemCount) {
-            newNode->nextNode = nextNode;
-            newNode->prevNode = this;
-            if (nextNode) {
-                nextNode->prevNode = newNode;
-            }
-            nextNode = newNode;
-        } else {
-            for (int i = chunkSize - 1; i > index; --i) {
-                newNode->itemList[i - chunkSize] = itemList[i];
-            }
-            newItemList[index - chunkSize] = item;
-
-            for (int i = index; i < chunkSize; ++i) {
-                itemList[i] = "";
-            }
-
-            itemCount = chunkSize / 2 + 1;
-            newNode->itemCount = chunkSize / 2;
-            newNode->nextNode = nextNode;
-            newNode->prevNode = this;
-            nextNode = newNode;
-            if (nextNode) {
-                nextNode->prevNode = newNode;
-            }
-        }
+      insert(index, item);
     }
+  }
 }
 
 void MyChunkyNode::remove(int index) {
-    if (index < 0 || index >= itemCount) {
-        throw std::out_of_range("Invalid index.");
+  int current_count = count();
+
+  if (current_count > 0) {
+    // Shift elements to remove the item
+    for (int i = index; i < current_count - 1; i++) {
+      itemsArray[i] = itemsArray[i + 1];
     }
+    itemsArray[current_count - 1].clear();
 
-    for (int i = index; i < itemCount - 1; ++i) {
-        itemList[i] = itemList[i + 1];
+    // Check if the node can be merged with the previous node
+    if (prevNode && prevNode->count() + current_count <= chunkyNodeSize) {
+      for (int i = 0; i < current_count; i++) {
+        prevNode->itemsArray[prevNode->count() + i] = itemsArray[i];
+        itemsArray[i].clear();
+      }
+      prevNode->setNext(nextNode);
+      if (nextNode) {
+        nextNode->setPrev(prevNode);
+      }
+      delete this;
     }
-
-    itemList[itemCount - 1] = "";
-    itemCount--;
-
-    if (itemCount == 0) {
-        if (prevNode) {
-            prevNode->nextNode = nextNode;
-        }
-        if (nextNode) {
-            nextNode->prevNode = prevNode;
-        }
-        delete this;
-    } else if (prevNode && prevNode->count() + itemCount <= chunkSize / 2) {
-        for (int i = 0; i < itemCount; ++i) {
-            prevNode->itemList[prevNode->count()] = itemList[i];
-            itemList[i] = "";
-        }
-
-        prevNode->itemCount += itemCount;
-        prevNode->nextNode = nextNode;
-
-        if (nextNode) {
-            nextNode->prevNode = prevNode;
-        }
-
-        delete this;
-    } else if (nextNode && nextNode->count() + itemCount <= chunkSize / 2) {
-        for (int i = 0; i < nextNode->count(); ++i) {
-            itemList[itemCount + i] = nextNode->itemList[i];
-            nextNode->itemList[i] = "";
-        }
-
-        itemCount += nextNode->count();
-        nextNode = nextNode->nextNode;
-
-        if (nextNode) {
-            nextNode->prevNode = this;
-        }
-
-        delete nextNode;
-    }
+  }
 }
 
-MyChunkyNode::~MyChunkyNode() {
-    delete[] itemList;
-}

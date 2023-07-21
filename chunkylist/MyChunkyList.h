@@ -5,12 +5,10 @@
 #include "MyChunkyNode.h"
 
 class MyChunkyList: public ChunkyList {
-  // TODO: Add any member variables you need.
 private:
-   int chunkSize;
-    MyChunkyNode* headNode;
-    MyChunkyNode* tailNode;
-    int itemCount;
+  MyChunkyNode* NodeHead;    
+  MyChunkyNode* NodeTail;   
+  int chunkyNodeSize;        
 public:
   MyChunkyList(int chunksize);
   ~MyChunkyList();
@@ -26,7 +24,6 @@ public:
   MyChunkyNode* head() const;
   MyChunkyNode* tail() const;
 
-  // TODO: Add any other member functions you need.
 };
 
 #endif
