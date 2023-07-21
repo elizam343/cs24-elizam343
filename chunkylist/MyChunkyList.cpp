@@ -55,8 +55,8 @@ void MyChunkyList::insert(int index, const std::string& item) {
   }
 }
 
-string& MyChunkyList::lookup(int index) {
-  static string empty_string = "";
+std::string& MyChunkyList::lookup(int index) {
+  static std::string empty_string = "";
 
   if (index < 0 || index >= count()) {
     return empty_string;
