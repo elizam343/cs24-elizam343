@@ -28,6 +28,7 @@ void MyChunkyList::insert(int index, const std::string& item) {
   }
 
   if (!NodeHead) {
+    // The list is empty, create the head node
     NodeHead = NodeTail = new MyChunkyNode(chunkyNodeSize);
     NodeHead->insert(0, item);
     return;
@@ -54,8 +55,8 @@ void MyChunkyList::insert(int index, const std::string& item) {
   }
 }
 
-std::string& MyChunkyList::lookup(int index) {
-  static std::string empty_string = "";
+string& MyChunkyList::lookup(int index) {
+  static string empty_string = "";
 
   if (index < 0 || index >= count()) {
     return empty_string;
@@ -93,35 +94,23 @@ void MyChunkyList::remove(int index) {
   }
 
   // Check if the head node is empty, if yes, remove it
-  if (NodeHead->count() == 0) {
+  if (NodeHead && NodeHead->count() == 0) {
     MyChunkyNode* new_head = NodeHead->next();
     delete NodeHead;
     NodeHead = new_head;
     if (NodeHead) {
       NodeHead->setPrev(nullptr);
-    } else {
-      NodeTail = nullptr;
     }
   }
 
   // Check if the tail node is empty, if yes, remove it
-  if (NodeTail->count() == 0) {
+  if (NodeTail && NodeTail->count() == 0) {
     MyChunkyNode* new_tail = NodeTail->prev();
     delete NodeTail;
     NodeTail = new_tail;
     if (NodeTail) {
       NodeTail->setNext(nullptr);
-    } else {
-      NodeHead = nullptr;
     }
   }
-}
-
-MyChunkyNode* MyChunkyList::head() const {
-  return NodeHead;
-}
-
-MyChunkyNode* MyChunkyList::tail() const {
-  return NodeTail;
 }
 
