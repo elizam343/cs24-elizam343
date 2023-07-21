@@ -11,7 +11,7 @@ main: main.o ChunkyList.o MyChunkyList.o MyChunkyNode.o
 	${CXX} $(CXXFLAGS) -o $@ $+
 
 main.o: main.cpp ChunkyList.h ChunkyNode.h
-	${CXX} $(CXXFLAGS) -c -o $@ $<
+	${CXX} $(CXXFLAGS) -c -o $@ $< 
 
 ChunkyList.o: ChunkyList.cpp ChunkyList.h ChunkyNode.h
 	${CXX} $(CXXFLAGS) -c -o $@ $<
