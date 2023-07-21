@@ -39,6 +39,7 @@ void MyChunkyList::insert(int index, const std::string& item) {
   } else if (index == current_count && current_count < chunkyNodeSize) {
     NodeTail->insert(NodeTail->count(), item);
   } else {
+    // Find the node to insert the item
     int node_index = 0;
     MyChunkyNode* current = NodeHead;
     while (current) {

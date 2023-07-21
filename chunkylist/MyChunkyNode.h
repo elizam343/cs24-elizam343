@@ -19,7 +19,7 @@ public:
   // These functions are needed by the autograder.
   // See ChunkyNode.h for their descriptions.
   int           count() const;
-  std::string*  items() const;
+  string*  items() const;
   MyChunkyNode* prev()  const;
   MyChunkyNode* next()  const;
 

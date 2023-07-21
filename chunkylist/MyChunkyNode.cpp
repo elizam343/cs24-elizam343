@@ -4,7 +4,12 @@ MyChunkyNode::MyChunkyNode(int chunksize)
     : itemsArray(new std::string[chunksize]),
       prevNode(nullptr),
       nextNode(nullptr),
-      chunkyNodeSize(chunksize) {}
+      chunkyNodeSize(chunksize) {
+  // Initialize the items_ array to empty strings
+  for (int i = 0; i < chunkyNodeSize; i++) {
+    itemsArray[i] = "";
+  }
+}
 
 MyChunkyNode::~MyChunkyNode() {
   delete[] itemsArray;
