@@ -99,6 +99,10 @@ void MyChunkyNode::split() {
   int current_count = count();
   if (current_count >= chunkyNodeSize) {
     int new_chunksize = chunkyNodeSize / 2;
+    if (chunkyNodeSize % 2 == 1) {
+      new_chunksize += 1; // Add one more item to the first node for odd chunk size
+    }
+
     MyChunkyNode* new_node = new MyChunkyNode(new_chunksize);
 
     for (int i = 0; i < new_chunksize; i++) {
