@@ -126,8 +126,6 @@ void MyChunkyList::remove(int index) {
   splitAndMerge();
 }
 
-// ...
-
 
 
 
@@ -152,52 +150,6 @@ std::string& MyChunkyList::lookup(int index) {
   return empty_string;
 }
 
-void MyChunkyList::remove(int index) {
-  if (index < 0 || index >= count()) {
-    throw std::out_of_range("Index out of range");
-  }
-
-  if (NodeHead && NodeHead->count() <= chunkyNodeSize / 2 && NodeHead->next()) {
-    NodeHead->merge();
-  }
-  splitAndMerge();
-
-  int node_index = 0;
-  MyChunkyNode* current = NodeHead;
-  while (current) {
-    int node_count = current->count();
-    if (index >= node_index && index < node_index + node_count) {
-      current->remove(index - node_index);
-      break;
-    }
-    node_index += node_count;
-    current = current->next();
-  }
-
-  // Check if the head node is empty, if yes, remove it
-  if (NodeHead->count() == 0) {
-    MyChunkyNode* new_head = NodeHead->next();
-    delete NodeHead;
-    NodeHead = new_head;
-    if (NodeHead) {
-      NodeHead->setPrev(nullptr);
-    } else {
-      NodeTail = nullptr;
-    }
-  }
-
-  // Check if the tail node is empty, if yes, remove it
-  if (NodeTail->count() == 0) {
-    MyChunkyNode* new_tail = NodeTail->prev();
-    delete NodeTail;
-    NodeTail = new_tail;
-    if (NodeTail) {
-      NodeTail->setNext(nullptr);
-    } else {
-      NodeHead = nullptr;
-    }
-  }
-}
 
 MyChunkyNode* MyChunkyList::head() const {
   return NodeHead;
