@@ -1,5 +1,6 @@
 
 #include "MyChunkyNode.h"
+#include <stdexcept>
 
 MyChunkyNode::MyChunkyNode(int chunksize)
     : itemsArray(new std::string[chunksize]),
@@ -40,6 +41,9 @@ void MyChunkyNode::setNext(MyChunkyNode* next) {
 
 void MyChunkyNode::insert(int index, const std::string& item) {
   int current_count = count();
+  if (index < 0 || index > current_count) {
+    throw std::out_of_range("Index out of range.");
+  }
 
   if (current_count < chunkyNodeSize) {
     for (int i = current_count; i > index; i--) {
