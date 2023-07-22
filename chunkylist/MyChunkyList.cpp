@@ -1,5 +1,6 @@
 #include "MyChunkyList.h"
 #include <stdexcept>
+#include <iostream>
 
 MyChunkyList::MyChunkyList(int chunksize)
     : NodeHead(nullptr), NodeTail(nullptr), chunkyNodeSize(chunksize) {}
@@ -40,7 +41,8 @@ void MyChunkyList::splitAndMerge() {
 
 void MyChunkyList::insert(int index, const std::string& item) {
   if (index < 0 || index > count()) {
-    throw std::out_of_range("Index out of range");
+    std::cout << "Invalid index. Item '" << item << "' not inserted." << std::endl;
+    return;
   }
 
   // Split nodes if needed before inserting
@@ -54,38 +56,24 @@ void MyChunkyList::insert(int index, const std::string& item) {
     return;
   }
 
-  if (index == 0) {
-    // Insert at the head, create a new node and update pointers
-    MyChunkyNode* new_head = new MyChunkyNode(chunkyNodeSize);
-    new_head->insert(0, item);
-    new_head->setNext(NodeHead);
-    NodeHead->setPrev(new_head);
-    NodeHead = new_head;
-    return;
-  }
-
-  int node_index = 0;
-  MyChunkyNode* current = NodeHead;
-  while (current) {
-    int node_count = current->count();
-
-    if (index <= node_index + node_count) {
-      // Insert into the current node
-      current->insert(index - node_index, item);
-      return;
+  int current_count = count();
+  if (index == 0 && current_count < chunkyNodeSize) {
+    NodeHead->insert(0, item);
+  } else if (index == current_count && current_count < chunkyNodeSize) {
+    NodeTail->insert(NodeTail->count(), item);
+  } else {
+    int node_index = 0;
+    MyChunkyNode* current = NodeHead;
+    while (current) {
+      int node_count = current->count();
+      if (index >= node_index && index <= node_index + node_count) {
+        current->insert(index - node_index, item);
+        break;
+      }
+      node_index += node_count;
+      current = current->next();
     }
-
-    // Move to the next node
-    current = current->next();
-    node_index += node_count;
   }
-
-  // If we reach this point, we need to insert the item into a new node at the end
-  MyChunkyNode* new_node = new MyChunkyNode(chunkyNodeSize);
-  new_node->insert(0, item);
-  NodeTail->setNext(new_node);
-  new_node->setPrev(NodeTail);
-  NodeTail = new_node;
 }
 
 void MyChunkyList::remove(int index) {
