@@ -120,46 +120,60 @@ void MyChunkyList::remove(int index) {
     throw std::out_of_range("Index out of range");
   }
 
-  if (NodeHead && NodeHead->count() <= chunkyNodeSize / 2 && NodeHead->next()) {
-    NodeHead->merge();
+  if (!NodeHead) {
+    return; // Empty list, nothing to remove
   }
+
+  if (index == 0) {
+    // Removing the head
+    if (NodeHead->count() == 1) {
+      // If the head node contains only one item, remove the node
+      MyChunkyNode* new_head = NodeHead->next();
+      delete NodeHead;
+      NodeHead = new_head;
+      if (NodeHead) {
+        NodeHead->setPrev(nullptr);
+      } else {
+        NodeTail = nullptr;
+      }
+    } else {
+      // Remove the item from the head node
+      NodeHead->remove(0);
+    }
+  } else if (index == count() - 1) {
+    // Removing the tail
+    if (NodeTail->count() == 1) {
+      // If the tail node contains only one item, remove the node
+      MyChunkyNode* new_tail = NodeTail->prev();
+      delete NodeTail;
+      NodeTail = new_tail;
+      if (NodeTail) {
+        NodeTail->setNext(nullptr);
+      } else {
+        NodeHead = nullptr;
+      }
+    } else {
+      // Remove the item from the tail node
+      NodeTail->remove(NodeTail->count() - 1);
+    }
+  } else {
+    // Removing from the middle
+    int node_index = 0;
+    MyChunkyNode* current = NodeHead;
+    while (current) {
+      int node_count = current->count();
+      if (index >= node_index && index < node_index + node_count) {
+        // Remove the item from the current node
+        current->remove(index - node_index);
+        break;
+      }
+      node_index += node_count;
+      current = current->next();
+    }
+  }
+
+  // Check if any merging is needed after the removal
   splitAndMerge();
-
-  int node_index = 0;
-  MyChunkyNode* current = NodeHead;
-  while (current) {
-    int node_count = current->count();
-    if (index >= node_index && index < node_index + node_count) {
-      current->remove(index - node_index);
-      break;
-    }
-    node_index += node_count;
-    current = current->next();
-  }
-
-  // Check if the head node is empty, if yes, remove it
-  if (NodeHead->count() == 0) {
-    MyChunkyNode* new_head = NodeHead->next();
-    delete NodeHead;
-    NodeHead = new_head;
-    if (NodeHead) {
-      NodeHead->setPrev(nullptr);
-    } else {
-      NodeTail = nullptr;
-    }
-  }
-
-  // Check if the tail node is empty, if yes, remove it
-  if (NodeTail->count() == 0) {
-    MyChunkyNode* new_tail = NodeTail->prev();
-    delete NodeTail;
-    NodeTail = new_tail;
-    if (NodeTail) {
-      NodeTail->setNext(nullptr);
-    } else {
-      NodeHead = nullptr;
-    }
-  }
 }
 
 MyChunkyNode* MyChunkyList::head() const {
