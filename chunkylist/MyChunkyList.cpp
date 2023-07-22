@@ -180,12 +180,19 @@ std::string& MyChunkyList::lookup(int index) {
 
   int node_index = 0;
   MyChunkyNode* current = NodeHead;
+
   while (current) {
     int node_count = current->count();
-    if (index >= node_index && index < node_index + node_count) {
-      return current->items()[index - node_index];
+    
+    // Check if the current node is not empty
+    if (node_count > 0) {
+      if (index >= node_index && index < node_index + node_count) {
+        return current->items()[index - node_index];
+      }
+      node_index += node_count;
     }
-    node_index += node_count;
+    
+    // Move to the next node
     current = current->next();
   }
 
