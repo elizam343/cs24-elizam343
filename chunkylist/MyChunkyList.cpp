@@ -42,6 +42,11 @@ void MyChunkyList::insert(int index, const std::string& item) {
   if (index < 0 || index > count()) {
     throw std::out_of_range("Index out of range");
   }
+
+  if (NodeTail && NodeTail->count() >= chunkyNodeSize) {
+    NodeTail->split();
+  }
+  
   splitAndMerge();
 
   if (!NodeHead) {
@@ -94,6 +99,10 @@ std::string& MyChunkyList::lookup(int index) {
 void MyChunkyList::remove(int index) {
   if (index < 0 || index >= count()) {
     throw std::out_of_range("Index out of range");
+  }
+
+  if (NodeHead && NodeHead->count() <= chunkyNodeSize / 2 && NodeHead->next()) {
+    NodeHead->merge();
   }
   splitAndMerge();
 
