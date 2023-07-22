@@ -40,7 +40,7 @@ void MyChunkyList::splitAndMerge() {
 
 void MyChunkyList::insert(int index, const std::string& item) {
   if (index < 0 || index > count()) {
-    throw ChunkyListIndexOutOfRangeException("Index out of range.");
+    throw std::out_of_range("Index out of range");
   }
   splitAndMerge();
 
@@ -93,7 +93,7 @@ std::string& MyChunkyList::lookup(int index) {
 
 void MyChunkyList::remove(int index) {
   if (index < 0 || index >= count()) {
-    throw ChunkyListIndexOutOfRangeException("Index out of range.");
+    throw std::out_of_range("Index out of range");
   }
   splitAndMerge();
 

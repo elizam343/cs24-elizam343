@@ -28,10 +28,4 @@ public:
 
 };
 
-class ChunkyListIndexOutOfRangeException : public std::runtime_error {
-public:
-    ChunkyListIndexOutOfRangeException(const std::string& msg)
-        : std::runtime_error(msg) {}
-};
-
 #endif
