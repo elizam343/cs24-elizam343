@@ -96,13 +96,17 @@ void MyChunkyNode::remove(int index) {
 }
 
 void MyChunkyNode::split() {
-  if (count() >= chunkyNodeSize) {
+  int current_count = count();
+  if (current_count >= chunkyNodeSize) {
     int new_chunksize = chunkyNodeSize / 2;
     MyChunkyNode* new_node = new MyChunkyNode(new_chunksize);
 
     for (int i = 0; i < new_chunksize; i++) {
-      new_node->itemsArray[i] = itemsArray[chunkyNodeSize - new_chunksize + i];
-      itemsArray[chunkyNodeSize - new_chunksize + i].clear();
+      int source_index = chunkyNodeSize - new_chunksize + i;
+      if (source_index >= 0 && source_index < chunkyNodeSize && !itemsArray[source_index].empty()) {
+        new_node->itemsArray[i] = itemsArray[source_index];
+        itemsArray[source_index].clear();
+      }
     }
 
     new_node->setNext(nextNode);
@@ -115,11 +119,18 @@ void MyChunkyNode::split() {
 }
 
 void MyChunkyNode::merge() {
-  if (count() == 0 && prevNode && nextNode &&
+  int current_count = count();
+  if (current_count == 0 && prevNode && nextNode &&
       prevNode->count() + nextNode->count() <= chunkyNodeSize) {
     for (int i = 0; i < nextNode->count(); i++) {
-      prevNode->itemsArray[prevNode->count() + i] = nextNode->itemsArray[i];
-      nextNode->itemsArray[i].clear();
+      int source_index_prev = prevNode->count() + i;
+      int source_index_next = i;
+      if (source_index_prev >= 0 && source_index_prev < chunkyNodeSize &&
+          source_index_next >= 0 && source_index_next < chunkyNodeSize &&
+          !nextNode->itemsArray[source_index_next].empty()) {
+        prevNode->itemsArray[source_index_prev] = nextNode->itemsArray[source_index_next];
+        nextNode->itemsArray[source_index_next].clear();
+      }
     }
     prevNode->setNext(nextNode->next());
     if (nextNode->next()) {
