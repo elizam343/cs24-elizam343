@@ -13,6 +13,10 @@ MyChunkyList::~MyChunkyList() {
     }
 }
 
+MyChunkyNode* MyChunkyList::createNode() {
+    return new MyChunkyNode(chunkyNodeSize);
+}
+
 int MyChunkyList::count() const {
     int total_count = 0;
     MyChunkyNode* current = NodeHead;
@@ -122,5 +126,9 @@ MyChunkyNode* MyChunkyList::head() const {
 }
 
 MyChunkyNode* MyChunkyList::tail() const {
-    return NodeTail;
+    MyChunkyNode* current = NodeHead;
+    while (current->next()) {
+        current = current->next();
+    }
+    return current;
 }
