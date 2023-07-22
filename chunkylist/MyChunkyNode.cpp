@@ -146,3 +146,45 @@ void MyChunkyNode::merge() {
     delete nextNode;
   }
 }
+
+int MyChunkyNode::getCount() const {
+  int count = 0;
+  while (count < chunkyNodeSize && !itemsArray[count].empty())
+    count++;
+  return count;
+}
+
+void MyChunkyNode::insertItem(int index, const std::string& item) {
+  int current_count = getCount();
+  if (index < 0 || index > current_count) {
+    throw std::out_of_range("Index out of range.");
+  }
+
+  if (current_count < chunkyNodeSize) {
+    for (int i = current_count; i > index; i--) {
+      itemsArray[i] = itemsArray[i - 1];
+    }
+    itemsArray[index] = item;
+  } else {
+    int new_chunksize = chunkyNodeSize / 2;
+    MyChunkyNode* new_node = new MyChunkyNode(new_chunksize);
+
+    for (int i = 0; i < new_chunksize; i++) {
+      new_node->itemsArray[i] = itemsArray[chunkyNodeSize - new_chunksize + i];
+      itemsArray[chunkyNodeSize - new_chunksize + i].clear();
+    }
+
+    new_node->setNext(nextNode);
+    new_node->setPrev(this);
+    if (nextNode) {
+      nextNode->setPrev(new_node);
+    }
+    setNext(new_node);
+
+    if (index >= new_chunksize) {
+      new_node->insertItem(index - new_chunksize, item);
+    } else {
+      insertItem(index, item);
+    }
+  }
+}

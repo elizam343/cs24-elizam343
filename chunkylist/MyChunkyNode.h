@@ -31,6 +31,9 @@ public:
   void split();
   void merge();
 
+  int getCount() const;
+  void insertItem(int index, const std::string& item);
+
 };
 
 #endif

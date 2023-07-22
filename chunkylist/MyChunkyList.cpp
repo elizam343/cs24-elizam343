@@ -37,7 +37,6 @@ void MyChunkyList::splitAndMerge() {
   }
 }
 
-// ...
 
 void MyChunkyList::insert(int index, const std::string& item) {
   if (index < 0 || index > count()) {
@@ -75,8 +74,13 @@ void MyChunkyList::insert(int index, const std::string& item) {
     }
   }
 
-  // Split and merge nodes as needed
-  splitAndMerge();
+  // Split the node if needed
+  splitNodeIfNeeded(NodeTail);
+
+  // Merge nodes if possible
+  if (NodeTail->next() && NodeTail->count() + NodeTail->next()->count() <= chunkyNodeSize / 2) {
+    NodeTail->merge();
+  }
 }
 
 void MyChunkyList::remove(int index) {
@@ -122,11 +126,45 @@ void MyChunkyList::remove(int index) {
     }
   }
 
-  // Split and merge nodes as needed
-  splitAndMerge();
+  // Split the node if needed
+  splitNodeIfNeeded(NodeTail);
+
+  // Merge nodes if possible
+  if (NodeTail->next() && NodeTail->count() + NodeTail->next()->count() <= chunkyNodeSize / 2) {
+    NodeTail->merge();
+  }
 }
 
+void MyChunkyList::splitNodeIfNeeded(MyChunkyNode* node) {
+  int current_count = node->getCount();
+  if (current_count >= chunkyNodeSize) {
+    int new_chunksize = chunkyNodeSize / 2;
+    if (chunkyNodeSize % 2 == 1) {
+      new_chunksize += 1; // Add one more item to the first node for odd chunk size
+    }
 
+    MyChunkyNode* new_node = new MyChunkyNode(new_chunksize);
+
+    int first_half = current_count / 2;
+    int second_half = current_count - first_half;
+
+    for (int i = 0; i < second_half; i++) {
+      new_node->insertItem(i, node->items()[first_half + i]);
+      node->items()[first_half + i].clear();
+    }
+
+    // Update counts for both nodes
+    node-> chunkyNodeSize = first_half;
+    new_node-> chunkyNodeSize = second_half;
+
+    new_node->setNext(node->next());
+    new_node->setPrev(node);
+    if (node->next()) {
+      node->next()->setPrev(new_node);
+    }
+    node->setNext(new_node);
+  }
+}
 
 
 std::string& MyChunkyList::lookup(int index) {

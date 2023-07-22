@@ -6,9 +6,11 @@
 
 class MyChunkyList: public ChunkyList {
 private:
+  string* itemsArray;
   MyChunkyNode* NodeHead;    
   MyChunkyNode* NodeTail;   
-  int chunkyNodeSize;        
+  int chunkyNodeSize;   
+  void splitNodeIfNeeded(MyChunkyNode* node);     
 public:
   MyChunkyList(int chunksize = 1);
   ~MyChunkyList();
