@@ -43,44 +43,49 @@ void MyChunkyList::insert(int index, const std::string& item) {
     throw std::out_of_range("Index out of range");
   }
 
-  // Check if the list is empty and create the first node
+  // Split nodes if needed before inserting
+  splitNodeIfNeeded(NodeHead);
+  splitNodeIfNeeded(NodeTail);
+
   if (!NodeHead) {
+    // Empty list, create the first node
     NodeHead = NodeTail = new MyChunkyNode(chunkyNodeSize);
     NodeHead->insert(0, item);
     return;
   }
 
-  // Check if there's room in the tail node to insert the item
-  if (NodeTail->count() < chunkyNodeSize) {
-    NodeTail->insert(NodeTail->count(), item);
-  } else {
-    // Check if there's room in the head node to insert the item
-    if (NodeHead->count() < chunkyNodeSize) {
-      NodeHead->insert(0, item);
-    } else {
-      // Find the node to insert the item
-      MyChunkyNode* current = NodeHead;
-      int node_index = 0;
-      while (current) {
-        int node_count = current->count();
-        if (index >= node_index && index <= node_index + node_count) {
-          // Insert the item into the current node
-          current->insert(index - node_index, item);
-          break;
-        }
-        node_index += node_count;
-        current = current->next();
-      }
+  if (index == 0) {
+    // Insert at the head, create a new node and update pointers
+    MyChunkyNode* new_head = new MyChunkyNode(chunkyNodeSize);
+    new_head->insert(0, item);
+    new_head->setNext(NodeHead);
+    NodeHead->setPrev(new_head);
+    NodeHead = new_head;
+    return;
+  }
+
+  int node_index = 0;
+  MyChunkyNode* current = NodeHead;
+  while (current) {
+    int node_count = current->count();
+
+    if (index <= node_index + node_count) {
+      // Insert into the current node
+      current->insert(index - node_index, item);
+      return;
     }
+
+    // Move to the next node
+    current = current->next();
+    node_index += node_count;
   }
 
-  // Split the node if needed
-  splitNodeIfNeeded(NodeTail);
-
-  // Merge nodes if possible
-  if (NodeTail->next() && NodeTail->count() + NodeTail->next()->count() <= chunkyNodeSize / 2) {
-    NodeTail->merge();
-  }
+  // If we reach this point, we need to insert the item into a new node at the end
+  MyChunkyNode* new_node = new MyChunkyNode(chunkyNodeSize);
+  new_node->insert(0, item);
+  NodeTail->setNext(new_node);
+  new_node->setPrev(NodeTail);
+  NodeTail = new_node;
 }
 
 void MyChunkyList::remove(int index) {
@@ -183,15 +188,20 @@ std::string& MyChunkyList::lookup(int index) {
 
   while (current) {
     int node_count = current->count();
-    
+
     // Check if the current node is not empty
     if (node_count > 0) {
       if (index >= node_index && index < node_index + node_count) {
         return current->items()[index - node_index];
       }
       node_index += node_count;
+    } else {
+      // Special handling for an empty head node when chunk size is one
+      if (current == NodeHead && chunkyNodeSize == 1) {
+        return empty_string;
+      }
     }
-    
+
     // Move to the next node
     current = current->next();
   }
