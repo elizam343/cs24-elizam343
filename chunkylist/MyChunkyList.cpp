@@ -1,5 +1,6 @@
 
 #include "MyChunkyList.h"
+#include <stdexcept>
 
 MyChunkyList::MyChunkyList(int chunksize)
     : NodeHead(nullptr), NodeTail(nullptr), chunkyNodeSize(chunksize) {}
@@ -39,7 +40,7 @@ void MyChunkyList::splitAndMerge() {
 
 void MyChunkyList::insert(int index, const std::string& item) {
   if (index < 0 || index > count()) {
-    return;
+    throw ChunkyListIndexOutOfRangeException("Index out of range.");
   }
   splitAndMerge();
 
@@ -92,7 +93,7 @@ std::string& MyChunkyList::lookup(int index) {
 
 void MyChunkyList::remove(int index) {
   if (index < 0 || index >= count()) {
-    return;
+    throw ChunkyListIndexOutOfRangeException("Index out of range.");
   }
   splitAndMerge();
 
