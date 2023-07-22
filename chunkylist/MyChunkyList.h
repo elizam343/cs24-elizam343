@@ -10,7 +10,7 @@ private:
   MyChunkyNode* NodeTail;   
   int chunkyNodeSize;        
 public:
-  MyChunkyList(int chunksize);
+  MyChunkyList(int chunksize = 1);
   ~MyChunkyList();
 
   // These functions implement the Sequence abstract data type:

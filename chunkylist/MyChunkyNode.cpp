@@ -115,9 +115,10 @@ void MyChunkyNode::split() {
 }
 
 void MyChunkyNode::merge() {
-  if (count() == 0 && prevNode && nextNode && prevNode->count() + nextNode->count() <= chunkyNodeSize) {
+  if (count() == 0 && prevNode && nextNode &&
+      prevNode->count() + nextNode->count() <= chunkyNodeSize) {
     for (int i = 0; i < nextNode->count(); i++) {
-      itemsArray[prevNode->count() + i] = nextNode->itemsArray[i];
+      prevNode->itemsArray[prevNode->count() + i] = nextNode->itemsArray[i];
       nextNode->itemsArray[i].clear();
     }
     prevNode->setNext(nextNode->next());

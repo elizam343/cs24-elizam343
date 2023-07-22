@@ -12,7 +12,7 @@ private:
   int chunkyNodeSize;        
 
 public:
-  MyChunkyNode(int chunksize);
+  MyChunkyNode(int chunksize = 1);
   ~MyChunkyNode();
 
 
@@ -27,7 +27,7 @@ public:
   void setNext(MyChunkyNode* next);
   void insert(int index, const std::string& item);
   void remove(int index);
-  
+
   void split();
   void merge();
 
