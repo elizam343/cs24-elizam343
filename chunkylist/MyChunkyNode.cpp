@@ -12,16 +12,7 @@ MyChunkyNode::MyChunkyNode(int chunksize)
 }
 
 MyChunkyNode::~MyChunkyNode() {
-    // Traverse the list of nodes and delete each node
-    MyChunkyNode* current = this;
-    while (current) {
-        MyChunkyNode* next = current->nextNode;
-        delete[] current->itemsArray;
-        current->prevNode = nullptr; // Set prevNode to nullptr to avoid dangling pointers
-        current->nextNode = nullptr; // Set nextNode to nullptr to avoid dangling pointers
-        delete current;
-        current = next;
-    }
+    delete[] itemsArray;
 }
 
 int MyChunkyNode::count() const {

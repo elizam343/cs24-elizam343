@@ -1,11 +1,7 @@
 #include "MyChunkyList.h"
 
 MyChunkyList::MyChunkyList(int chunksize)
-    : NodeHead(nullptr), NodeTail(nullptr), chunkyNodeSize(chunksize) {
-    // Create the initial head node
-    NodeHead = NodeTail = new MyChunkyNode(chunkyNodeSize);
-}
-
+    : NodeHead(nullptr), NodeTail(nullptr), chunkyNodeSize(chunksize) {}
 
 MyChunkyList::~MyChunkyList() {
     MyChunkyNode* current = NodeHead;
@@ -31,6 +27,13 @@ void MyChunkyList::insert(int index, const std::string& item) {
         return;
     }
 
+    if (!NodeHead) {
+        // The list is empty, create the head node
+        NodeHead = NodeTail = new MyChunkyNode(chunkyNodeSize);
+        NodeHead->insert(0, item);
+        return;
+    }
+
     int current_count = count();
     if (index == 0 && current_count < chunkyNodeSize) {
         // Insert at the beginning of the list in the head node
@@ -51,16 +54,6 @@ void MyChunkyList::insert(int index, const std::string& item) {
             node_index += node_count;
             current = current->next();
         }
-    }
-
-    // Check if the head node is full, if yes, split it
-    if (NodeHead->count() == chunkyNodeSize) {
-        NodeHead->splitNode();
-    }
-
-    // Check if the tail node is full, if yes, split it
-    if (NodeTail->count() == chunkyNodeSize) {
-        NodeTail->splitNode();
     }
 }
 
@@ -120,16 +113,6 @@ void MyChunkyList::remove(int index) {
         if (NodeTail) {
             NodeTail->setNext(nullptr);
         }
-    }
-
-    // Check if the head node has less than half the chunk size, and merge with the next node if possible
-    if (NodeHead && NodeHead->count() <= chunkyNodeSize / 2) {
-        NodeHead->mergeNext();
-    }
-
-    // Check if the tail node has less than half the chunk size, and merge with the previous node if possible
-    if (NodeTail && NodeTail->count() <= chunkyNodeSize / 2) {
-        NodeTail->prev()->mergeNext();
     }
 }
 
