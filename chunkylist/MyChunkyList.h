@@ -9,8 +9,6 @@ private:
   MyChunkyNode* NodeHead;    
   MyChunkyNode* NodeTail;   
   int chunkyNodeSize;        
-  MyChunkyNode* createNode();
-  
 public:
   MyChunkyList(int chunksize);
   ~MyChunkyList();
