@@ -45,16 +45,34 @@ void MyChunkyNode::setNext(MyChunkyNode* next) {
 void MyChunkyNode::insert(int index, const std::string& item) {
     int current_count = count();
 
-    if (current_count < chunkyNodeSize) {
-        // There is space in the current node, shift elements and insert
+    if (current_count >= chunkyNodeSize) {
+        // Node is full, split it into two nodes
+        int new_chunksize = chunkyNodeSize / 2;
+        MyChunkyNode* new_node = new MyChunkyNode(new_chunksize);
+
+        for (int i = 0; i < new_chunksize; i++) {
+            new_node->itemsArray[i] = itemsArray[chunkyNodeSize - new_chunksize + i];
+            itemsArray[chunkyNodeSize - new_chunksize + i].clear();
+        }
+
+        new_node->setNext(nextNode);
+        new_node->setPrev(this);
+        if (nextNode) {
+            nextNode->setPrev(new_node);
+        }
+        setNext(new_node);
+
+        if (index >= new_chunksize) {
+            new_node->insert(index - new_chunksize, item);
+        } else {
+            insert(index, item);
+        }
+    } else {
+        // Node is not full, insert the item
         for (int i = current_count; i > index; i--) {
             itemsArray[i] = itemsArray[i - 1];
         }
         itemsArray[index] = item;
-    } else {
-        // The current node is full, split it
-        splitNode();
-        insert(index, item); // Re-insert the item after splitting
     }
 }
 
