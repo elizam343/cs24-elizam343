@@ -17,11 +17,12 @@ MyChunkyNode::~MyChunkyNode() {
     while (current) {
         MyChunkyNode* next = current->nextNode;
         delete[] current->itemsArray;
+        current->prevNode = nullptr; // Set prevNode to nullptr to avoid dangling pointers
+        current->nextNode = nullptr; // Set nextNode to nullptr to avoid dangling pointers
         delete current;
         current = next;
     }
 }
-
 
 int MyChunkyNode::count() const {
     int count = 0;
