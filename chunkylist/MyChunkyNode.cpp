@@ -12,8 +12,16 @@ MyChunkyNode::MyChunkyNode(int chunksize)
 }
 
 MyChunkyNode::~MyChunkyNode() {
-    delete[] itemsArray;
+    // Traverse the list of nodes and delete each node
+    MyChunkyNode* current = this;
+    while (current) {
+        MyChunkyNode* next = current->nextNode;
+        delete[] current->itemsArray;
+        delete current;
+        current = next;
+    }
 }
+
 
 int MyChunkyNode::count() const {
     int count = 0;
