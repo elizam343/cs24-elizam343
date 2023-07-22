@@ -24,6 +24,8 @@ public:
   MyChunkyNode* head() const;
   MyChunkyNode* tail() const;
 
+  void splitAndMerge();
+
 };
 
 #endif
