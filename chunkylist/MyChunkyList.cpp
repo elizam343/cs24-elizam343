@@ -38,42 +38,61 @@ void MyChunkyList::splitAndMerge() {
   }
 }
 
+
 void MyChunkyList::insert(int index, const std::string& item) {
   if (index < 0 || index > count()) {
     throw std::out_of_range("Index out of range");
   }
 
-  if (NodeTail && NodeTail->count() >= chunkyNodeSize) {
-    NodeTail->split();
-  }
-  
-  splitAndMerge();
-
-  if (!NodeHead) {
-    NodeHead = NodeTail = new MyChunkyNode(chunkyNodeSize);
-    NodeHead->insert(0, item);
-    return;
-  }
-
-  int current_count = count();
-  if (index == 0 && current_count < chunkyNodeSize) {
-    NodeHead->insert(0, item);
-  } else if (index == current_count && current_count < chunkyNodeSize) {
-    NodeTail->insert(NodeTail->count(), item);
+  if (index == 0) {
+    // Inserting at the head
+    if (NodeHead->count() < chunkyNodeSize) {
+      // If the head node has space, insert the item in the head node
+      NodeHead->insert(0, item);
+    } else {
+      // If the head node is full, create a new node and make it the new head
+      MyChunkyNode* new_head = new MyChunkyNode(chunkyNodeSize);
+      new_head->insert(0, item);
+      new_head->setNext(NodeHead);
+      NodeHead->setPrev(new_head);
+      NodeHead = new_head;
+    }
+  } else if (index == count()) {
+    // Inserting at the tail
+    if (NodeTail->count() < chunkyNodeSize) {
+      // If the tail node has space, insert the item in the tail node
+      NodeTail->insert(NodeTail->count(), item);
+    } else {
+      // If the tail node is full, create a new node and make it the new tail
+      MyChunkyNode* new_tail = new MyChunkyNode(chunkyNodeSize);
+      new_tail->insert(0, item);
+      new_tail->setPrev(NodeTail);
+      NodeTail->setNext(new_tail);
+      NodeTail = new_tail;
+    }
   } else {
-    int node_index = 0;
-    MyChunkyNode* current = NodeHead;
-    while (current) {
-      int node_count = current->count();
-      if (index >= node_index && index <= node_index + node_count) {
-        current->insert(index - node_index, item);
-        break;
+    int current_count = count();
+    if (index == 0 && current_count < chunkyNodeSize) {
+      NodeHead->insert(0, item);
+    } else if (index == current_count && current_count < chunkyNodeSize) {
+      NodeTail->insert(NodeTail->count(), item);
+    } else {
+      int node_index = 0;
+      MyChunkyNode* current = NodeHead;
+      while (current) {
+        int node_count = current->count();
+        if (index >= node_index && index <= node_index + node_count) {
+          current->insert(index - node_index, item);
+          break;
+        }
+        node_index += node_count;
+        current = current->next();
       }
-      node_index += node_count;
-      current = current->next();
     }
   }
+  splitAndMerge();
 }
+
 
 std::string& MyChunkyList::lookup(int index) {
   static std::string empty_string = "";
@@ -150,3 +169,7 @@ MyChunkyNode* MyChunkyList::head() const {
 MyChunkyNode* MyChunkyList::tail() const {
   return NodeTail;
 }
+
+
+
+  
