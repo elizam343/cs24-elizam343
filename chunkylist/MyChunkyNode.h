@@ -33,6 +33,8 @@ public:
 
   int getCount() const;
   void insertItem(int index, const std::string& item);
+  int getChunkSize() const;  // Add a public getter for chunk size
+  void setChunkSize(int size);  // Add a public setter for chunk size
 
 };
 

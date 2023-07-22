@@ -98,6 +98,10 @@ void MyChunkyNode::remove(int index) {
   }
 }
 
+void MyChunkyNode::setChunkSize(int size) {
+  chunkyNodeSize = size;
+}
+
 void MyChunkyNode::split() {
   int current_count = count();
   if (current_count >= chunkyNodeSize) {
@@ -152,6 +156,10 @@ int MyChunkyNode::getCount() const {
   while (count < chunkyNodeSize && !itemsArray[count].empty())
     count++;
   return count;
+}
+
+int MyChunkyNode::getChunkSize() const {
+  return chunkyNodeSize;
 }
 
 void MyChunkyNode::insertItem(int index, const std::string& item) {

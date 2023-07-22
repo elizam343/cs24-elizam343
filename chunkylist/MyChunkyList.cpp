@@ -137,33 +137,37 @@ void MyChunkyList::remove(int index) {
 
 void MyChunkyList::splitNodeIfNeeded(MyChunkyNode* node) {
   int current_count = node->getCount();
-  if (current_count >= chunkyNodeSize) {
-    int new_chunksize = chunkyNodeSize / 2;
-    if (chunkyNodeSize % 2 == 1) {
-      new_chunksize += 1; // Add one more item to the first node for odd chunk size
-    }
+  int chunkyNodeSize = node->getChunkSize(); // Use the getter to get chunk size
 
-    MyChunkyNode* new_node = new MyChunkyNode(new_chunksize);
+  // No need to split if the current_count is less than chunk size
+  if (current_count < chunkyNodeSize)
+    return;
 
-    int first_half = current_count / 2;
-    int second_half = current_count - first_half;
-
-    for (int i = 0; i < second_half; i++) {
-      new_node->insertItem(i, node->items()[first_half + i]);
-      node->items()[first_half + i].clear();
-    }
-
-    // Update counts for both nodes
-    node-> chunkyNodeSize = first_half;
-    new_node-> chunkyNodeSize = second_half;
-
-    new_node->setNext(node->next());
-    new_node->setPrev(node);
-    if (node->next()) {
-      node->next()->setPrev(new_node);
-    }
-    node->setNext(new_node);
+  int new_chunksize = chunkyNodeSize / 2;
+  if (chunkyNodeSize % 2 == 1) {
+    new_chunksize += 1; // Add one more item to the first node for odd chunk size
   }
+
+  MyChunkyNode* new_node = new MyChunkyNode(new_chunksize);
+
+  int first_half = current_count / 2;
+  int second_half = current_count - first_half;
+
+  for (int i = 0; i < second_half; i++) {
+    new_node->insertItem(i, node->items()[first_half + i]);
+    node->items()[first_half + i].clear();
+  }
+
+  // Update counts for both nodes
+  node->setChunkSize(first_half);
+  new_node->setChunkSize(second_half);
+
+  new_node->setNext(node->next());
+  new_node->setPrev(node);
+  if (node->next()) {
+    node->next()->setPrev(new_node);
+  }
+  node->setNext(new_node);
 }
 
 
