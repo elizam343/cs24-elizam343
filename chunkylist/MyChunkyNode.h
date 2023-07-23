@@ -33,6 +33,8 @@ public:
   void split();
   void merge();
   void decrementCount();
+  void append(int value);
+  string get(int index);
 
 };
 

@@ -99,6 +99,29 @@ void MyChunkyNode::decrementCount() {
         countVariable--;
 }
 
+void MyChunkyNode::append(int value) {
+  // Check if there is space in the node
+  if (countVariable < chunkyNodeSize) {
+    // Add the value to the end of itemsArray
+    itemsArray[countVariable] = value;
+    // Increment the count variable
+    countVariable++;
+  } else {
+    throw std::runtime_error("The node is full.");
+  }
+}
+
+string MyChunkyNode::get(int index) {
+    // Check if the index is in the valid range
+    if(index >= 0 && index < countVariable) {
+        // Return the item at the specified index
+        return itemsArray[index];
+    }
+    else {
+        // Throw an exception if the index is out of range
+        throw std::out_of_range("Index out of range");
+    }
+}
 
 void MyChunkyNode::split() {
   int total_count = count();
