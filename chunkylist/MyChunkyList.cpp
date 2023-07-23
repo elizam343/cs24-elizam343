@@ -99,7 +99,6 @@ void MyChunkyList::insert(int index, const std::string& item) {
   }
 }
 
-
 std::string& MyChunkyList::lookup(int index) {
   if (index < 0 || index >= count()) {
     throw std::out_of_range("Index out of range");
@@ -129,35 +128,27 @@ void MyChunkyList::remove(int index) {
   int current_index = 0;
   while (current) {
     if (index < current_index + current->count()) {
-      current->remove(index - current_index);
+      current->remove(index - current_index); // This function should adjust countVariable
+
+      // If the current node is empty, remove it
+      if (current->count() == 0) {
+        if (current->prev()) {
+          current->prev()->setNext(current->next());
+        }
+        if (current->next()) {
+          current->next()->setPrev(current->prev());
+        }
+        delete current;
+      }
+      // If the current node and previous node can be merged, merge them
+      else if (current->prev() && current->prev()->count() + current->count() <= chunkyNodeSize / 2) {
+        current->prev()->merge(); // This function should handle merging and deleting nodes
+      }
+      
       break;
     }
     current_index += current->count();
     current = current->next();
-  }
-
-  // Check if the head node is empty, if yes, remove it
-  if (NodeHead->count() == 0) {
-    MyChunkyNode* new_head = NodeHead->next();
-    delete NodeHead;
-    NodeHead = new_head;
-    if (NodeHead) {
-      NodeHead->setPrev(nullptr);
-    } else {
-      NodeTail = nullptr;
-    }
-  }
-
-  // Check if the tail node is empty, if yes, remove it
-  if (NodeTail && NodeTail->count() == 0) {
-    MyChunkyNode* new_tail = NodeTail->prev();
-    delete NodeTail;
-    NodeTail = new_tail;
-    if (NodeTail) {
-      NodeTail->setNext(nullptr);
-    } else {
-      NodeHead = nullptr;
-    }
   }
 }
 
