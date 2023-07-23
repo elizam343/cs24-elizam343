@@ -132,15 +132,24 @@ void MyChunkyList::remove(int index) {
 
       // If the current node is empty, remove it
       if (current->count() == 0) {
-        if (current->prev()) {
-          current->prev()->setNext(current->next());
+        MyChunkyNode* prevNode = current->prev();
+        MyChunkyNode* nextNode = current->next();
+
+        if (prevNode) {
+          prevNode->setNext(nextNode);
         }
-        if (current->next()) {
-          current->next()->setPrev(current->prev());
+        if (nextNode) {
+          nextNode->setPrev(prevNode);
         }
         delete current;
+        
+        // After deletion, if nodes can be merged, do so
+        if (prevNode && nextNode && prevNode->count() + nextNode->count() <= chunkyNodeSize / 2) {
+          prevNode->merge(); // This function should handle merging and deleting nodes
+        }
       }
-      // If the current node and previous node can be merged, merge them
+      
+      // If the current node is not empty but can be merged with previous node, merge them
       else if (current->prev() && current->prev()->count() + current->count() <= chunkyNodeSize / 2) {
         current->prev()->merge(); // This function should handle merging and deleting nodes
       }
@@ -151,6 +160,7 @@ void MyChunkyList::remove(int index) {
     current = current->next();
   }
 }
+
 
 MyChunkyNode* MyChunkyList::head() const {
   return NodeHead;

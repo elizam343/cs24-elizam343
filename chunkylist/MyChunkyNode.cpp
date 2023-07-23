@@ -85,29 +85,12 @@ void MyChunkyNode::remove(int index) {
     throw std::out_of_range("Index out of range.");
   }
 
-  if (current_count > 0) {
-    // Shift elements to remove the item
-    for (int i = index; i < current_count - 1; i++) {
-      itemsArray[i] = itemsArray[i + 1];
-    }
-    itemsArray[current_count - 1].clear();
-    decrementCount(); // if your count() is based on a variable, decrement it here
-
-    current_count = count();
-    // Check if the node can be merged with the previous node
-    if (prevNode && prevNode->count() + current_count <= chunkyNodeSize) {
-      for (int i = 0; i < current_count; i++) {
-        prevNode->itemsArray[prevNode->count() + i] = itemsArray[i];
-        itemsArray[i].clear();
-        decrementCount(); // if your count() is based on a variable, decrement it here
-      }
-      prevNode->setNext(nextNode);
-      if (nextNode) {
-        nextNode->setPrev(prevNode);
-      }
-      delete this;
-    }
+  // Shift elements to remove the item
+  for (int i = index; i < current_count - 1; i++) {
+    itemsArray[i] = itemsArray[i + 1];
   }
+  itemsArray[current_count - 1].clear();
+  decrementCount(); // if your count() is based on a variable, decrement it here
 }
 
 void MyChunkyNode::decrementCount() {
