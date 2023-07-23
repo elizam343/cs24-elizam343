@@ -151,10 +151,14 @@ void MyChunkyNode::merge() {
     countVariable = 0;  // set the count of the current node to 0
 
     // Update the next and prev pointers
-    prevNode->setNext(nextNode);
+    MyChunkyNode* to_delete = this;
+    if (prevNode) {
+      prevNode->setNext(nextNode);
+    }
     if (nextNode) {
       nextNode->setPrev(prevNode);
     }
-    delete this;
+
+    delete to_delete;
   }
 }
