@@ -65,16 +65,25 @@ void MyChunkyNode::insert(int index, const std::string& item) {
     }
     setNext(new_node);
 
-    if (index >= new_chunksize) {
-      new_node->insert(index - new_chunksize, item);
+    // update the current count after splitting
+    current_count = count();
+    if (index >= current_count) {
+      new_node->insert(index - current_count, item);
     } else {
-      insert(index, item);
+      for (int i = current_count; i > index; i--) {
+        itemsArray[i] = itemsArray[i - 1];
+      }
+      itemsArray[index] = item;
     }
   }
 }
 
+
 void MyChunkyNode::remove(int index) {
   int current_count = count();
+  if (index < 0 || index >= current_count) {
+    throw std::out_of_range("Index out of range.");
+  }
 
   if (current_count > 0) {
     // Shift elements to remove the item
@@ -82,12 +91,15 @@ void MyChunkyNode::remove(int index) {
       itemsArray[i] = itemsArray[i + 1];
     }
     itemsArray[current_count - 1].clear();
+    decrementCount(); // if your count() is based on a variable, decrement it here
 
+    current_count = count();
     // Check if the node can be merged with the previous node
     if (prevNode && prevNode->count() + current_count <= chunkyNodeSize) {
       for (int i = 0; i < current_count; i++) {
         prevNode->itemsArray[prevNode->count() + i] = itemsArray[i];
         itemsArray[i].clear();
+        decrementCount(); // if your count() is based on a variable, decrement it here
       }
       prevNode->setNext(nextNode);
       if (nextNode) {
@@ -98,9 +110,11 @@ void MyChunkyNode::remove(int index) {
   }
 }
 
-void MyChunkyNode::setChunkSize(int size) {
-  chunkyNodeSize = size;
+void MyChunkyNode::decrementCount() {
+    if (countVariable > 0) // assuming countVariable is the variable tracking the number of items
+        countVariable--;
 }
+
 
 void MyChunkyNode::split() {
   int current_count = count();
@@ -148,51 +162,5 @@ void MyChunkyNode::merge() {
       nextNode->next()->setPrev(prevNode);
     }
     delete nextNode;
-  }
-}
-
-int MyChunkyNode::getCount() const {
-  int count = 0;
-  while (count < chunkyNodeSize && !itemsArray[count].empty())
-    count++;
-  return count;
-}
-
-int MyChunkyNode::getChunkSize() const {
-  return chunkyNodeSize;
-}
-
-void MyChunkyNode::insertItem(int index, const std::string& item) {
-  int current_count = getCount();
-  if (index < 0 || index > current_count) {
-    throw std::out_of_range("Index out of range.");
-  }
-
-  if (current_count < chunkyNodeSize) {
-    for (int i = current_count; i > index; i--) {
-      itemsArray[i] = itemsArray[i - 1];
-    }
-    itemsArray[index] = item;
-  } else {
-    int new_chunksize = chunkyNodeSize / 2;
-    MyChunkyNode* new_node = new MyChunkyNode(new_chunksize);
-
-    for (int i = 0; i < new_chunksize; i++) {
-      new_node->itemsArray[i] = itemsArray[chunkyNodeSize - new_chunksize + i];
-      itemsArray[chunkyNodeSize - new_chunksize + i].clear();
-    }
-
-    new_node->setNext(nextNode);
-    new_node->setPrev(this);
-    if (nextNode) {
-      nextNode->setPrev(new_node);
-    }
-    setNext(new_node);
-
-    if (index >= new_chunksize) {
-      new_node->insertItem(index - new_chunksize, item);
-    } else {
-      insertItem(index, item);
-    }
   }
 }

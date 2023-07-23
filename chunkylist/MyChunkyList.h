@@ -1,3 +1,4 @@
+
 #ifndef MYCHUNKYLIST_H
 #define MYCHUNKYLIST_H
 
@@ -6,11 +7,9 @@
 
 class MyChunkyList: public ChunkyList {
 private:
-  string* itemsArray;
   MyChunkyNode* NodeHead;    
   MyChunkyNode* NodeTail;   
-  int chunkyNodeSize;   
-  void splitNodeIfNeeded(MyChunkyNode* node);     
+  int chunkyNodeSize;        
 public:
   MyChunkyList(int chunksize = 1);
   ~MyChunkyList();

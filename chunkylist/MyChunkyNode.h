@@ -1,3 +1,4 @@
+
 #ifndef MYCHUNKYNODE_H
 #define MYCHUNKYNODE_H
 using namespace std;
@@ -9,7 +10,8 @@ private:
   string* itemsArray;   
   MyChunkyNode* prevNode;   
   MyChunkyNode* nextNode;   
-  int chunkyNodeSize;        
+  int chunkyNodeSize;    
+  int countVariable;    
 
 public:
   MyChunkyNode(int chunksize = 1);
@@ -30,11 +32,7 @@ public:
 
   void split();
   void merge();
-
-  int getCount() const;
-  void insertItem(int index, const std::string& item);
-  int getChunkSize() const;  // Add a public getter for chunk size
-  void setChunkSize(int size);  // Add a public setter for chunk size
+  void decrementCount();
 
 };
 

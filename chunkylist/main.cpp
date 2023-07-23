@@ -16,9 +16,9 @@ int main() {
     // Test Insert at Head
     {
         MyChunkyList list(4);
-        //list.insert(0, "First");
+        list.insert(0, "First");
         std::cout << "Inserting at head..." << std::endl;
-        //list.insert(0, "Head Item");
+        list.insert(0, "Head Item");
         // Assert that "Head Item" is at the head of the list
         //assert(list.lookup(0) == "Head Item");
         //assert(list.lookup(1) == "First");
