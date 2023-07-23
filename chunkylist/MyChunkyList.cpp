@@ -25,15 +25,17 @@ int MyChunkyList::count() const {
 }
 
 void MyChunkyList::splitAndMerge() {
+  // First, merge nodes as necessary
   MyChunkyNode* current = head();
   while (current) {
-    current->split();
+    current->merge();
     current = current->next();
   }
 
+  // Then, split nodes as necessary
   current = head();
   while (current) {
-    current->merge();
+    current->split();
     current = current->next();
   }
 }
