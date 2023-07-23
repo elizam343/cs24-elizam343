@@ -132,10 +132,12 @@ void MyChunkyNode::merge() {
     // Move items from this node to the previous node
     for (int i = 0; i < count(); i++) {
       prevNode->itemsArray[prevNode->count() + i] = itemsArray[i];
+      itemsArray[i].clear();  // clear the element after moving
     }
 
     // Adjust the count variables
     prevNode->countVariable += countVariable;
+    countVariable = 0;  // set the count of the current node to 0
 
     // Update the next and prev pointers
     prevNode->setNext(nextNode);
