@@ -107,6 +107,7 @@ void MyChunkyNode::append(const std::string& item) {
         throw std::runtime_error("Node is full");
     }
 }
+
 std::string MyChunkyNode::get(int index) {
     if (index >= 0 && index < countVariable) {
         return itemsArray[index];
@@ -151,38 +152,28 @@ void MyChunkyNode::split() {
   }
 }
 
-
-
 void MyChunkyNode::merge() {
-  // Only merge if the previous node exists and the total number of items in this node and the previous node is less or equal to chunkyNodeSize / 2
-  if ((prevNode && count() + prevNode->count()) <= chunkyNodeSize) {  // You should ensure the total is less than or equal to the total node size, not half
-    // Move items from this node to the previous node
-    for (int i = 0; i < count(); i++) {
-      prevNode->itemsArray[prevNode->count() + i] = itemsArray[i];
+  // Only merge if the next node exists and the total number of items in this node and the next node is less than or equal to chunkyNodeSize
+  if ((nextNode && (count() + nextNode->count()) <= chunkyNodeSize)) {
+    // Move items from the next node to this node
+    for (int i = 0; i < nextNode->count(); i++) {
+      itemsArray[count() + i] = nextNode->itemsArray[i];
     }
 
     // Adjust the count variables
-    prevNode->countVariable += countVariable;
-    countVariable = 0;  // set the count of the current node to 0
+    countVariable += nextNode->countVariable;
 
-    // Create a copy of the pointers as the 'this' node will be deleted
-    MyChunkyNode* oldPrev = prevNode;
-    MyChunkyNode* oldNext = nextNode;
+    // Hold the nextNode in a temp pointer
+    MyChunkyNode* toDelete = nextNode;
 
-    // Update the next and prev pointers
-    if (oldPrev) {
-      oldPrev->setNext(oldNext);
-    }
-    if (oldNext) {
-      oldNext->setPrev(oldPrev);
+    // Update the next pointer of this node and prev pointer of nextNode's next node
+    nextNode = nextNode->nextNode;
+    if (nextNode) {
+      nextNode->prevNode = this;
     }
 
-    delete this;  // 'this' node is now deleted
-
-    // After deletion, if nodes can be merged, do so
-    if (oldPrev && oldNext && oldPrev->count() + oldNext->count() <= chunkyNodeSize) {  // Again, the total should be less than or equal to the total node size, not half
-      oldPrev->merge();
-    }
+    delete toDelete;  // Delete the nextNode as it's now merged with this node
   }
 }
+
 
