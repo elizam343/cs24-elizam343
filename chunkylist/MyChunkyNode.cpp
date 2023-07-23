@@ -119,7 +119,7 @@ void MyChunkyNode::decrementCount() {
 void MyChunkyNode::split() {
   int current_count = count();
   if (current_count > chunkyNodeSize / 2) {
-    int split_index = (chunkyNodeSize % 2 == 0) ? chunkyNodeSize / 2 : chunkyNodeSize / 2 + 1;
+    int split_index = (current_count % 2 == 0) ? current_count / 2 : current_count / 2 + 1;
 
     MyChunkyNode* new_node = new MyChunkyNode(chunkyNodeSize);
 
