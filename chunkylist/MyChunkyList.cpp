@@ -91,6 +91,12 @@ void MyChunkyList::insert(int index, const std::string& item) {
     current_index += current->count();
     current = current->next();
   }
+  if (current) {
+    current->merge();
+    if (current->next()) {
+      current->next()->merge();
+    }
+  }
 }
 
 
