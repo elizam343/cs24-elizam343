@@ -136,6 +136,7 @@ void MyChunkyNode::split() {
 }
 
 
+
 void MyChunkyNode::merge() {
   // Only merge if the previous node exists and the total number of items in this node and the previous node is less or equal to chunksize / 2
   if (prevNode && count() + prevNode->count() <= chunkyNodeSize / 2) {
