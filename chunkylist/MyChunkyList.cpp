@@ -151,6 +151,7 @@ void MyChunkyList::remove(int index) {
         }
 
         delete current;
+        current = nullptr;  // set current to nullptr after deletion
 
         // If prevNode and nextNode exist and can be merged, do so
         if (prevNode && nextNode && prevNode->count() + nextNode->count() <= chunkyNodeSize / 2) {
@@ -166,9 +167,12 @@ void MyChunkyList::remove(int index) {
       break;
     }
     current_index += current->count();
-    current = current->next();
+    if (current) {
+      current = current->next();
+    }
   }
 }
+
 
 
 
