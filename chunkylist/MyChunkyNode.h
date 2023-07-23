@@ -33,7 +33,7 @@ public:
   void split();
   void merge();
   void decrementCount();
-  void append(int value);
+  void append(const std::string& item);
   std::string get(int index);
 
 };
