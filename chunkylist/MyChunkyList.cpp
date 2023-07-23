@@ -48,6 +48,8 @@ void MyChunkyList::insert(int index, const std::string& item) {
   // Create a new node if list is empty
   if (!NodeHead) {
     NodeHead = NodeTail = new MyChunkyNode(chunkyNodeSize);
+    NodeHead->insert(0, item);
+    return;
   }
 
   // If inserting at the start of the list and the head node is full, create a new head node
@@ -75,15 +77,22 @@ void MyChunkyList::insert(int index, const std::string& item) {
   int current_index = 0;
   while (current) {
     if (index <= current_index + current->count()) {
-      current->insert(index - current_index, item);
-      break;
+      if (current->count() < chunkyNodeSize) {
+        // Insert into this node if there's room
+        current->insert(index - current_index, item);
+        return;
+      } else {
+        // If the node is full, split it before inserting
+        current->split();
+        current->insert(index - current_index, item);
+        return;
+      }
     }
     current_index += current->count();
     current = current->next();
   }
-
-  splitAndMerge();
 }
+
 
 std::string& MyChunkyList::lookup(int index) {
   static std::string empty_string = "";
