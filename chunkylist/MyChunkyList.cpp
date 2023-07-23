@@ -123,7 +123,6 @@ void MyChunkyList::remove(int index) {
     throw std::out_of_range("Index out of range");
   }
 
-  // Find the node to remove from and remove the item
   MyChunkyNode* current = NodeHead;
   int current_index = 0;
   while (current) {
@@ -137,29 +136,36 @@ void MyChunkyList::remove(int index) {
 
         if (prevNode) {
           prevNode->setNext(nextNode);
+        } else { // the current node was the head
+          NodeHead = nextNode;
         }
+        
         if (nextNode) {
           nextNode->setPrev(prevNode);
+        } else { // the current node was the tail
+          NodeTail = prevNode;
         }
+
         delete current;
-        
-        // After deletion, if nodes can be merged, do so
+
+        // If prevNode and nextNode exist and can be merged, do so
         if (prevNode && nextNode && prevNode->count() + nextNode->count() <= chunkyNodeSize / 2) {
           prevNode->merge(); // This function should handle merging and deleting nodes
         }
       }
-      
+
       // If the current node is not empty but can be merged with previous node, merge them
       else if (current->prev() && current->prev()->count() + current->count() <= chunkyNodeSize / 2) {
         current->prev()->merge(); // This function should handle merging and deleting nodes
       }
-      
+
       break;
     }
     current_index += current->count();
     current = current->next();
   }
 }
+
 
 
 MyChunkyNode* MyChunkyList::head() const {
