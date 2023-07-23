@@ -100,21 +100,30 @@ void MyChunkyNode::decrementCount() {
 
 
 void MyChunkyNode::split() {
-  int current_count = count();
-  if (current_count > chunkyNodeSize / 2) {
-    int split_index = (current_count % 2 == 0) ? current_count / 2 : current_count / 2 + 1;
+  int total_count = count();
 
-    MyChunkyNode* new_node = new MyChunkyNode(chunkyNodeSize);
+  if (total_count > chunkyNodeSize) {
+    int first_node_size = total_count / 2;
+    int second_node_size = total_count - first_node_size;
 
-    // Move items from the current node to the new node
-    for (int i = split_index; i < chunkyNodeSize; i++) {
-      new_node->itemsArray[i - split_index] = itemsArray[i];
-      itemsArray[i] = ""; // Clear the item in the original array
+    // If the total count is odd, the first node should hold one more item
+    if (total_count % 2 != 0) {
+      first_node_size++;
+      second_node_size--;
     }
 
-    // Adjust the count variables
-    countVariable = split_index;
-    new_node->countVariable = current_count - split_index;
+    // Create the new node
+    MyChunkyNode* new_node = new MyChunkyNode(chunkyNodeSize);
+
+    // Move items to the new node
+    for (int i = 0; i < second_node_size; i++) {
+      new_node->itemsArray[i] = itemsArray[first_node_size + i];
+      itemsArray[first_node_size + i].clear();
+    }
+
+    // Update counts
+    countVariable = first_node_size;
+    new_node->countVariable = second_node_size;
 
     // Update the next and prev pointers
     new_node->setNext(nextNode);
@@ -125,6 +134,7 @@ void MyChunkyNode::split() {
     setNext(new_node);
   }
 }
+
 
 void MyChunkyNode::merge() {
   // Only merge if the previous node exists and the total number of items in this node and the previous node is less or equal to chunksize / 2
