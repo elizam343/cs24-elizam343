@@ -95,10 +95,8 @@ void MyChunkyList::insert(int index, const std::string& item) {
 
 
 std::string& MyChunkyList::lookup(int index) {
-  static std::string empty_string = "";
-
   if (index < 0 || index >= count()) {
-    return empty_string;
+    throw std::out_of_range("Index out of range");
   }
 
   int node_index = 0;
@@ -112,7 +110,7 @@ std::string& MyChunkyList::lookup(int index) {
     current = current->next();
   }
 
-  return empty_string;
+  throw std::out_of_range("Index out of range");
 }
 
 void MyChunkyList::remove(int index) {
