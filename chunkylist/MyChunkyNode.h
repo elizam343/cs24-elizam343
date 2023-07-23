@@ -34,7 +34,7 @@ public:
   void merge();
   void decrementCount();
   void append(int value);
-  string get(int index);
+  std::string get(int index);
 
 };
 
