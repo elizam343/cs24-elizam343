@@ -127,7 +127,7 @@ void MyChunkyList::remove(int index) {
   int current_index = 0;
   while (current) {
     if (index < current_index + current->count()) {
-      current->remove(index - current_index); // This function should adjust countVariable
+      current->remove(index - current_index);
 
       // If the current node is empty, remove it
       if (current->count() == 0) {
@@ -147,24 +147,28 @@ void MyChunkyList::remove(int index) {
         }
 
         delete current;
+        current = nullptr;
 
         // If prevNode and nextNode exist and can be merged, do so
         if (prevNode && nextNode && prevNode->count() + nextNode->count() <= chunkyNodeSize / 2) {
-          prevNode->merge(); // This function should handle merging and deleting nodes
+          prevNode->merge();
         }
       }
 
       // If the current node is not empty but can be merged with previous node, merge them
       else if (current->prev() && current->prev()->count() + current->count() <= chunkyNodeSize / 2) {
-        current->prev()->merge(); // This function should handle merging and deleting nodes
+        current->prev()->merge();
       }
 
       break;
     }
     current_index += current->count();
-    current = current->next();
+    if (current) {
+      current = current->next();
+    }
   }
 }
+
 
 
 
