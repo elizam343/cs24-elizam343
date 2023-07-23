@@ -175,9 +175,6 @@ void MyChunkyList::remove(int index) {
 
 
 
-
-
-
 MyChunkyNode* MyChunkyList::head() const {
   return NodeHead;
 }
