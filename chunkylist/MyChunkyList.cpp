@@ -54,6 +54,8 @@ void MyChunkyList::insert(int index, const std::string& item) {
     new_node->setNext(NodeHead);
     NodeHead->setPrev(new_node);
     NodeHead = new_node;
+    NodeHead->insert(0, item);
+    return;
   }
 
   // If inserting at the end of the list and the tail node is full, create a new tail node
@@ -62,6 +64,8 @@ void MyChunkyList::insert(int index, const std::string& item) {
     new_node->setPrev(NodeTail);
     NodeTail->setNext(new_node);
     NodeTail = new_node;
+    NodeTail->insert(0, item);
+    return;
   }
 
   // Find the node to insert into and insert the item
@@ -75,6 +79,8 @@ void MyChunkyList::insert(int index, const std::string& item) {
     current_index += current->count();
     current = current->next();
   }
+
+  splitAndMerge();
 }
 
 std::string& MyChunkyList::lookup(int index) {
