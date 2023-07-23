@@ -144,23 +144,21 @@ void MyChunkyNode::split() {
 }
 
 void MyChunkyNode::merge() {
-  int current_count = count();
-  if (current_count == 0 && prevNode && nextNode &&
-      prevNode->count() + nextNode->count() <= chunkyNodeSize) {
-    for (int i = 0; i < nextNode->count(); i++) {
-      int source_index_prev = prevNode->count() + i;
-      int source_index_next = i;
-      if (source_index_prev >= 0 && source_index_prev < chunkyNodeSize &&
-          source_index_next >= 0 && source_index_next < chunkyNodeSize &&
-          !nextNode->itemsArray[source_index_next].empty()) {
-        prevNode->itemsArray[source_index_prev] = nextNode->itemsArray[source_index_next];
-        nextNode->itemsArray[source_index_next].clear();
-      }
+  // Only merge if the previous node exists and the total number of items in this node and the previous node is less or equal to chunksize / 2
+  if (prevNode && count() + prevNode->count() <= chunkyNodeSize / 2) {
+    // Move items from this node to the previous node
+    for (int i = 0; i < count(); i++) {
+      prevNode->itemsArray[prevNode->count() + i] = itemsArray[i];
     }
-    prevNode->setNext(nextNode->next());
-    if (nextNode->next()) {
-      nextNode->next()->setPrev(prevNode);
+
+    // Adjust the count variables
+    prevNode->countVariable += countVariable;
+
+    // Update the next and prev pointers
+    prevNode->setNext(nextNode);
+    if (nextNode) {
+      nextNode->setPrev(prevNode);
     }
-    delete nextNode;
+    delete this;
   }
 }
