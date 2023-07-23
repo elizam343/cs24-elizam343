@@ -134,20 +134,23 @@ void MyChunkyList::remove(int index) {
         MyChunkyNode* prevNode = current->prev();
         MyChunkyNode* nextNode = current->next();
 
+        // Update the next pointer of prevNode and prev pointer of nextNode
         if (prevNode) {
           prevNode->setNext(nextNode);
-        } else { // the current node was the head
-          NodeHead = nextNode;
         }
-        
         if (nextNode) {
           nextNode->setPrev(prevNode);
-        } else { // the current node was the tail
+        }
+
+        // If current node is head or tail, update the NodeHead and NodeTail
+        if (current == NodeHead) {
+          NodeHead = nextNode;
+        }
+        if (current == NodeTail) {
           NodeTail = prevNode;
         }
 
         delete current;
-        current = nullptr;
 
         // If prevNode and nextNode exist and can be merged, do so
         if (prevNode && nextNode && prevNode->count() + nextNode->count() <= chunkyNodeSize / 2) {
@@ -163,11 +166,10 @@ void MyChunkyList::remove(int index) {
       break;
     }
     current_index += current->count();
-    if (current) {
-      current = current->next();
-    }
+    current = current->next();
   }
 }
+
 
 
 
