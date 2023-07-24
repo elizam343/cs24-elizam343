@@ -138,6 +138,9 @@ void MyChunkyList::remove(int index) {
             // Adjust the head of the list if necessary.
             if (current == NodeHead && current->count() == 0) {
                 NodeHead = NodeHead->next();
+                if(NodeHead) {
+                    NodeHead->prevNode = nullptr; // Set previous pointer of the new head to nullptr
+                }
                 delete current;
             }
 
@@ -147,6 +150,7 @@ void MyChunkyList::remove(int index) {
         current = current->next();
     }
 }
+
 
 
 
