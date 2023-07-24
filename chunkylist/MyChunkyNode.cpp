@@ -36,44 +36,49 @@ void MyChunkyNode::setNext(MyChunkyNode* next) {
 }
 
 void MyChunkyNode::insert(int index, const std::string& item) {
-  int current_count = count();
-  if (index < 0 || index > current_count) {
-    throw std::out_of_range("Index out of range.");
-  }
-
-  if (current_count < chunkyNodeSize) {
-    for (int i = current_count; i > index; i--) {
-      itemsArray[i] = itemsArray[i - 1];
-    }
-    itemsArray[index] = item;
-  } else {
-    int new_chunksize = chunkyNodeSize / 2;
-    MyChunkyNode* new_node = new MyChunkyNode(new_chunksize);
-
-    for (int i = 0; i < new_chunksize; i++) {
-      new_node->itemsArray[i] = itemsArray[chunkyNodeSize - new_chunksize + i];
-      itemsArray[chunkyNodeSize - new_chunksize + i].clear();
+    if (index < 0 || index > countVariable) {
+        throw std::out_of_range("Index out of range");
     }
 
-    new_node->setNext(nextNode);
-    new_node->setPrev(this);
-    if (nextNode) {
-      nextNode->setPrev(new_node);
-    }
-    setNext(new_node);
+    if (countVariable < chunkyNodeSize) {
+        // Shift elements to the right of the insert location to make room for the new element
+        for (int i = countVariable; i > index; --i) {
+            itemsArray[i] = itemsArray[i - 1];
+        }
 
-    // update the current count after splitting
-    current_count = count();
-    if (index >= current_count) {
-      new_node->insert(index - current_count, item);
+        // Insert the new element and increase the countVariable by one
+        itemsArray[index] = item;
+        ++countVariable;
     } else {
-      for (int i = current_count; i > index; i--) {
-        itemsArray[i] = itemsArray[i - 1];
-      }
-      itemsArray[index] = item;
+        // The node is full, so we need to split it
+        MyChunkyNode* newNode = new MyChunkyNode(chunkyNodeSize);
+        
+        // Move half of the elements to the new node
+        int mid = chunkyNodeSize / 2;
+        for (int i = mid; i < chunkyNodeSize; ++i) {
+            newNode->append(itemsArray[i]);
+        }
+
+        // Remove moved elements from original node
+        countVariable = mid;
+
+        // Insert the new element
+        if (index <= mid) {
+            this->insert(index, item);
+        } else {
+            newNode->insert(index - mid, item);
+        }
+
+        // Update next and previous pointers
+        newNode->nextNode = this->nextNode;
+        if (newNode->nextNode != nullptr) {
+            newNode->nextNode->prevNode = newNode;
+        }
+        this->nextNode = newNode;
+        newNode->prevNode = this;
     }
-  }
 }
+
 
 
 void MyChunkyNode::remove(int index) {
@@ -88,7 +93,26 @@ void MyChunkyNode::remove(int index) {
 
     // Decrease the countVariable by one
     --countVariable;
+
+    // Check if this node is less than half full and the next node is not empty
+    if (countVariable < chunkyNodeSize / 2 && nextNode != nullptr && nextNode->countVariable > 0) {
+        // Merge this node with the next node
+        for (int i = 0; i < nextNode->countVariable; ++i) {
+            this->append(nextNode->itemsArray[i]);
+        }
+
+        // Update the next and previous pointers
+        MyChunkyNode* tempNode = nextNode;
+        nextNode = nextNode->nextNode;
+        if (nextNode != nullptr) {
+            nextNode->prevNode = this;
+        }
+
+        // Delete the merged node
+        delete tempNode;
+    }
 }
+
 
 
 void MyChunkyNode::decrementCount() {
