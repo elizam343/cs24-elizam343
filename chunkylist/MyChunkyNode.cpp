@@ -5,19 +5,16 @@ MyChunkyNode::MyChunkyNode(int chunksize)
     : itemsArray(new std::string[chunksize]),
       prevNode(nullptr),
       nextNode(nullptr),
-      chunkyNodeSize(chunksize) {}
+      chunkyNodeSize(chunksize),
+      countVariable(0) {} // added this line
 
 MyChunkyNode::~MyChunkyNode() {
   delete[] itemsArray;
 }
 
 int MyChunkyNode::count() const {
-  int count = 0;
-  while (count < chunkyNodeSize && !itemsArray[count].empty())
-    count++;
-  return count;
+    return countVariable;
 }
-
 std::string* MyChunkyNode::items() const {
   return itemsArray;
 }
@@ -102,7 +99,7 @@ void MyChunkyNode::decrementCount() {
 void MyChunkyNode::append(const std::string& item) {
     if (countVariable < chunkyNodeSize) {
         itemsArray[countVariable] = item;
-        countVariable++;
+        ++countVariable;
     } else {
         throw std::runtime_error("Node is full");
     }
