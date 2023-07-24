@@ -129,12 +129,25 @@ void MyChunkyList::remove(int index) {
     while (current) {
         if (index < current_index + current->count()) {
             current->remove(index - current_index);
+
+            // Merge nodes if necessary.
+            if (current->count() < current->max_count() / 2 && current->next()) {
+                current->merge();
+            }
+
+            // Adjust the head of the list if necessary.
+            if (current == NodeHead && current->count() == 0) {
+                NodeHead = NodeHead->next();
+                delete current;
+            }
+
             break;
         }
         current_index += current->count();
         current = current->next();
     }
 }
+
 
 
 
