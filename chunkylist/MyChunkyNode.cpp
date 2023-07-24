@@ -147,14 +147,8 @@ void MyChunkyNode::split() {
   int total_count = count();
 
   if (total_count > chunkyNodeSize) {
-    int first_node_size = total_count / 2;
-
     // If the total count is odd, the first node should hold one more item
-    if (total_count % 2 != 0) {
-      first_node_size++;
-    }
-
-    // Now, calculate the size for the second node
+    int first_node_size = (total_count / 2) + (total_count % 2);
     int second_node_size = total_count - first_node_size;
 
     // Create the new node
@@ -179,6 +173,7 @@ void MyChunkyNode::split() {
     setNext(new_node);
   }
 }
+
 
 
 void MyChunkyNode::merge() {
