@@ -53,21 +53,16 @@ void MyChunkyNode::insert(int index, const std::string& item) {
         // The node is full, so we need to split it
         MyChunkyNode* newNode = new MyChunkyNode(chunkyNodeSize);
         
-        // Move half of the elements to the new node
-        int mid = chunkyNodeSize / 2;
-        for (int i = mid; i < chunkyNodeSize; ++i) {
+        // Move elements from the insert position to the new node
+        for (int i = index; i < chunkyNodeSize; ++i) {
             newNode->append(itemsArray[i]);
         }
 
         // Remove moved elements from original node
-        countVariable = mid;
+        countVariable = index;
 
         // Insert the new element
-        if (index <= mid) {
-            this->insert(index, item);
-        } else {
-            newNode->insert(index - mid, item);
-        }
+        this->insert(index, item);
 
         // Update next and previous pointers
         newNode->nextNode = this->nextNode;
@@ -97,19 +92,29 @@ void MyChunkyNode::remove(int index) {
     // Check if this node is less than half full and the next node is not empty
     if (countVariable < chunkyNodeSize / 2 && nextNode != nullptr && nextNode->countVariable > 0) {
         // Merge this node with the next node
-        for (int i = 0; i < nextNode->countVariable; ++i) {
-            this->append(nextNode->itemsArray[i]);
+        for (int i = countVariable, j = 0; i < chunkyNodeSize && j < nextNode->countVariable; ++i, ++j) {
+            this->itemsArray[i] = nextNode->itemsArray[j];
         }
+        this->countVariable += nextNode->countVariable;
 
-        // Update the next and previous pointers
-        MyChunkyNode* tempNode = nextNode;
-        nextNode = nextNode->nextNode;
-        if (nextNode != nullptr) {
-            nextNode->prevNode = this;
+        // Shift elements in the next node
+        for (int i = 0, j = countVariable; j < nextNode->countVariable; ++i, ++j) {
+            nextNode->itemsArray[i] = nextNode->itemsArray[j];
         }
+        nextNode->countVariable -= countVariable;
 
-        // Delete the merged node
-        delete tempNode;
+        // Check if the next node is empty
+        if (nextNode->countVariable == 0) {
+            // Update the next and previous pointers
+            MyChunkyNode* tempNode = nextNode;
+            nextNode = nextNode->nextNode;
+            if (nextNode != nullptr) {
+                nextNode->prevNode = this;
+            }
+
+            // Delete the merged node
+            delete tempNode;
+        }
     }
 }
 
