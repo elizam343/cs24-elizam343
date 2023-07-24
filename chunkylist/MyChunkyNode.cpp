@@ -178,10 +178,10 @@ void MyChunkyNode::split() {
 
 void MyChunkyNode::merge() {
   // Only merge if the next node exists and the total number of items in this node and the next node is less than or equal to chunkyNodeSize
-  if ((nextNode && (count() + nextNode->count()) <= chunkyNodeSize)) {
+  if ((nextNode && (countVariable + nextNode->countVariable) <= chunkyNodeSize)) {
     // Move items from the next node to this node
-    for (int i = 0; i < nextNode->count(); i++) {
-      itemsArray[count() + i] = nextNode->itemsArray[i];
+    for (int i = 0; i < nextNode->countVariable; i++) {
+      itemsArray[countVariable + i] = nextNode->itemsArray[i];
     }
 
     // Adjust the count variables
@@ -196,8 +196,7 @@ void MyChunkyNode::merge() {
       nextNode->prevNode = this;
     }
 
-    delete toDelete;  // Delete the nextNode as it's now merged with this node
+    // Deleting the node that has been merged
+    delete toDelete;
   }
-}
-
 
