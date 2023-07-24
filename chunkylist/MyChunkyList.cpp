@@ -131,7 +131,7 @@ void MyChunkyList::remove(int index) {
             current->remove(index - current_index);
 
             // Merge nodes if necessary.
-            if (current->count() < current->max_count() / 2 && current->next()) {
+            if (current->count() < chunkyNodeSize / 2 && current->next()) {
                 current->merge();
             }
 
@@ -147,6 +147,7 @@ void MyChunkyList::remove(int index) {
         current = current->next();
     }
 }
+
 
 
 
