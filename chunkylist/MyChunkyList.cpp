@@ -119,37 +119,56 @@ std::string& MyChunkyList::lookup(int index) {
 }
 
 void MyChunkyList::remove(int index) {
-    if (index < 0 || index >= count()) {
-        throw std::out_of_range("Index out of range");
-    }
+  if (index < 0 || index >= count()) {
+    throw std::out_of_range("Index out of range");
+  }
 
-    MyChunkyNode* current = NodeHead;
-    int current_index = 0;
+  MyChunkyNode* current = NodeHead;
+  int current_index = 0;
+  
+  while (current) {
+    if (index < current_index + current->count()) {
+      current->remove(index - current_index); // This function should adjust countVariable
 
-    while (current) {
-        if (index < current_index + current->count()) {
-            current->remove(index - current_index);
+      // If the current node is empty, remove it
+      if (current->count() == 0) {
+        MyChunkyNode* prevNode = current->prev();
+        MyChunkyNode* nextNode = current->next();
 
-            // Merge nodes if necessary.
-            if (current->count() < chunkyNodeSize / 2 && current->next()) {
-                current->merge();
-            }
-
-            // Adjust the head of the list if necessary.
-            if (current == NodeHead && current->count() == 0) {
-                NodeHead = NodeHead->next();
-                if(NodeHead) {
-                    NodeHead->prevNode = nullptr; // Set previous pointer of the new head to nullptr
-                }
-                delete current;
-            }
-
-            break;
+        if (prevNode) {
+          prevNode->setNext(nextNode);
+        } else { // the current node was the head
+          NodeHead = nextNode;
         }
-        current_index += current->count();
-        current = current->next();
+        
+        if (nextNode) {
+          nextNode->setPrev(prevNode);
+        } else { // the current node was the tail
+          NodeTail = prevNode;
+        }
+
+        delete current;
+        current = nullptr;
+
+        // If prevNode and nextNode exist and can be merged, do so
+        if (prevNode && nextNode && prevNode->count() + nextNode->count() <= chunkyNodeSize) {
+          prevNode->merge(); // This function should handle merging and deleting nodes
+        }
+      }
+
+      // If the current node is not empty but can be merged with previous node, merge them
+      else if (current->prev() && current->prev()->count() + current->count() <= chunkyNodeSize) {
+        current->prev()->merge(); // This function should handle merging and deleting nodes
+        current = current->prev(); // as current might have been deleted, step back
+      }
+      break;
     }
+    current_index += current->count();
+    current = current->next();
+  }
 }
+
+
 
 
 
