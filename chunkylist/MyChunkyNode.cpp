@@ -199,4 +199,4 @@ void MyChunkyNode::merge() {
     // Deleting the node that has been merged
     delete toDelete;
   }
-
+}
