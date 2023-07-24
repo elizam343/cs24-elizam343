@@ -80,19 +80,19 @@ void MyChunkyNode::insert(int index, const std::string& item) {
 
 
 void MyChunkyNode::remove(int index) {
-  int current_count = count();
-  if (index < 0 || index >= current_count) {
-    throw std::out_of_range("Index out of range.");
-  }
+    if (index < 0 || index >= countVariable) {
+        throw std::out_of_range("Index out of range");
+    }
 
-  // Shift elements to remove the item
-  for (int i = index; i < current_count - 1; i++) {
-    itemsArray[i] = itemsArray[i + 1];
-  }
-  
-  // Decrease the count
-  decrementCount();
+    // Shift elements to fill the gap of the removed element
+    for (int i = index; i < countVariable - 1; ++i) {
+        itemsArray[i] = itemsArray[i + 1];
+    }
+
+    // Decrease the countVariable by one
+    --countVariable;
 }
+
 
 void MyChunkyNode::decrementCount() {
     if (countVariable > 0) // assuming countVariable is the variable tracking the number of items

@@ -118,86 +118,23 @@ std::string& MyChunkyList::lookup(int index) {
   throw std::out_of_range("Index out of range");
 }
 
-
-
 void MyChunkyList::remove(int index) {
-  if (index < 0 || index >= count()) {
-    throw std::out_of_range("Index out of range");
-  }
-
-  MyChunkyNode* current = NodeHead;
-  int current_index = 0;
-  while (current) {
-    if (index < current_index + current->count()) {
-      current->remove(index - current_index);
-
-      // If the current node is empty, remove it
-      if (current->count() == 0) {
-        MyChunkyNode* prevNode = current->prev();
-        MyChunkyNode* nextNode = current->next();
-
-        // Update the next pointer of prevNode and prev pointer of nextNode
-        if (prevNode) {
-          prevNode->setNext(nextNode);
-        }
-        if (nextNode) {
-          nextNode->setPrev(prevNode);
-        }
-
-        // If current node is head or tail, update the NodeHead and NodeTail
-        if (current == NodeHead) {
-          NodeHead = nextNode;
-        }
-        if (current == NodeTail) {
-          NodeTail = prevNode;
-        }
-
-        delete current;
-        current = nullptr;  // set current to nullptr after deletion
-
-        // If prevNode and nextNode exist and can be merged, do so
-        if (prevNode && nextNode && prevNode->count() + nextNode->count() <= chunkyNodeSize / 2) {
-          prevNode->merge();
-        }
-      }
-      else {
-        // If the current node is not empty but has fewer than half chunkyNodeSize items, fill it with items from the next node
-        if (current && current->count() < chunkyNodeSize / 2 && current->next()) {
-          MyChunkyNode* nextNode = current->next();
-          while (current->count() < chunkyNodeSize / 2 && nextNode->count() > chunkyNodeSize / 2) {
-            // Move an item from the beginning of the next node to the end of the current node
-            current->append(nextNode->get(0));
-            nextNode->remove(0);
-          }
-
-          // If the next node is now empty, remove it
-          if (nextNode->count() == 0) {
-            current->setNext(nextNode->next());
-            if (nextNode->next()) {
-              nextNode->next()->setPrev(current);
-            }
-            if (nextNode == NodeTail) {
-              NodeTail = current;
-            }
-            delete nextNode;
-          }
-        }
-
-        // If the current node is not empty but can be merged with previous node, merge them
-        if (current->prev() && current->prev()->count() + current->count() <= chunkyNodeSize / 2) {
-          current->prev()->merge();
-        }
-      }
-
-      break;
+    if (index < 0 || index >= count()) {
+        throw std::out_of_range("Index out of range");
     }
-    current_index += current->count();
-    if (current) {
-      current = current->next();
+
+    MyChunkyNode* current = NodeHead;
+    int current_index = 0;
+
+    while (current) {
+        if (index < current_index + current->count()) {
+            current->remove(index - current_index);
+            break;
+        }
+        current_index += current->count();
+        current = current->next();
     }
-  }
 }
-
 
 
 
