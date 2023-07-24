@@ -95,13 +95,14 @@ void MyChunkyNode::remove(int index) {
         for (int i = countVariable, j = 0; i < chunkyNodeSize && j < nextNode->countVariable; ++i, ++j) {
             this->itemsArray[i] = nextNode->itemsArray[j];
         }
-        this->countVariable += nextNode->countVariable;
+        int mergedCount = nextNode->countVariable;
+        this->countVariable += mergedCount;
 
         // Shift elements in the next node
-        for (int i = 0, j = countVariable; j < nextNode->countVariable; ++i, ++j) {
+        for (int i = 0, j = mergedCount; j < nextNode->countVariable; ++i, ++j) {
             nextNode->itemsArray[i] = nextNode->itemsArray[j];
         }
-        nextNode->countVariable -= countVariable;
+        nextNode->countVariable -= mergedCount;
 
         // Check if the next node is empty
         if (nextNode->countVariable == 0) {
