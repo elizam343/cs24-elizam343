@@ -181,6 +181,9 @@ void MyChunkyNode::merge() {
   if ((nextNode && (countVariable + nextNode->countVariable) <= chunkyNodeSize)) {
     // Move items from the next node to this node
     for (int i = 0; i < nextNode->countVariable; i++) {
+      if(countVariable + i >= chunkyNodeSize) {
+        throw std::runtime_error("Attempting to write past the end of itemsArray");
+      }
       itemsArray[countVariable + i] = nextNode->itemsArray[i];
     }
 
