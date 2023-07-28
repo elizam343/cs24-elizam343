@@ -26,7 +26,7 @@ double apply_operator(double a, double b, const std::string& op) {
         return std::fmod(a, b);
     }
     if (op == "^") return std::pow(a, b);
-    throw std::runtime_error("Unknown token");
+    throw std::runtime_error("Unknown operator.");
 }
 
 int main() {
@@ -37,11 +37,14 @@ int main() {
         std::istringstream iss(line);
         std::string token;
         bool error = false;
+        int num_operands = 0;  // Counter for operands
+        int num_operators = 0;  // Counter for operators
 
         while (iss >> token) {
             if (is_operator(token)) {
+                num_operators++;
                 if (mathstack->is_empty()) {
-                    std::cout << "No expression." << std::endl;
+                    std::cout << "Not enough operands." << std::endl;
                     error = true;
                     break;
                 }
@@ -52,7 +55,7 @@ int main() {
                     mathstack->push(-b);
                 } else {
                     if (mathstack->is_empty()) {
-                        std::cout << "No expression." << std::endl;
+                        std::cout << "Not enough operands." << std::endl;
                         error = true;
                         break;
                     }
@@ -68,23 +71,32 @@ int main() {
                     }
                 }
             } else {
+                num_operands++;
                 try {
                     double value = std::stod(token);
                     mathstack->push(value);
                 } catch (std::invalid_argument&) {
-                    std::cout << "Unknown token." << std::endl;
+                    std::cout << "Invalid number." << std::endl;
                     error = true;
                     break;
                 }
             }
         }
 
-        if (error || mathstack->is_empty()) {
-            if (mathstack->is_empty()) {
-                std::cout << "No expression." << std::endl;
-            } else {
-                std::cout << "Too many operands." << std::endl;
-            }
+        if (error) {
+            mathstack->clear();  
+            continue;
+        }
+
+        if (mathstack->is_empty()) {
+            std::cout << "No expression." << std::endl;
+            continue;
+        }
+
+        // Too many operands if there are more than one more operand than operators
+        if (num_operands > num_operators + 1) {
+            std::cout << "Too many operands." << std::endl;
+            mathstack->clear();  
             continue;
         }
 
@@ -93,6 +105,6 @@ int main() {
         mathstack->clear();
     }
 
-    delete mathstack;  // don't forget to delete the pointer
+    delete mathstack; 
     return 0;
 }
