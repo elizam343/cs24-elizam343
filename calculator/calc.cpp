@@ -37,7 +37,7 @@ int main() {
         std::istringstream iss(line);
         std::string token;
         bool error = false;
-        int operand_count = 0;  // Add this to track number of operands
+        int operand_count = 0;  
 
         while (iss >> token) {
             if (is_operator(token)) {
@@ -65,7 +65,7 @@ int main() {
                     try {
                         double result = apply_operator(a, b, token);
                         mathstack->push(result);
-                        operand_count++;  // Increment here because we've pushed the result onto the stack
+                        operand_count++;  
                     } catch (std::runtime_error& e) {
                         std::cout << e.what() << std::endl;
                         error = true;
@@ -76,7 +76,7 @@ int main() {
                 try {
                     double value = std::stod(token);
                     mathstack->push(value);
-                    operand_count++;  // Increment here because we've pushed a new operand onto the stack
+                    operand_count++;  
                 } catch (std::invalid_argument&) {
                     std::cout << "Unknown token." << std::endl;
                     error = true;
