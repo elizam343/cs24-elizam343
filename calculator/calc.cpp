@@ -15,13 +15,13 @@ double apply_operator(double a, double b, const std::string& op) {
     if (op == "*") return a * b;
     if (op == "/") {
         if(b == 0.0){
-            throw std::runtime_error("Division by zero");
+            throw std::runtime_error("Division by zero.");
         }
         return a / b;
     }
     if (op == "%") {
         if(b == 0.0){
-            throw std::runtime_error("Division by zero");
+            throw std::runtime_error("Division by zero.");
         }
         return std::fmod(a, b);
     }
@@ -41,7 +41,7 @@ int main() {
         while (iss >> token) {
             if (is_operator(token)) {
                 if (mathstack->is_empty()) {
-                    std::cout << "Not enough operands." << std::endl;
+                    std::cout << "No expression." << std::endl;
                     error = true;
                     break;
                 }
@@ -52,7 +52,7 @@ int main() {
                     mathstack->push(-b);
                 } else {
                     if (mathstack->is_empty()) {
-                        std::cout << "Not enough operands." << std::endl;
+                        std::cout << "No expression." << std::endl;
                         error = true;
                         break;
                     }
