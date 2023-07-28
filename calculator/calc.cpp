@@ -37,6 +37,7 @@ int main() {
         std::istringstream iss(line);
         std::string token;
         bool error = false;
+        int operand_count = 0;  // Add this to track number of operands
 
         while (iss >> token) {
             if (is_operator(token)) {
@@ -47,6 +48,7 @@ int main() {
                 }
 
                 double b = mathstack->pop();
+                operand_count--;
 
                 if (token == "~") {
                     mathstack->push(-b);
@@ -58,9 +60,12 @@ int main() {
                     }
 
                     double a = mathstack->pop();
+                    operand_count--;
+
                     try {
                         double result = apply_operator(a, b, token);
                         mathstack->push(result);
+                        operand_count++;  // Increment here because we've pushed the result onto the stack
                     } catch (std::runtime_error& e) {
                         std::cout << e.what() << std::endl;
                         error = true;
@@ -71,6 +76,7 @@ int main() {
                 try {
                     double value = std::stod(token);
                     mathstack->push(value);
+                    operand_count++;  // Increment here because we've pushed a new operand onto the stack
                 } catch (std::invalid_argument&) {
                     std::cout << "Unknown token." << std::endl;
                     error = true;
@@ -80,21 +86,25 @@ int main() {
         }
 
         if (error) {
-            mathstack->clear();  // clear the stack if there was an error
-            continue;
-        }
-
-        if (mathstack->size() > 1) {
-            std::cout << "Too many operands." << std::endl;
             mathstack->clear();
+            operand_count = 0;  
             continue;
         }
 
         if (mathstack->is_empty()) {
             std::cout << "No expression." << std::endl;
-            continue;
+        } else {
+            if (operand_count > 1) {
+                std::cout << "Too many operands." << std::endl;
+            } else {
+                double result = mathstack->top();
+                std::cout << "= " << result << std::endl;
+            }
+            mathstack->clear();
+            operand_count = 0;  
         }
+    }
 
-        double result = mathstack->top();
-        std::cout << "= " << result << std::endl;
-        mathstack->clear();
+    delete mathstack; 
+    return 0;
+}
