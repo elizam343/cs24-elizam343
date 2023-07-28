@@ -76,7 +76,7 @@ int main() {
                     double value = std::stod(token);
                     mathstack->push(value);
                 } catch (std::invalid_argument&) {
-                    std::cout << "Invalid number." << std::endl;
+                    std::cout << "Unknown token." << std::endl;
                     error = true;
                     break;
                 }
