@@ -8,7 +8,7 @@ In order:
 2. PauseVec (dynamically-sized arrays, difference between representation and represented)
 3. ChunkyList (doubly-linked lists, inheritance)
 4. Calculator (stack, use of interface)
-5. StringChains (binary trees, immutability)
+5. StringGrove (binary trees, immutability)
 6. TBD
 7. TBD
 8. TBD
