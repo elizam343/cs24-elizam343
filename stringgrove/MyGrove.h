@@ -15,10 +15,9 @@ private:
   Node* root;
 
   // Helper function for recursive concatenation
-  Node* concatNodes(Node* node1, Node* node2) const;
-
+  Node* concatNodes(Node* node1, Node* node2);
   // Helper function for recursive substring
-  Node* substrNode(Node* node, int start, int end) const;
+  Node* substrNode(Node* node, int start, int end);
 
   // Helper function for recursive deletion of nodes
   void deleteNodes(Node* node);
