@@ -1,22 +1,6 @@
 #include "MyGrove.h"
 #include <iostream>
 
-Node::Node(const char* str) {
-    int len = 0;
-    while(str[len] != '\0') len++;  // count length
-
-    data = new char[len+1];
-    for(int i = 0; i <= len; i++) data[i] = str[i];  // copy string
-    left = right = nullptr;
-}
-
-Node::Node(Node* leftNode, Node* rightNode) {
-    // Do not explicitly concatenate data here.
-    // Just set left and right pointers
-    left = leftNode;
-    right = rightNode;
-}
-
 MyGrove::MyGrove(const char* str) {
     create(str);  // Call the create method to add a new node with the string
 }
@@ -54,24 +38,37 @@ void MyGrove::concat(int id1, int id2) {
     nodes[nodeCount++] = new Node(nodes[id1], nodes[id2]);
 }
 
-void MyGrove::print(int id) {
+
+char MyGrove::charAt(int id, int index) {
     if(id < 0 || id >= nodeCount) {
-        std::cout << "Invalid node id" << std::endl;
-        return;
+        throw std::out_of_range("Invalid node id");
     }
-    
-    // Modify print method to handle joint nodes
-    printNode(nodes[id]);
-    std::cout << std::endl;
+    return charAtNode(nodes[id], index);
 }
 
-void MyGrove::printNode(Node* node) {
-    if(node->left != nullptr)
-        printNode(node->left);
-    
-    if(node->right != nullptr)
-        printNode(node->right);
-        
-    if(node->left == nullptr && node->right == nullptr)
-        std::cout << node->data;
+char MyGrove::charAtNode(Node* node, int index) {
+    if(index < 0 || index >= node->length) {
+        throw std::out_of_range("Index out of range");
+    }
+    if(node->left) {
+        if(index < node->left->length) {
+            return charAtNode(node->left, index);
+        }
+        else {
+            return charAtNode(node->right, index - node->left->length);
+        }
+    }
+    else {
+        return node->data[index];
+    }
+}
+
+MyGrove* MyGrove::substr(int id, int start, int end) {
+    if(id < 0 || id >= nodeCount) {
+        throw std::out_of_range("Invalid node id");
+    }
+    MyGrove* newGrove = new MyGrove();
+    newGrove->create("");
+    newGrove->nodes[0] = substrNode(nodes[id], start, end);
+    return newGrove;
 }
