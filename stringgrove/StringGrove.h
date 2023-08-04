@@ -20,7 +20,7 @@ public:
 
   // Concatenate s onto the end of this string and return the new string.
   // This should take O(1) time.
-  virtual const StringGrove* concat(T* s) const = 0;
+  virtual const StringGrove* concat(const T* s) const = 0;
 
   // Return the character at position i.
   // This can take O(h) time, where h is the number of concatenations.
