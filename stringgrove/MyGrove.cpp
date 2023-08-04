@@ -2,11 +2,11 @@
 #include <iostream>
 
 MyGrove::MyGrove(const char* str) {
-    create(str);  // Call the create method to add a new node with the string
+    create(str);
 }
 
 MyGrove::MyGrove() {
-    nodes = new Node*[10];  // start with capacity 10
+    nodes = new Node*[10];
     nodeCount = 0;
     nodeCapacity = 10;
 }
@@ -20,7 +20,7 @@ MyGrove::~MyGrove() {
 }
 
 void MyGrove::create(const char* str) {
-    if(nodeCount == nodeCapacity) {  // resize if necessary
+    if(nodeCount == nodeCapacity) {
         Node** newNodes = new Node*[nodeCapacity*2];
         for(int i = 0; i < nodeCount; i++) newNodes[i] = nodes[i];
         delete[] nodes;
@@ -37,7 +37,6 @@ void MyGrove::concat(int id1, int id2) {
     }
     nodes[nodeCount++] = new Node(nodes[id1], nodes[id2]);
 }
-
 
 char MyGrove::charAt(int id, int index) {
     if(id < 0 || id >= nodeCount) {
@@ -61,6 +60,24 @@ char MyGrove::charAtNode(Node* node, int index) {
     else {
         return node->data[index];
     }
+}
+
+MyGrove::Node* MyGrove::substrNode(Node* node, int start, int end) {
+    if (start < 0 || end > node->length || start > end) {
+        throw std::out_of_range("Invalid substring range");
+    }
+
+    char* substring = new char[end - start + 1];
+    for(int i = start; i < end; i++) {
+        substring[i - start] = node->data[i];
+    }
+    substring[end - start] = '\0';
+
+    Node* newNode = new Node(substring);
+
+    delete[] substring;
+
+    return newNode;
 }
 
 MyGrove* MyGrove::substr(int id, int start, int end) {
@@ -92,4 +109,26 @@ void MyGrove::printNode(Node* node) {
     else {
         std::cout << node->data;
     }
+}
+
+MyGrove::Node::Node(const char* data) {
+    int length = 0;
+    while(data[length] != '\0') {
+        length++;
+    }
+    this->data = new char[length + 1];
+    for(int i = 0; i < length; i++) {
+        this->data[i] = data[i];
+    }
+    this->data[length] = '\0';
+    this->length = length;
+    this->left = nullptr;
+    this->right = nullptr;
+}
+
+MyGrove::Node::Node(Node* left, Node* right) {
+    this->left = left;
+    this->right = right;
+    this->data = nullptr;
+    this->length = left->length + right->length;
 }
