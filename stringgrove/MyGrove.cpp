@@ -62,22 +62,36 @@ char MyGrove::charAtNode(Node* node, int index) {
 
 
 MyGrove::Node* MyGrove::substrNode(Node* node, int start, int end) {
-    if (start < 0 || end > node->length || start > end) {
-        throw std::out_of_range("Invalid substring range");
+    if(start < 0 || end >= node->length) {
+        throw std::out_of_range("Index out of range");
     }
-
-    char* substring = new char[end - start + 1];
-    for(int i = start; i < end; i++) {
-        substring[i - start] = node->data[i];
+    if(node->left) {
+        // Recurse into left and right child nodes
+        Node* left = (start < node->left->length) ? substrNode(node->left, start, std::min(end, node->left->length)) : nullptr;
+        Node* right = (end >= node->left->length) ? substrNode(node->right, std::max(0, start - node->left->length), end - node->left->length) : nullptr;
+        return new Node(left, right);
     }
-    substring[end - start] = '\0';
+    else {
+        // If substring is supposed to be empty, just return a new node with an empty string
+        if (end - start <= 0) {
+            return new Node("");
+        }
 
-    Node* newNode = new Node(substring);
+        // Allocate a new C-string to hold the substring
+        char* substring = new char[end - start + 2];
 
-    delete[] substring;
-
-    return newNode;
+        // Now copy the data from node->data into substring
+        for(int i = start; i <= end; i++) {
+            if (node->data == nullptr || i < 0 || i >= node->length) {
+                throw std::runtime_error("Invalid data or index");
+            }
+            substring[i - start] = node->data[i];
+        }
+        substring[end - start + 1] = '\0';  // Null terminate the C-string
+        return new Node(substring);
+    }
 }
+
 
 MyGrove* MyGrove::substr(int id, int start, int end) {
     if(id < 0 || id >= nodeCount) {
