@@ -21,6 +21,7 @@ public:
     void create(const char* str);
     void concat(int id1, int id2);
     void print(int id);
+    void printNode(Node* node);
     char charAt(int id, int index);
     MyGrove* substr(int id, int start, int end);
 

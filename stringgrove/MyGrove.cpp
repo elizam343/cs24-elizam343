@@ -72,3 +72,24 @@ MyGrove* MyGrove::substr(int id, int start, int end) {
     newGrove->nodes[0] = substrNode(nodes[id], start, end);
     return newGrove;
 }
+
+void MyGrove::print(int id) {
+    if(id < 0 || id >= nodeCount) {
+        std::cout << "Invalid node id" << std::endl;
+        return;
+    }
+    printNode(nodes[id]);
+    std::cout << std::endl;
+}
+
+void MyGrove::printNode(Node* node) {
+    if(node->left) {
+        printNode(node->left);
+    }
+    if(node->right) {
+        printNode(node->right);
+    }
+    else {
+        std::cout << node->data;
+    }
+}
