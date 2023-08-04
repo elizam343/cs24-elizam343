@@ -1,92 +1,70 @@
 #include "MyGrove.h"
-#include <stdexcept>
-#include <cstring>
+#include <iostream>
+
+Node::Node(const char* str) {
+    int len = 0;
+    while(str[len] != '\0') len++;  // count length
+
+    data = new char[len+1];
+    for(int i = 0; i <= len; i++) data[i] = str[i];  // copy string
+    left = right = nullptr;
+}
+
+Node::Node(Node* leftNode, Node* rightNode) {
+    int len1 = 0;
+    while(leftNode->data[len1] != '\0') len1++;  // count lengths
+    int len2 = 0;
+    while(rightNode->data[len2] != '\0') len2++;
+
+    data = new char[len1+len2+1];
+    for(int i = 0; i < len1; i++) data[i] = leftNode->data[i];  // copy left node data
+    for(int i = 0; i < len2; i++) data[i+len1] = rightNode->data[i];  // copy right node data
+    data[len1+len2] = '\0';  // null terminate
+    left = leftNode;
+    right = rightNode;
+}
 
 MyGrove::MyGrove(const char* str) {
-    root = new Node;
-    root->data = str;
-    root->length = strlen(str);
-    root->left = nullptr;
-    root->right = nullptr;
+    create(str);  // Call the create method to add a new node with the string
+}
+
+MyGrove::MyGrove() {
+    nodes = new Node*[10];  // start with capacity 10
+    nodeCount = 0;
+    nodeCapacity = 10;
 }
 
 MyGrove::~MyGrove() {
-    deleteNodes(root);
-}
-
-void MyGrove::deleteNodes(Node* node) {
-    if (node->left)
-        deleteNodes(node->left);
-    if (node->right)
-        deleteNodes(node->right);
-    delete node;
-}
-
-int MyGrove::len() const {
-    return root->length;
-}
-
-Node* MyGrove::concatNodes(Node* node1, Node* node2) {
-    Node* newNode = new Node;
-    newNode->data = nullptr; // Join nodes do not hold data
-    newNode->length = node1->length + node2->length;
-    newNode->left = node1;
-    newNode->right = node2;
-    return newNode;
-}
-
-const MyGrove* MyGrove::concat(MyGrove* other) const {
-    MyGrove* newGrove = new MyGrove("");
-    newGrove->root = concatNodes(this->root, other->root);
-    return newGrove;
-}
-
-char MyGrove::charAt(int index) const {
-    if (index >= root->length || index < 0) {
-        throw std::out_of_range("Index out of range");
+    for(int i = 0; i < nodeCount; i++) {
+        delete[] nodes[i]->data;
+        delete nodes[i];
     }
-    Node* current = root;
-    while (current->left || current->right) {
-        if (current->left && index < current->left->length) {
-            current = current->left;
-        } else {
-            index -= current->left ? current->left->length : 0;
-            current = current->right;
-        }
-    }
-    return current->data[index];
+    delete[] nodes;
 }
 
-Node* MyGrove::substrNode(Node* node, int start, int end) {
-    if (start > end || start < 0 || end > node->length) {
-        throw std::out_of_range("Invalid start or end index for substring");
+void MyGrove::create(const char* str) {
+    if(nodeCount == nodeCapacity) {  // resize if necessary
+        Node** newNodes = new Node*[nodeCapacity*2];
+        for(int i = 0; i < nodeCount; i++) newNodes[i] = nodes[i];
+        delete[] nodes;
+        nodes = newNodes;
+        nodeCapacity *= 2;
     }
-
-    if (!node->left && !node->right) { // If the node is a leaf
-        Node* newNode = new Node;
-        newNode->data = node->data + start; // Set the data pointer to the start of the substring
-        newNode->length = end - start;
-        newNode->left = nullptr;
-        newNode->right = nullptr;
-        return newNode;
-    } else {
-        if (end <= node->left->length) {
-            return substrNode(node->left, start, end);
-        } else if (start >= node->left->length) {
-            return substrNode(node->right, start - node->left->length, end - node->left->length);
-        } else {
-            Node* newNode = new Node;
-            newNode->data = nullptr;
-            newNode->length = end - start;
-            newNode->left = substrNode(node->left, start, node->left->length);
-            newNode->right = substrNode(node->right, 0, end - node->left->length);
-            return newNode;
-        }
-    }
+    nodes[nodeCount++] = new Node(str);
 }
 
-const MyGrove* MyGrove::substr(int start, int end) const {
-    MyGrove* newGrove = new MyGrove("");
-    newGrove->root = substrNode(root, start, end);
-    return newGrove;
+void MyGrove::concat(int id1, int id2) {
+    if(id1 < 0 || id1 >= nodeCount || id2 < 0 || id2 >= nodeCount) {
+        std::cout << "Invalid node id" << std::endl;
+        return;
+    }
+    nodes[nodeCount++] = new Node(nodes[id1], nodes[id2]);
+}
+
+void MyGrove::print(int id) {
+    if(id < 0 || id >= nodeCount) {
+        std::cout << "Invalid node id" << std::endl;
+        return;
+    }
+    std::cout << "Node " << id << ": " << nodes[id]->data << std::endl;
 }

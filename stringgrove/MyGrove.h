@@ -1,39 +1,28 @@
 #ifndef MYGROVE_H
 #define MYGROVE_H
 
-#include "StringGrove.h"
+struct Node {
+    char* data;
+    Node* left;
+    Node* right;
 
-class MyGrove: public StringGrove<MyGrove> {
-private:
-  struct Node {
-      const char* data; // Pointer to the character array
-      int length; // Length of the string represented by this node
-      Node* left;
-      Node* right;
-  };
+    Node(const char* str);
+    Node(Node* leftNode, Node* rightNode);
+};
 
-  Node* root;
-
-  // Helper function for recursive concatenation
-  Node* concatNodes(Node* node1, Node* node2);
-  // Helper function for recursive substring
-  Node* substrNode(Node* node, int start, int end);
-
-  // Helper function for recursive deletion of nodes
-  void deleteNodes(Node* node);
-  
+class MyGrove {
 public:
-  MyGrove(const char* str);
-  ~MyGrove();
+    Node** nodes;
+    int nodeCount;
+    int nodeCapacity;
 
-  // Required StringGrove functions.
-  // See StringGrove.h for descriptions.
-  int     len() const;
-  const MyGrove*    concat(MyGrove* other) const;
-  char 	  charAt(int index) const;
-  const MyGrove*    substr(int start, int end) const;
+    MyGrove();
+    ~MyGrove();
 
-  // TODO: Add helper functions if necessary.
+    void create(const char* str);
+    void concat(int id1, int id2);
+    void print(int id);
+    MyGrove(const char* str);
 };
 
 #endif
