@@ -11,15 +11,8 @@ Node::Node(const char* str) {
 }
 
 Node::Node(Node* leftNode, Node* rightNode) {
-    int len1 = 0;
-    while(leftNode->data[len1] != '\0') len1++;  // count lengths
-    int len2 = 0;
-    while(rightNode->data[len2] != '\0') len2++;
-
-    data = new char[len1+len2+1];
-    for(int i = 0; i < len1; i++) data[i] = leftNode->data[i];  // copy left node data
-    for(int i = 0; i < len2; i++) data[i+len1] = rightNode->data[i];  // copy right node data
-    data[len1+len2] = '\0';  // null terminate
+    // Do not explicitly concatenate data here.
+    // Just set left and right pointers
     left = leftNode;
     right = rightNode;
 }
@@ -66,5 +59,19 @@ void MyGrove::print(int id) {
         std::cout << "Invalid node id" << std::endl;
         return;
     }
-    std::cout << "Node " << id << ": " << nodes[id]->data << std::endl;
+    
+    // Modify print method to handle joint nodes
+    printNode(nodes[id]);
+    std::cout << std::endl;
+}
+
+void MyGrove::printNode(Node* node) {
+    if(node->left != nullptr)
+        printNode(node->left);
+    
+    if(node->right != nullptr)
+        printNode(node->right);
+        
+    if(node->left == nullptr && node->right == nullptr)
+        std::cout << node->data;
 }
