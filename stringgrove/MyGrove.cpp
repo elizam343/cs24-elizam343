@@ -49,18 +49,17 @@ char MyGrove::charAtNode(Node* node, int index) {
     if(index < 0 || index >= node->length) {
         throw std::out_of_range("Index out of range");
     }
-    if(node->left) {
-        if(index < node->left->length) {
-            return charAtNode(node->left, index);
-        }
-        else {
-            return charAtNode(node->right, index - node->left->length);
-        }
+    if(node->left && index < node->left->length) {
+        return charAtNode(node->left, index);
+    }
+    else if(node->right) {
+        return charAtNode(node->right, index - (node->left ? node->left->length : 0));
     }
     else {
         return node->data[index];
     }
 }
+
 
 MyGrove::Node* MyGrove::substrNode(Node* node, int start, int end) {
     if (start < 0 || end > node->length || start > end) {
