@@ -62,13 +62,15 @@ char MyGrove::charAtNode(Node* node, int index) {
 
 
 MyGrove::Node* MyGrove::substrNode(Node* node, int start, int end) {
-    if(start < 0 || end >= node->length) {
+    if(start < 0 || end > node->length) {
+        std::cerr << "Error: start=" << start << ", end=" << end << ", node->length=" << node->length << std::endl;
         throw std::out_of_range("Index out of range");
     }
+
     if(node->left) {
         // Recurse into left and right child nodes
-        Node* left = (start < node->left->length) ? substrNode(node->left, start, std::min(end, node->left->length)) : nullptr;
-        Node* right = (end >= node->left->length) ? substrNode(node->right, std::max(0, start - node->left->length), end - node->left->length) : nullptr;
+        Node* left = (start <= node->left->length) ? substrNode(node->left, start, std::min(end, node->left->length)) : nullptr;
+        Node* right = (end > node->left->length) ? substrNode(node->right, std::max(0, start - node->left->length), end - node->left->length) : nullptr;
         return new Node(left, right);
     }
     else {
@@ -87,10 +89,12 @@ MyGrove::Node* MyGrove::substrNode(Node* node, int start, int end) {
             }
             substring[i - start] = node->data[i];
         }
+
         substring[end - start + 1] = '\0';  // Null terminate the C-string
         return new Node(substring);
     }
 }
+
 
 
 MyGrove* MyGrove::substr(int id, int start, int end) {
@@ -142,6 +146,7 @@ MyGrove::Node::Node(const char* data) {
 MyGrove::Node::Node(Node* left, Node* right) {
     this->left = left;
     this->right = right;
-    this->data = nullptr;
+    this->data = nullptr; // data is not needed as this is a concatenation of two nodes
     this->length = left->length + right->length;
 }
+
