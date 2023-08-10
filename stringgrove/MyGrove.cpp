@@ -62,38 +62,25 @@ char MyGrove::charAtNode(Node* node, int index) {
 
 
 MyGrove::Node* MyGrove::substrNode(Node* node, int start, int end) {
-    if(start < 0 || end > node->length) {
+    if(!node || start < 0 || start >= end || end > node->length) {
         std::cerr << "Error: start=" << start << ", end=" << end << ", node->length=" << node->length << std::endl;
         throw std::out_of_range("Index out of range");
     }
 
-    if(node->left) {
-        // Recurse into left and right child nodes
-        Node* left = (start <= node->left->length) ? substrNode(node->left, start, std::min(end, node->left->length)) : nullptr;
-        Node* right = (end > node->left->length) ? substrNode(node->right, std::max(0, start - node->left->length), end - node->left->length) : nullptr;
+    if(node->left || node->right) {
+        int leftLength = node->left ? node->left->length : 0;
+        Node* left = (start < leftLength) ? substrNode(node->left, start, std::min(end, leftLength)) : nullptr;
+        Node* right = (end > leftLength) ? substrNode(node->right, std::max(0, start - leftLength), end - leftLength) : nullptr;
         return new Node(left, right);
     }
     else {
-        // If substring is supposed to be empty, just return a new node with an empty string
-        if (end - start <= 0) {
-            return new Node("");
-        }
-
-        // Allocate a new C-string to hold the substring
-        char* substring = new char[end - start + 2];
-
-        // Now copy the data from node->data into substring
-        for(int i = start; i <= end; i++) {
-            if (node->data == nullptr || i < 0 || i >= node->length) {
-                throw std::runtime_error("Invalid data or index");
-            }
-            substring[i - start] = node->data[i];
-        }
-
-        substring[end - start + 1] = '\0';  // Null terminate the C-string
+        char* substring = new char[end - start + 1];
+        std::copy(node->data + start, node->data + end, substring);
+        substring[end - start] = '\0';  
         return new Node(substring);
     }
 }
+
 
 
 
@@ -101,11 +88,16 @@ MyGrove* MyGrove::substr(int id, int start, int end) {
     if(id < 0 || id >= nodeCount) {
         throw std::out_of_range("Invalid node id");
     }
+    if(start < 0 || end > nodes[id]->length || start >= end) {
+        std::cerr << "Error: start=" << start << ", end=" << end << ", length=" << nodes[id]->length << std::endl;
+        throw std::out_of_range("Index out of range");
+    }
     MyGrove* newGrove = new MyGrove();
     newGrove->create("");
     newGrove->nodes[0] = substrNode(nodes[id], start, end);
     return newGrove;
 }
+
 
 void MyGrove::print(int id) {
     if(id < 0 || id >= nodeCount) {
