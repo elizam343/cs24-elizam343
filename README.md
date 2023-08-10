@@ -9,7 +9,7 @@ In order:
 3. ChunkyList (doubly-linked lists, inheritance)
 4. Calculator (stack, use of interface)
 5. StringGrove (binary trees, immutability)
-6. TBD
+6. Spellchecker (min-heaps)
 7. TBD
 8. TBD
 9. TBD
