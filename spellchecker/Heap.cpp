@@ -114,7 +114,7 @@ Heap::Entry Heap::pushpop(const std::string& value, float score) {
     // If the heap is empty or the given score is less than the top score, 
     // simply return the given value and score without altering the heap.
     if (mCount == 0 || score < mData[0].score) {
-        return {value, score};
+        throw std::underflow_error("Heap is empty");
     }
 
     // If the score is greater than or equal to the top score, 
