@@ -8,6 +8,8 @@ WordList::WordList(std::istream& stream) {
     }
 }
 
+#include <cctype>  // For std::tolower
+
 Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float cutoff) const {
     Heap heap(maxcount);
 
@@ -19,8 +21,13 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
         float totalScore = 0.0;
 
         for (size_t i = 0; i < word.length(); ++i) {
-            char c = word[i];
-            Point charPoint = QWERTY[c - 'a'];  // assume lowercase letter
+            char c = std::tolower(word[i]);  // Convert character to lowercase
+
+            if (c < 'a' || c > 'z') {
+                continue;  // Skip non-alphabet characters
+            }
+
+            Point charPoint = QWERTY[c - 'a'];
 
             float dx = charPoint.x - points[i].x;
             float dy = charPoint.y - points[i].y;
@@ -43,3 +50,4 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
 
     return heap;
 }
+
