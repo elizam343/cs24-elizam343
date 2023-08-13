@@ -21,12 +21,13 @@ int main() {
     
     // Now the heap should be full
     assert(heap.count() == 5);
+
     try {
         heap.push("fig", 10.0);  // this should throw an overflow error
         assert(false); // If we reach here, the test has failed.
     } catch(const std::overflow_error& e) {
         // expected this exception
-    }
+    } 
 
     // Test 3: Pop from empty heap
     Heap emptyHeap(5);
@@ -42,7 +43,7 @@ int main() {
     heap2.push("grape", 11.0);
     Heap::Entry pushpopEntry = heap2.pushpop("honeydew", 12.0);
     assert(pushpopEntry.value == "grape");
-    assert(heap2.top().value == "honeydew");
+    assert(heap2.top().value == "honeydew"); 
 
     // Test 5: Copy constructor
     Heap heap3(heap2);

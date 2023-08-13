@@ -56,11 +56,11 @@ void Heap::push(const std::string& value, float score) {
     mData[mCount] = {value, score};
     mCount++;
 
-    // Manual implementation of heapifyUp and manual swap
+    // Manual implementation of heapifyUp for min-heap
     size_t idx = mCount - 1;
     while (idx > 0) {
         size_t parentIdx = (idx - 1) / 2;
-        if (mData[idx].score > mData[parentIdx].score) {
+        if (mData[idx].score < mData[parentIdx].score) {
             Entry temp = mData[idx];
             mData[idx] = mData[parentIdx];
             mData[parentIdx] = temp;
@@ -80,26 +80,26 @@ Heap::Entry Heap::pop() {
     mData[0] = mData[mCount - 1];
     mCount--;
 
-    // Manual implementation of heapifyDown and manual swap
+    // Manual implementation of heapifyDown for min-heap
     size_t idx = 0;
     while (true) {
         size_t leftIdx = 2 * idx + 1;
         size_t rightIdx = 2 * idx + 2;
-        size_t largest = idx;
+        size_t smallest = idx;
 
-        if (leftIdx < mCount && mData[leftIdx].score > mData[largest].score) {
-            largest = leftIdx;
+        if (leftIdx < mCount && mData[leftIdx].score < mData[smallest].score) {
+            smallest = leftIdx;
         }
 
-        if (rightIdx < mCount && mData[rightIdx].score > mData[largest].score) {
-            largest = rightIdx;
+        if (rightIdx < mCount && mData[rightIdx].score < mData[smallest].score) {
+            smallest = rightIdx;
         }
 
-        if (largest != idx) {
+        if (smallest != idx) {
             Entry temp = mData[idx];
-            mData[idx] = mData[largest];
-            mData[largest] = temp;
-            idx = largest;
+            mData[idx] = mData[smallest];
+            mData[smallest] = temp;
+            idx = smallest;
         } else {
             break;
         }
@@ -108,10 +108,19 @@ Heap::Entry Heap::pop() {
     return poppedValue;
 }
 
+
+
 Heap::Entry Heap::pushpop(const std::string& value, float score) {
-    if (mCount == 0 || score > mData[0].score) {
-        push(value, score);
-        return pop();
+    // If the heap is empty or the given score is less than the top score, 
+    // simply return the given value and score without altering the heap.
+    if (mCount == 0 || score < mData[0].score) {
+        return {value, score};
     }
-    return {value, score};
+
+    // If the score is greater than or equal to the top score, 
+    // push the new value and pop the top value.
+    push(value, score);
+    return pop();
 }
+
+
