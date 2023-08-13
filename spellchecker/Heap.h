@@ -20,6 +20,8 @@ private:
     Entry* mData;
     size_t mCapacity;
     size_t mCount;
+    void heapifyUp(size_t index);
+    void heapifyDown(size_t index);
 
 public:
     Heap(size_t capacity);
@@ -34,8 +36,7 @@ public:
     Entry        pushpop(const std::string& value, float score);
     void         push(const std::string& value, float score);
     const Entry& top() const;
-    void heapifyUp(size_t index);
-    void heapifyDown(size_t index);
+    
 };
 
 #endif
