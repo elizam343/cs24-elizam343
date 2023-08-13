@@ -71,7 +71,6 @@ void Heap::push(const std::string& value, float score) {
     }
 }
 
-
 Heap::Entry Heap::pop() {
     if (mCount == 0) {
         throw std::underflow_error("Heap is empty");
@@ -112,19 +111,40 @@ Heap::Entry Heap::pop() {
 
 
 Heap::Entry Heap::pushpop(const std::string& value, float score) {
-    // If the heap is empty, throw an error.
     if (mCount == 0) {
         throw std::underflow_error("Heap is empty");
     }
 
-    // Pop and store the smallest value from the heap
-    Entry poppedValue = pop();
+    if (score >= mData[0].score) {
+        Entry poppedValue = mData[0];
+        mData[0] = {value, score};
 
-    // Push the new value into the heap
-    push(value, score);
+        // Manual implementation of heapifyDown for min-heap
+        size_t idx = 0;
+        while (true) {
+            size_t leftIdx = 2 * idx + 1;
+            size_t rightIdx = 2 * idx + 2;
+            size_t smallest = idx;
 
-    return poppedValue;
+            if (leftIdx < mCount && mData[leftIdx].score < mData[smallest].score) {
+                smallest = leftIdx;
+            }
+
+            if (rightIdx < mCount && mData[rightIdx].score < mData[smallest].score) {
+                smallest = rightIdx;
+            }
+
+            if (smallest != idx) {
+                Entry temp = mData[idx];
+                mData[idx] = mData[smallest];
+                mData[smallest] = temp;
+                idx = smallest;
+            } else {
+                break;
+            }
+        }
+        return poppedValue;
+    } else {
+        return {value, score};
+    }
 }
-
-
-
