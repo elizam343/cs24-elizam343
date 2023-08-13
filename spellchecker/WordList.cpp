@@ -37,7 +37,7 @@ float WordList::calculateScore(const std::string& word, const std::vector<Point>
 
     for (size_t i = 0; i < word.length(); ++i) {
         char c = word[i];
-        Point charPoint = QWERTY[c - 'a']; // assuming lowercase letter
+        Point charPoint = QWERTY[c - 'a']; //lowercase letter
 
         float dx = charPoint.x - points[i].x;
         float dy = charPoint.y - points[i].y;

@@ -1,4 +1,6 @@
 #include "Heap.h"
+#include <stdexcept>  // For exception handling
+#include <algorithm>  // For std::swap
 
 // Constructor
 Heap::Heap(size_t capacity) 
