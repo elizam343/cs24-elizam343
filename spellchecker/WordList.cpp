@@ -21,7 +21,9 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
         float totalScore = 0.0;
 
         for (size_t i = 0; i < word.length(); ++i) {
-            char c = std::tolower(word[i]);  // Convert character to lowercase
+            char c = word[i];  // Removed tolower()
+
+            float score;
 
             if (c >= 'a' && c <= 'z') {
                 Point charPoint = QWERTY[c - 'a'];
@@ -30,9 +32,15 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
                 float dy = charPoint.y - points[i].y;
                 float distance = sqrt(dx * dx + dy * dy);
 
-                float score = 1 / (10 * distance * distance + 1);
-                totalScore += score;
+                score = 1 / (10 * distance * distance + 1);
+            } else {
+                // Handle non-lowercase alphabetic characters or assign default score
+                // Here, you might want to set a default score or add some specific handling
+                // for characters like 'I'. For now, let's assign a default score.
+                score = 0.001;  // Assigning a default low score
             }
+            
+            totalScore += score;
         }
 
         float averageScore = totalScore / word.length();
