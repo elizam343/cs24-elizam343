@@ -112,40 +112,37 @@ Heap::Entry Heap::pop() {
 
 Heap::Entry Heap::pushpop(const std::string& value, float score) {
     if (mCount == 0) {
-        return {value, score}; // If heap is empty, return the incoming value
+        throw std::underflow_error("Heap is empty");
     }
 
-    Entry originalTop = mData[0]; // Store the original top
+    Entry poppedValue = mData[0];
+    mData[0] = {value, score}; // always replace the top
 
-    if (score < originalTop.score) {
-        return {value, score}; // Return the incoming value if its score is less than the top's score
-    } else {
-        mData[0] = {value, score}; // Replace the top with the incoming value
-        
-        // Inline heapifyDown logic starts here
-        size_t idx = 0;
-        while (true) {
-            size_t leftIdx = 2 * idx + 1;
-            size_t rightIdx = 2 * idx + 2;
-            size_t smallest = idx;
+    // Manual implementation of heapifyDown for min-heap
+    size_t idx = 0;
+    while (true) {
+        size_t leftIdx = 2 * idx + 1;
+        size_t rightIdx = 2 * idx + 2;
+        size_t smallest = idx;
 
-            if (leftIdx < mCount && mData[leftIdx].score < mData[smallest].score) {
-                smallest = leftIdx;
-            }
-
-            if (rightIdx < mCount && mData[rightIdx].score < mData[smallest].score) {
-                smallest = rightIdx;
-            }
-
-            if (smallest != idx) {
-                std::swap(mData[idx], mData[smallest]);
-                idx = smallest;
-            } else {
-                break;
-            }
+        if (leftIdx < mCount && mData[leftIdx].score < mData[smallest].score) {
+            smallest = leftIdx;
         }
-        // Inline heapifyDown logic ends here
 
-        return originalTop; // Return the original top value
+        if (rightIdx < mCount && mData[rightIdx].score < mData[smallest].score) {
+            smallest = rightIdx;
+        }
+
+        if (smallest != idx) {
+            Entry temp = mData[idx];
+            mData[idx] = mData[smallest];
+            mData[smallest] = temp;
+            idx = smallest;
+        } else {
+            break;
+        }
     }
+
+    return poppedValue;
 }
+
