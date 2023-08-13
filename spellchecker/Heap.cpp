@@ -111,16 +111,19 @@ Heap::Entry Heap::pop() {
 
 
 Heap::Entry Heap::pushpop(const std::string& value, float score) {
-    // If the heap is empty or the given score is less than the top score, 
-    // simply return the given value and score without altering the heap.
+    // If the heap is empty, throw an error.
     if (mCount == 0) {
         throw std::underflow_error("Heap is empty");
     }
 
-    // If the score is greater than or equal to the top score, 
-    // push the new value and pop the top value.
+    // Pop and store the smallest value from the heap
+    Entry poppedValue = pop();
+
+    // Push the new value into the heap
     push(value, score);
-    return pop();
+
+    return poppedValue;
 }
+
 
 
