@@ -20,8 +20,6 @@ private:
     Entry* mData;
     size_t mCapacity;
     size_t mCount;
-    void heapifyUp(size_t index);
-    void heapifyDown(size_t index);
 
 public:
     Heap(size_t capacity);

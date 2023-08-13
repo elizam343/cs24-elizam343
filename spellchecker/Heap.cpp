@@ -1,18 +1,22 @@
 #include "Heap.h"
-#include <stdexcept>
+#include <stdexcept>  // for std::runtime_error
+#include <algorithm>  // for std::min_element
 
-Heap::Heap(size_t capacity) : mCapacity(capacity), mCount(0) {
-    mData = new Entry[capacity];
+Heap::Heap(size_t capacity) 
+    : mCapacity(capacity), mCount(0), mData(new Entry[capacity]) {}
+
+Heap::Heap(const Heap& other) 
+    : mCapacity(other.mCapacity), mCount(other.mCount), mData(new Entry[other.mCapacity]) {
+    for (size_t i = 0; i < mCount; i++) {
+        mData[i] = other.mData[i];
+    }
 }
 
-Heap::Heap(const Heap& other) : mCapacity(other.mCapacity), mCount(other.mCount) {
-    mData = new Entry[mCapacity];
-    std::copy(other.mData, other.mData + other.mCount, mData);
-}
-
-Heap::Heap(Heap&& other) : mData(other.mData), mCapacity(other.mCapacity), mCount(other.mCount) {
+Heap::Heap(Heap&& other) 
+    : mData(other.mData), mCapacity(other.mCapacity), mCount(other.mCount) {
     other.mData = nullptr;
-    other.mCapacity = other.mCount = 0;
+    other.mCapacity = 0;
+    other.mCount = 0;
 }
 
 Heap::~Heap() {
@@ -27,16 +31,9 @@ size_t Heap::count() const {
     return mCount;
 }
 
-const Heap::Entry& Heap::top() const {
-    if (mCount == 0) {
-        throw std::runtime_error("Heap is empty");
-    }
-    return mData[0];
-}
-
 const Heap::Entry& Heap::lookup(size_t index) const {
     if (index >= mCount) {
-        throw std::out_of_range("Index out of range");
+        throw std::runtime_error("Index out of bounds");
     }
     return mData[index];
 }
@@ -45,54 +42,61 @@ Heap::Entry Heap::pop() {
     if (mCount == 0) {
         throw std::runtime_error("Heap is empty");
     }
-    Entry top = mData[0];
-    mData[0] = mData[--mCount];
-    heapifyDown(0);
-    return top;
-}
 
-void Heap::push(const std::string& value, float score) {
-    if (mCount == mCapacity) {
-        throw std::runtime_error("Heap is full");
-    }
-    mData[mCount++] = {value, score};
-    heapifyUp(mCount - 1);
+    // Find the entry with the smallest score
+    auto it = std::min_element(mData, mData + mCount, [](const Entry& a, const Entry& b) {
+        return a.score < b.score;
+    });
+
+    Entry minEntry = *it;
+
+    // Replace the smallest entry with the last one
+    *it = mData[mCount - 1];
+    mCount--;
+
+    return minEntry;
 }
 
 Heap::Entry Heap::pushpop(const std::string& value, float score) {
-    // Check if the heap is empty
     if (mCount == 0) {
         push(value, score);
-        return top();
+        return {value, score};
     }
-    
-    Heap::Entry topEntry = top();
-    
-    if (score < topEntry.score) {
-        mData[0] = {value, score};
-        heapifyDown(0);  // Make sure to define and implement this function.
+
+    // Find the entry with the smallest score
+    auto it = std::min_element(mData, mData + mCount, [](const Entry& a, const Entry& b) {
+        return a.score < b.score;
+    });
+
+    if (score < it->score) {
+        return {value, score};
     }
-    return top();
+
+    Entry minEntry = *it;
+
+    // Replace the smallest score with the new entry
+    *it = {value, score};
+
+    return minEntry;
 }
 
-
-void Heap::heapifyUp(size_t index) {
-    while (index > 0) {
-        size_t parent = (index - 1) / 2;
-        if (mData[parent].score <= mData[index].score) break;
-        std::swap(mData[parent], mData[index]);
-        index = parent;
+void Heap::push(const std::string& value, float score) {
+    if (mCount >= mCapacity) {
+        throw std::runtime_error("Heap is full");
     }
+
+    mData[mCount++] = {value, score};
 }
 
-void Heap::heapifyDown(size_t index) {
-    while (index * 2 + 1 < mCount) {
-        size_t child = index * 2 + 1;
-        if (child + 1 < mCount && mData[child + 1].score < mData[child].score) {
-            child++;
-        }
-        if (mData[child].score >= mData[index].score) break;
-        std::swap(mData[child], mData[index]);
-        index = child;
+const Heap::Entry& Heap::top() const {
+    if (mCount == 0) {
+        throw std::runtime_error("Heap is empty");
     }
+
+    // Find the entry with the smallest score
+    auto it = std::min_element(mData, mData + mCount, [](const Entry& a, const Entry& b) {
+        return a.score < b.score;
+    });
+
+    return *it;
 }
