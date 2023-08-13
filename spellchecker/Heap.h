@@ -34,6 +34,8 @@ public:
     Entry        pushpop(const std::string& value, float score);
     void         push(const std::string& value, float score);
     const Entry& top() const;
+    void heapifyUp(size_t index);
+    void heapifyDown(size_t index);
 };
 
 #endif
