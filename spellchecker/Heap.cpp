@@ -112,39 +112,42 @@ Heap::Entry Heap::pop() {
 
 Heap::Entry Heap::pushpop(const std::string& value, float score) {
     if (mCount == 0) {
-        throw std::underflow_error("Heap is empty");
-    }
-
-    if (score >= mData[0].score) {
-        Entry poppedValue = mData[0];
-        mData[0] = {value, score};
-
-        // Manual implementation of heapifyDown for min-heap
-        size_t idx = 0;
-        while (true) {
-            size_t leftIdx = 2 * idx + 1;
-            size_t rightIdx = 2 * idx + 2;
-            size_t smallest = idx;
-
-            if (leftIdx < mCount && mData[leftIdx].score < mData[smallest].score) {
-                smallest = leftIdx;
-            }
-
-            if (rightIdx < mCount && mData[rightIdx].score < mData[smallest].score) {
-                smallest = rightIdx;
-            }
-
-            if (smallest != idx) {
-                Entry temp = mData[idx];
-                mData[idx] = mData[smallest];
-                mData[smallest] = temp;
-                idx = smallest;
-            } else {
-                break;
-            }
-        }
-        return poppedValue;
-    } else {
         return {value, score};
     }
+
+    Entry topValue = mData[0];
+    
+    if (score < topValue.score) {
+        return {value, score};
+    }
+
+    // Replace the root of the heap with the new entry and adjust
+    mData[0] = {value, score};
+
+    // Inline heapifyDown logic starts here
+    size_t idx = 0;
+    while (true) {
+        size_t leftIdx = 2 * idx + 1;
+        size_t rightIdx = 2 * idx + 2;
+        size_t smallest = idx;
+
+        if (leftIdx < mCount && mData[leftIdx].score < mData[smallest].score) {
+            smallest = leftIdx;
+        }
+
+        if (rightIdx < mCount && mData[rightIdx].score < mData[smallest].score) {
+            smallest = rightIdx;
+        }
+
+        if (smallest != idx) {
+            std::swap(mData[idx], mData[smallest]);
+            idx = smallest;
+        } else {
+            break;
+        }
+    }
+    // Inline heapifyDown logic ends here
+
+    return topValue;
 }
+
