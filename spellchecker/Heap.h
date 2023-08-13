@@ -34,7 +34,6 @@ public:
     Entry        pushpop(const std::string& value, float score);
     void         push(const std::string& value, float score);
     const Entry& top() const;
-    
 };
 
 #endif
