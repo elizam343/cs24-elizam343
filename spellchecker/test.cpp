@@ -123,6 +123,29 @@ void test_mismatched_word_point_lengths() {
     std::cout << "Test: Mismatched word and point lengths passed!\n";
 }
 
+void test_large_word_prediction() {
+    std::istringstream stream("supercalifragilisticexpialidocious antidisestablishmentarianism pneumonoultramicroscopicsilicovolcanoconiosis");
+    WordList wordList(stream);
+    
+    // Dummy keypress points for the word "supercalifragilisticexpialidocious"
+    // Assuming each character's Point is an exact match on the QWERTY layout
+    std::vector<Point> points = {/* Fill with the QWERTY Point coordinates for each character in "supercalifragilisticexpialidocious" */};
+
+    // Populate the points vector with the QWERTY Point values for "supercalifragilisticexpialidocious"
+    for (char c : "supercalifragilisticexpialidocious") {
+        points.push_back(QWERTY[c - 'a']);
+    }
+
+    Heap result = wordList.correct(points, 5, 0.5);
+    
+    // Ensure the top predicted word matches the word "supercalifragilisticexpialidocious"
+    assert(result.top().value == "supercalifragilisticexpialidocious");
+    
+    std::cout << "Test: Large word prediction passed!\n";
+}
+
+
+
 int main() {
     // Add the new test functions here
     test_empty_stream();
@@ -130,6 +153,7 @@ int main() {
     test_number_symbol_words();
     test_empty_points();
     test_mismatched_word_point_lengths();
+    test_large_word_prediction();
 
     test_basic_push_pop();
     test_heap_max_capacity();

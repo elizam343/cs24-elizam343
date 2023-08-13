@@ -15,11 +15,9 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
 
     float tot = 0.0;
     for (std::string str : mWords) {
-        if (points.size() != str.length()) {
-            continue;
-        }
+        size_t minLength = std::min(points.size(), str.length());
 
-        for (size_t i = 0; i < str.length(); i++) {
+        for (size_t i = 0; i < minLength; i++) {
             if (str[i] < 'a' || str[i] > 'z') {
                 // Handle non-lowercase characters
                 // Assuming you want to continue and ignore this word
@@ -35,7 +33,7 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
             tot += score;
         }
 
-        float avg = tot / str.length();
+        float avg = tot / minLength;
 
         if (avg > cutoff) {
             if (heap.count() < maxcount) {
@@ -48,4 +46,5 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
     }
     return heap;
 }
+
 
