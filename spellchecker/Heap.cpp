@@ -44,7 +44,7 @@ const Heap::Entry& Heap::lookup(size_t index) const {
 
 const Heap::Entry& Heap::top() const {
     if (mCount == 0) {
-        throw std::out_of_range("Heap is empty");
+        throw std::underflow_error("Heap is empty");
     }
     return mData[0];
 }
