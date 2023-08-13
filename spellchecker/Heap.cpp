@@ -3,11 +3,11 @@
 
 // Constructor
 Heap::Heap(size_t capacity) 
-    : mCapacity(capacity), mCount(0), mData(new Entry[capacity]) {}
+    : mCapacity(capacity), mData(new Entry[capacity]), mCount(0) {}
 
 // Copy constructor
 Heap::Heap(const Heap& other) 
-    : mCapacity(other.mCapacity), mCount(other.mCount), mData(new Entry[other.mCapacity]) {
+    : mCapacity(other.mCapacity), mData(new Entry[other.mCapacity]), mCount(other.mCount) {
     for (size_t i = 0; i < mCount; i++) {
         mData[i] = other.mData[i];
     }
@@ -15,7 +15,7 @@ Heap::Heap(const Heap& other)
 
 // Move constructor
 Heap::Heap(Heap&& other) 
-    : mCapacity(other.mCapacity), mCount(other.mCount), mData(other.mData) {
+    : mCapacity(other.mCapacity), mData(other.mData), mCount(other.mCount) {
     other.mData = nullptr;
     other.mCount = 0;
     other.mCapacity = 0;
