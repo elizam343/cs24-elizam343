@@ -112,42 +112,40 @@ Heap::Entry Heap::pop() {
 
 Heap::Entry Heap::pushpop(const std::string& value, float score) {
     if (mCount == 0) {
-        return {value, score};
+        return {value, score}; // If heap is empty, return the incoming value
     }
 
-    Entry topValue = mData[0];
-    
-    if (score < topValue.score) {
-        return {value, score};
+    Entry originalTop = mData[0]; // Store the original top
+
+    if (score < originalTop.score) {
+        return {value, score}; // Return the incoming value if its score is less than the top's score
+    } else {
+        mData[0] = {value, score}; // Replace the top with the incoming value
+        
+        // Inline heapifyDown logic starts here
+        size_t idx = 0;
+        while (true) {
+            size_t leftIdx = 2 * idx + 1;
+            size_t rightIdx = 2 * idx + 2;
+            size_t smallest = idx;
+
+            if (leftIdx < mCount && mData[leftIdx].score < mData[smallest].score) {
+                smallest = leftIdx;
+            }
+
+            if (rightIdx < mCount && mData[rightIdx].score < mData[smallest].score) {
+                smallest = rightIdx;
+            }
+
+            if (smallest != idx) {
+                std::swap(mData[idx], mData[smallest]);
+                idx = smallest;
+            } else {
+                break;
+            }
+        }
+        // Inline heapifyDown logic ends here
+
+        return originalTop; // Return the original top value
     }
-
-    // Replace the root of the heap with the new entry and adjust
-    mData[0] = {value, score};
-
-    // Inline heapifyDown logic starts here
-    size_t idx = 0;
-    while (true) {
-        size_t leftIdx = 2 * idx + 1;
-        size_t rightIdx = 2 * idx + 2;
-        size_t smallest = idx;
-
-        if (leftIdx < mCount && mData[leftIdx].score < mData[smallest].score) {
-            smallest = leftIdx;
-        }
-
-        if (rightIdx < mCount && mData[rightIdx].score < mData[smallest].score) {
-            smallest = rightIdx;
-        }
-
-        if (smallest != idx) {
-            std::swap(mData[idx], mData[smallest]);
-            idx = smallest;
-        } else {
-            break;
-        }
-    }
-    // Inline heapifyDown logic ends here
-
-    return topValue;
 }
-
