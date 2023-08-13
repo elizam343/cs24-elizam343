@@ -7,6 +7,12 @@ CXX      = g++
 #  $+ is a list of all the dependencies
 #  $< is the first dependency
 
+test: test.o Point.o Heap.o WordList.o
+	${CXX} $(CXXFLAGS) -o $@ $+
+
+test.o: test.cpp WordList.h Heap.h Point.h
+	${CXX} $(CXXFLAGS) -c -o $@ $<
+
 main: main.o Point.o Heap.o WordList.o
 	${CXX} $(CXXFLAGS) -o $@ $+
 
