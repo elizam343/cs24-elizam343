@@ -1,10 +1,10 @@
 #include "Heap.h"
-#include <stdexcept>  // for std::runtime_error
-#include <algorithm>  // for std::min_element
 
+// Constructor
 Heap::Heap(size_t capacity) 
     : mCapacity(capacity), mCount(0), mData(new Entry[capacity]) {}
 
+// Copy constructor
 Heap::Heap(const Heap& other) 
     : mCapacity(other.mCapacity), mCount(other.mCount), mData(new Entry[other.mCapacity]) {
     for (size_t i = 0; i < mCount; i++) {
@@ -12,13 +12,15 @@ Heap::Heap(const Heap& other)
     }
 }
 
+// Move constructor
 Heap::Heap(Heap&& other) 
-    : mData(other.mData), mCapacity(other.mCapacity), mCount(other.mCount) {
+    : mCapacity(other.mCapacity), mCount(other.mCount), mData(other.mData) {
     other.mData = nullptr;
-    other.mCapacity = 0;
     other.mCount = 0;
+    other.mCapacity = 0;
 }
 
+// Destructor
 Heap::~Heap() {
     delete[] mData;
 }
@@ -33,70 +35,77 @@ size_t Heap::count() const {
 
 const Heap::Entry& Heap::lookup(size_t index) const {
     if (index >= mCount) {
-        throw std::runtime_error("Index out of bounds");
+        throw std::out_of_range("Index out of range");
     }
     return mData[index];
 }
 
-Heap::Entry Heap::pop() {
+const Heap::Entry& Heap::top() const {
     if (mCount == 0) {
-        throw std::runtime_error("Heap is empty");
+        throw std::out_of_range("Heap is empty");
     }
-
-    // Find the entry with the smallest score
-    auto it = std::min_element(mData, mData + mCount, [](const Entry& a, const Entry& b) {
-        return a.score < b.score;
-    });
-
-    Entry minEntry = *it;
-
-    // Replace the smallest entry with the last one
-    *it = mData[mCount - 1];
-    mCount--;
-
-    return minEntry;
-}
-
-Heap::Entry Heap::pushpop(const std::string& value, float score) {
-    if (mCount == 0) {
-        push(value, score);
-        return {value, score};
-    }
-
-    // Find the entry with the smallest score
-    auto it = std::min_element(mData, mData + mCount, [](const Entry& a, const Entry& b) {
-        return a.score < b.score;
-    });
-
-    if (score < it->score) {
-        return {value, score};
-    }
-
-    Entry minEntry = *it;
-
-    // Replace the smallest score with the new entry
-    *it = {value, score};
-
-    return minEntry;
+    return mData[0];
 }
 
 void Heap::push(const std::string& value, float score) {
-    if (mCount >= mCapacity) {
-        throw std::runtime_error("Heap is full");
+    if (mCount == mCapacity) {
+        throw std::overflow_error("Heap is full");
     }
+    mData[mCount] = {value, score};
+    mCount++;
 
-    mData[mCount++] = {value, score};
+    // Manual implementation of heapifyUp
+    size_t idx = mCount - 1;
+    while (idx > 0) {
+        size_t parentIdx = (idx - 1) / 2;
+        if (mData[idx].score > mData[parentIdx].score) {
+            std::swap(mData[idx], mData[parentIdx]);
+            idx = parentIdx;
+        } else {
+            break;
+        }
+    }
 }
 
-const Heap::Entry& Heap::top() const {
+Heap::Entry Heap::pop() {
     if (mCount == 0) {
-        throw std::runtime_error("Heap is empty");
+        throw std::underflow_error("Heap is empty");
     }
 
-    // Find the entry with the smallest score
-    auto it = std::min_element(mData, mData + mCount, [](const Entry& a, const Entry& b) {
-        return a.score < b.score;
-    });
+    Entry poppedValue = mData[0];
+    mData[0] = mData[mCount - 1];
+    mCount--;
 
-    return *it;
+    // Manual implementation of heapifyDown
+    size_t idx = 0;
+    while (true) {
+        size_t leftChildIdx = 2 * idx + 1;
+        size_t rightChildIdx = 2 * idx + 2;
+        size_t largest = idx;
+
+        if (leftChildIdx < mCount && mData[leftChildIdx].score > mData[largest].score) {
+            largest = leftChildIdx;
+        }
+
+        if (rightChildIdx < mCount && mData[rightChildIdx].score > mData[largest].score) {
+            largest = rightChildIdx;
+        }
+
+        if (largest != idx) {
+            std::swap(mData[idx], mData[largest]);
+            idx = largest;
+        } else {
+            break;
+        }
+    }
+
+    return poppedValue;
+}
+
+Heap::Entry Heap::pushpop(const std::string& value, float score) {
+    if (mCount == 0 || score > mData[0].score) {
+        push(value, score);
+        return pop();
+    }
+    return {value, score};
 }
