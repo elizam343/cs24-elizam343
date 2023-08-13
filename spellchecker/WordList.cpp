@@ -13,13 +13,20 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
     Heap heap(maxcount);
 
     for (std::string str : mWords) {
-        bool isValid = true;  
+        bool isValid = true;
         float tot = 0.0;
+        int lengthDifference = std::abs(static_cast<int>(points.size()) - static_cast<int>(str.length()));
+
+        if (lengthDifference > 1) {
+            
+            continue;
+        }
 
         size_t comparisonLength = std::min(points.size(), str.length());
 
         for (size_t i = 0; i < comparisonLength; i++) {
             if (str[i] < 'a' || str[i] > 'z') {
+                
                 tot = 0.0;
                 isValid = false;
                 break;
@@ -37,10 +44,11 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
             continue;
         }
 
-        float penalty = 1.0;  
+        float penalty = 1.0; 
 
-        if (str.length() != points.size()) {
-            penalty = 0.9; 
+
+        if (lengthDifference == 1) {
+            penalty = 0.9;  
         }
 
         float avg = (tot / comparisonLength) * penalty;
@@ -55,6 +63,7 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
     }
     return heap;
 }
+
 
 
 

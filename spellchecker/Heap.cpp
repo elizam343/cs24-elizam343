@@ -56,7 +56,7 @@ void Heap::push(const std::string& value, float score) {
     mData[mCount] = {value, score};
     mCount++;
 
-    // Manual implementation of heapifyUp for min-heap
+
     size_t idx = mCount - 1;
     while (idx > 0) {
         size_t parentIdx = (idx - 1) / 2;
@@ -80,7 +80,7 @@ Heap::Entry Heap::pop() {
     mData[0] = mData[mCount - 1];
     mCount--;
 
-    // Manual implementation of heapifyDown for min-heap
+
     size_t idx = 0;
     while (true) {
         size_t leftIdx = 2 * idx + 1;
@@ -116,9 +116,8 @@ Heap::Entry Heap::pushpop(const std::string& value, float score) {
     }
 
     Entry poppedValue = mData[0];
-    mData[0] = {value, score}; // always replace the top
+    mData[0] = {value, score}; // replace the top
 
-    // Manual implementation of heapifyDown for min-heap
     size_t idx = 0;
     while (true) {
         size_t leftIdx = 2 * idx + 1;
