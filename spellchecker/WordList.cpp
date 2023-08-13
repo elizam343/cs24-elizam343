@@ -1,5 +1,4 @@
 #include "WordList.h"
-#include <algorithm>
 #include <cmath>
 
 WordList::WordList(std::istream& stream) {
@@ -13,37 +12,34 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
     Heap heap(maxcount);
 
     for (const auto& word : mWords) {
-        float score = calculateScore(word, points);
-        if (score < cutoff) {
+        if (word.length() != points.size()) {
+            continue;  // Skip words of different lengths
+        }
+
+        float totalScore = 0.0;
+
+        for (size_t i = 0; i < word.length(); ++i) {
+            char c = word[i];
+            Point charPoint = QWERTY[c - 'a'];  // assume lowercase letter
+
+            float dx = charPoint.x - points[i].x;
+            float dy = charPoint.y - points[i].y;
+            float distance = sqrt(dx * dx + dy * dy);
+
+            float score = 1 / (10 * distance * distance + 1);
+            totalScore += score;
+        }
+
+        float averageScore = totalScore / word.length();
+
+        if (averageScore > cutoff) {
             if (heap.count() < maxcount) {
-                heap.push(word, score);
-            } else if (score < heap.top().score) {
-                heap.pushpop(word, score);
+                heap.push(word, averageScore);
+            } else if (averageScore > heap.top().score) {
+                heap.pushpop(word, averageScore);
             }
         }
     }
 
     return heap;
-}
-
-float WordList::calculateScore(const std::string& word, const std::vector<Point>& points) const {
-    // Implement scoring algorithm here
-    // You might compare the points to the QWERTY positions of the letters in the word
-    if (word.length() != points.size()) {
-        return INFINITY;  // or some large value to indicate mismatch in size
-    }
-
-    float totalDistance = 0.0;
-
-    for (size_t i = 0; i < word.length(); ++i) {
-        char c = word[i];
-        Point charPoint = QWERTY[c - 'a']; //lowercase letter
-
-        float dx = charPoint.x - points[i].x;
-        float dy = charPoint.y - points[i].y;
-
-        totalDistance += sqrt(dx * dx + dy * dy);
-    }
-
-    return totalDistance / word.length();
 }

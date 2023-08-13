@@ -1,6 +1,5 @@
 #include "Heap.h"
 #include <stdexcept>  // For exception handling
-#include <algorithm>  // For std::swap
 
 // Constructor
 Heap::Heap(size_t capacity) 
@@ -56,12 +55,14 @@ void Heap::push(const std::string& value, float score) {
     mData[mCount] = {value, score};
     mCount++;
 
-    // Manual implementation of heapifyUp
+    // Manual implementation of heapifyUp and manual swap
     size_t idx = mCount - 1;
     while (idx > 0) {
         size_t parentIdx = (idx - 1) / 2;
         if (mData[idx].score > mData[parentIdx].score) {
-            std::swap(mData[idx], mData[parentIdx]);
+            Entry temp = mData[idx];
+            mData[idx] = mData[parentIdx];
+            mData[parentIdx] = temp;
             idx = parentIdx;
         } else {
             break;
@@ -78,23 +79,25 @@ Heap::Entry Heap::pop() {
     mData[0] = mData[mCount - 1];
     mCount--;
 
-    // Manual implementation of heapifyDown
+    // Manual implementation of heapifyDown and manual swap
     size_t idx = 0;
     while (true) {
-        size_t leftChildIdx = 2 * idx + 1;
-        size_t rightChildIdx = 2 * idx + 2;
+        size_t leftIdx = 2 * idx + 1;
+        size_t rightIdx = 2 * idx + 2;
         size_t largest = idx;
 
-        if (leftChildIdx < mCount && mData[leftChildIdx].score > mData[largest].score) {
-            largest = leftChildIdx;
+        if (leftIdx < mCount && mData[leftIdx].score > mData[largest].score) {
+            largest = leftIdx;
         }
 
-        if (rightChildIdx < mCount && mData[rightChildIdx].score > mData[largest].score) {
-            largest = rightChildIdx;
+        if (rightIdx < mCount && mData[rightIdx].score > mData[largest].score) {
+            largest = rightIdx;
         }
 
         if (largest != idx) {
-            std::swap(mData[idx], mData[largest]);
+            Entry temp = mData[idx];
+            mData[idx] = mData[largest];
+            mData[largest] = temp;
             idx = largest;
         } else {
             break;
