@@ -71,6 +71,7 @@ void Heap::push(const std::string& value, float score) {
     }
 }
 
+
 Heap::Entry Heap::pop() {
     if (mCount == 0) {
         throw std::underflow_error("Heap is empty");
