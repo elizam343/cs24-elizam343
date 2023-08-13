@@ -12,18 +12,14 @@ WordList::WordList(std::istream& stream) {
 Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float cutoff) const {
     Heap heap(maxcount);
 
-    float tot = 0.0;
     for (std::string str : mWords) {
-        if (str.length() != points.size()) {
-            continue; // Skip the word if its length doesn't match the number of points.
-        }
+        bool isValid = true;  
+        float tot = 0.0;
 
-        bool isValid = true;  // A flag to check if the word contains only lowercase letters
+        size_t comparisonLength = std::min(points.size(), str.length());
 
-        for (size_t i = 0; i < str.length(); i++) {
+        for (size_t i = 0; i < comparisonLength; i++) {
             if (str[i] < 'a' || str[i] > 'z') {
-                // Handle non-lowercase characters
-                // Assuming you want to continue and ignore this word
                 tot = 0.0;
                 isValid = false;
                 break;
@@ -41,7 +37,13 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
             continue;
         }
 
-        float avg = tot / str.length();
+        float penalty = 1.0;  
+
+        if (str.length() != points.size()) {
+            penalty = 0.9; 
+        }
+
+        float avg = (tot / comparisonLength) * penalty;
 
         if (avg > cutoff) {
             if (heap.count() < maxcount) {
@@ -50,10 +52,10 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
                 heap.pushpop(str, avg);
             }
         }
-        tot = 0.0;
     }
     return heap;
 }
+
 
 
 
