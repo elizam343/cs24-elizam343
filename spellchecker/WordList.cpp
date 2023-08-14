@@ -12,21 +12,18 @@ WordList::WordList(std::istream& stream) {
 Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float cutoff) const {
     Heap heap(maxcount);
 
+    float tot = 0.0;
     for (std::string str : mWords) {
-        bool isValid = true;
-        float tot = 0.0;
-        int lengthDifference = std::abs(static_cast<int>(points.size()) - static_cast<int>(str.length()));
-
-        if (lengthDifference > 1) {
-            // Skip words that have a length difference greater than 1 from the points
-            continue;
+        if (str.length() != points.size()) {
+            continue; // Skip the word if its length doesn't match the number of points.
         }
 
-        size_t comparisonLength = std::min(points.size(), str.length());
+        bool isValid = true;  // A flag to check if the word contains only lowercase letters
 
-        for (size_t i = 0; i < comparisonLength; i++) {
+        for (size_t i = 0; i < str.length(); i++) {
             if (str[i] < 'a' || str[i] > 'z') {
                 // Handle non-lowercase characters
+                // Assuming you want to continue and ignore this word
                 tot = 0.0;
                 isValid = false;
                 break;
@@ -44,14 +41,7 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
             continue;
         }
 
-        float penalty = 1.0;  // No penalty by default
-
-        // If lengths differ by 1, apply a penalty to the score
-        if (lengthDifference == 1) {
-            penalty = 0.9;  // Adjust this value based on how strongly you want to penalize mismatches
-        }
-
-        float avg = (tot / comparisonLength) * penalty;
+        float avg = tot / str.length();
 
         if (avg > cutoff) {
             if (heap.count() < maxcount) {
@@ -60,6 +50,10 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
                 heap.pushpop(str, avg);
             }
         }
+        tot = 0.0;
     }
+
     return heap;
+
 }
+
