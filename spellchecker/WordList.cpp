@@ -44,25 +44,6 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
             continue;
         }
 
-        // Change in scoring strategy to incorporate the extra/missing points
-        float avg;
-        if (points.size() == str.length()) {
-            avg = tot / points.size();
-        } else {
-            // Include all characters and touch points in the score and average by the maximum length
-            for (size_t i = comparisonLength; i < std::max(points.size(), str.length()); i++) {
-                if (i < str.length() && (str[i] < 'a' || str[i] > 'z')) {
-                    // Handle non-lowercase characters
-                    isValid = false;
-                    break;
-                }
-                
-                // Add a default penalty for missing characters or extra touch points
-                tot += 0.5;  // or any other penalty value you see fit
-            }
-            avg = tot / std::max(points.size(), str.length());
-        }
-
         float penalty = 1.0;  // No penalty by default
 
         // If lengths differ by 1, apply a penalty to the score
@@ -70,7 +51,7 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
             penalty = 0.9;  // Adjust this value based on how strongly you want to penalize mismatches
         }
 
-        avg *= penalty;
+        float avg = (tot / comparisonLength) * penalty;
 
         if (avg > cutoff) {
             if (heap.count() < maxcount) {
