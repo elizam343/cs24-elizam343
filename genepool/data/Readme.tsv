@@ -1,0 +1,6 @@
+# The example from the readme.
+
+Eve	female	???	???
+Alice	female	Eve	???
+Bob	male	Eve	???
+Carol	female	Alice	Bob

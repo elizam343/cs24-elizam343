@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="-300 -300 600 600" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    rect {
+      width: 40px;
+    }
+
+    text {
+      text-anchor: middle;
+      font-size: 5pt;
+    }
+
+    path {
+      stroke: black;
+      fill: none;
+    }
+
+    g.couple > g:first-child {transform: translate(0, 10px);}
+    g.couple > g:last-child  {transform: translate(0, 40px);}
+
+    g.i rect {
+      stroke: black;
+      fill: none;
+
+      rx: 10px;
+      ry: 10px;
+    }
+
+    g.m rect {
+      stroke: #000080;
+      fill: none;
+
+      rx: 0;
+      ry: 0;
+    }
+
+    g.m text {
+      fill: #000080;
+    }
+
+    g.f rect {
+      stroke: #800000;
+      fill: none;
+
+      rx: 5px;
+      ry: 5px;
+    }
+
+    g.f text {
+      fill: #800000;
+    }
+  </style>
+
+  <!-- Mother & Father -->
+  <path d="M-140,5 L-140,45  M-140,25 L-35,25  M0,-60 L-35,-60 L-35,80 L0,80  M-35,10 L0,10" />
+
+  <!-- You & Lover -->
+  <path d="M0,10 L0,40  M0,25 L35,25  M70,-25 L35,-25 L35,45 L70,45" />
+
+  <!-- Daughter & Lover -->
+  <path d="M70,-25 L70,5  M70,-10 L105,-10  M140,-25 L105,-25 L105,5 L140,5" />
+
+  <!-- Son & Lover -->
+  <path d="M70,45 L70,75  M70,60 L105,60  M140,45 L105,45 L105,75 L140,75" />
+
+
+  <g class="couple" transform="translate(-210, -35)">
+    <g class="m">
+      <rect x="-20" y="-10" width="40" height="20" />
+    </g>
+
+    <g class="f">
+      <rect x="-20" y="-10" width="40" height="20" />
+      <text x="0" y="2.5">grandmother</text>
+    </g>
+  </g>
+
+  <g class="couple" transform="translate(-210, 35)">
+    <g class="m">
+      <rect x="-20" y="-10" width="40" height="20" />
+      <text x="0" y="2.5">grandfather</text>
+    </g>
+
+    <g class="f">
+      <rect x="-20" y="-10" width="40" height="20" />
+    </g>
+  </g>
+
+
+  <g class="couple" transform="translate(-140, -35)">
+    <g class="m">
+      <rect x="-20" y="-10" width="40" height="20" />
+    </g>
+
+    <g class="f">
+      <rect x="-20" y="-10" width="40" height="20" />
+      <text x="0" y="2.5">mother</text>
+    </g>
+  </g>
+
+  <g class="couple" transform="translate(-140, 35)">
+    <g class="m">
+      <rect x="-20" y="-10" width="40" height="20" />
+      <text x="0" y="2.5">father</text>
+    </g>
+
+    <g class="f">
+      <rect x="-20" y="-10" width="40" height="20" />
+    </g>
+  </g>
+
+  <g class="couple" transform="translate(0, -210)">
+    <g class="f">
+      <rect x="-20" y="-10" width="40" height="20" />
+      <text x="0" y="-1">maternal</text>
+      <text x="0" y="6">half sister</text>
+    </g>
+
+    <g class="m">
+      <rect x="-20" y="-10" width="40" height="20" />
+    </g>
+  </g>
+
+  <g class="couple" transform="translate(0, -140)">
+    <g class="m">
+      <rect x="-20" y="-10" width="40" height="20" />
+      <text x="0" y="-1">maternal</text>
+      <text x="0" y="6">half brother</text>
+    </g>
+
+    <g class="f">
+      <rect x="-20" y="-10" width="40" height="20" />
+    </g>
+  </g>
+
+  <g class="couple" transform="translate(0, -70)">
+    <g class="f">
+      <rect x="-20" y="-10" width="40" height="20" />
+      <text x="0" y="2.5">full sister</text>
+    </g>
+
+    <g class="m">
+      <rect x="-20" y="-10" width="40" height="20" />
+    </g>
+  </g>
+
+
+  <g class="couple">
+    <g class="i">
+      <rect x="-20" y="-10" width="40" height="20" />
+      <text x="0" y="2.5">YOU</text>
+    </g>
+
+    <g class="i">
+      <rect x="-20" y="-10" width="40" height="20" />
+    </g>
+  </g>
+
+
+  <g class="couple" transform="translate(0, 70)">
+    <g class="m">
+      <rect x="-20" y="-10" width="40" height="20" />
+      <text x="0" y="2.5">full brother</text>
+    </g>
+
+    <g class="f">
+      <rect x="-20" y="-10" width="40" height="20" />
+    </g>
+  </g>
+
+  <g class="couple" transform="translate(0, 140)">
+    <g class="f">
+      <rect x="-20" y="-10" width="40" height="20" />
+      <text x="0" y="-1">paternal</text>
+      <text x="0" y="6">half sister</text>
+    </g>
+
+    <g class="m">
+      <rect x="-20" y="-10" width="40" height="20" />
+    </g>
+  </g>
+
+  <g class="couple" transform="translate(0, 210)">
+    <g class="m">
+      <rect x="-20" y="-10" width="40" height="20" />
+      <text x="0" y="-1">paternal</text>
+      <text x="0" y="6">half brother</text>
+    </g>
+
+    <g class="f">
+      <rect x="-20" y="-10" width="40" height="20" />
+    </g>
+  </g>
+
+
+  <g class="couple" transform="translate(70, -35)">
+    <g class="f">
+      <rect x="-20" y="-10" width="40" height="20" />
+      <text x="0" y="2.5">daughter</text>
+    </g>
+
+    <g class="m">
+      <rect x="-20" y="-10" width="40" height="20" />
+    </g>
+  </g>
+
+  <g class="couple" transform="translate(70, 35)">
+    <g class="m">
+      <rect x="-20" y="-10" width="40" height="20" />
+      <text x="0" y="2.5">son</text>
+    </g>
+
+    <g class="f">
+      <rect x="-20" y="-10" width="40" height="20" />
+    </g>
+  </g>
+
+
+  <g class="couple" transform="translate(140, -35)">
+    <g class="f">
+      <rect x="-20" y="-10" width="40" height="20" />
+      <text x="0" y="2.5">granddaughter</text>
+    </g>
+
+    <g class="m">
+      <rect x="-20" y="-10" width="40" height="20" />
+      <text x="0" y="2.5">grandson</text>
+    </g>
+  </g>
+
+  <g class="couple" transform="translate(140, 35)">
+    <g class="f">
+      <rect x="-20" y="-10" width="40" height="20" />
+      <text x="0" y="2.5">granddaughter</text>
+    </g>
+
+    <g class="m">
+      <rect x="-20" y="-10" width="40" height="20" />
+      <text x="0" y="2.5">grandson</text>
+    </g>
+  </g>
+
+  <!-- <g class="m" transform="translate(70, 25)">
+    <rect x="-20" y="-10" width="40" height="20" />
+    <text x="0" y="2.5">son</text>
+  </g>
+
+  <g class="f" transform="translate(70, 50)">
+    <rect x="-20" y="-10" width="40" height="20" />
+  </g> -->
+
+
+
+
+</svg>
