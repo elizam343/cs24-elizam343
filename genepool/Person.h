@@ -12,13 +12,16 @@
 // Implement the member functions in Person.cpp.
 
 class Person {
-  // Member Variables
-
-  // Helper Functions
+private:
+  std::string name_;
+  Gender gender_;
+  Person* mother_;
+  Person* father_;
+  std::set<Person*> children_;
 
 public:
-  // Constructor
-  // Destructor?
+  Person(const std::string& name, Gender gender);
+  ~Person();
 
   // Required Getter Functions
   const std::string& name()   const;

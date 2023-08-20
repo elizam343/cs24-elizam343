@@ -16,6 +16,9 @@ class GenePool {
   // Member Variables
 
   // Helper Functions
+private:
+    std::map<std::string, Person*> people_;
+    void readFromStream(std::istream& stream);
 
 public:
   // Build a database of people from a TSV file.
