@@ -2,7 +2,6 @@
 #define PERSON_H
 
 #include "Enums.h"
-
 #include <set>
 #include <string>
 
@@ -52,6 +51,9 @@ public:
   std::set<Person*> uncles(PMod pmod = PMod::ANY, SMod smod = SMod::ANY);
 
   // Other Member Functions
+  void addMother(Person* mother);
+  void addFather(Person* father);
+  void addChild(Person* child);
 };
 
 #endif
