@@ -24,9 +24,13 @@ void GenePool::readFromStream(std::istream& stream) {
 
         Gender gender = (genderStr == "Male" ? Gender::MALE : Gender::FEMALE);
         
-        Person* person = new Person(name, gender);
-        
-        people_[name] = person;
+        if (people_.find(name) == people_.end()) {
+            Person* person = new Person(name, gender);
+            people_[name] = person;
+        } else {
+            // Handle duplicate person or simply skip
+            // For now, we'll just skip.
+        }
     }
 
     // Reset stream position to beginning for second pass
@@ -52,6 +56,7 @@ void GenePool::readFromStream(std::istream& stream) {
         }
     }
 }
+
 
 std::set<Person*> GenePool::everyone() const {
     std::set<Person*> result;
