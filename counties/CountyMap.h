@@ -4,6 +4,8 @@
 #include <vector>
 #include "County.h"
 
+using namespace std;
+
 class CountyMap {
 	private:
 		//storage requirement: O(e), e = number of edges between counties
@@ -13,6 +15,10 @@ class CountyMap {
 		//constructor
 		//performance: O(n^2), n = number of counties
 		CountyMap(vector<County> counties, vector<vector<bool>> adjacencyMatrix);
+
+		CountyMap(const CountyMap& other) ;
+
+		~CountyMap();
 
 		//performance: O(1)
 		County getCounty(int countyID);
@@ -28,4 +34,6 @@ class CountyMap {
 
 		//performance: O(n), n = number of counties in the itinerary
 		bool checkValidItinerary(vector<int> itinerary);
-}
+};
+
+#endif
