@@ -62,20 +62,47 @@ std::set<Person*> Person::ancestors(PMod pmod) {
     return ancestorsSet;
 }
 
-// Here's a basic outline for siblings, as an example:
 std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
     std::set<Person*> siblingSet;
+    
+    std::set<Person*> maternalSiblings, paternalSiblings;
+    
     if (p_Mother) {
-        siblingSet.insert(p_Mother->children().begin(), p_Mother->children().end());
+        maternalSiblings = p_Mother->children();
     }
+
     if (p_Father) {
-        siblingSet.insert(p_Father->children().begin(), p_Father->children().end());
+        paternalSiblings = p_Father->children();
     }
+
+    if (smod == SMod::FULL) {
+        for (auto& sibling : maternalSiblings) {
+            if (paternalSiblings.find(sibling) != paternalSiblings.end()) {
+                siblingSet.insert(sibling);
+            }
+        }
+    } else if (smod == SMod::HALF) {
+        for (auto& sibling : maternalSiblings) {
+            if (paternalSiblings.find(sibling) == paternalSiblings.end()) {
+                siblingSet.insert(sibling);
+            }
+        }
+        for (auto& sibling : paternalSiblings) {
+            if (maternalSiblings.find(sibling) == maternalSiblings.end()) {
+                siblingSet.insert(sibling);
+            }
+        }
+    } else {  // SMod::ANY
+        siblingSet.insert(maternalSiblings.begin(), maternalSiblings.end());
+        siblingSet.insert(paternalSiblings.begin(), paternalSiblings.end());
+    }
+
     siblingSet.erase(this); // Remove self from the set of siblings
 
-    // Further logic needed for SMod differentiation (FULL, HALF, ANY)
     return siblingSet;
 }
+
+
 
 std::set<Person*> Person::aunts(PMod pmod, SMod smod) {
     std::set<Person*> auntSet;
