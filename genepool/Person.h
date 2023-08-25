@@ -2,6 +2,7 @@
 #define PERSON_H
 
 #include "Enums.h"
+
 #include <set>
 #include <string>
 
@@ -11,15 +12,20 @@
 // Implement the member functions in Person.cpp.
 
 class Person {
-private:
-  std::string name_;
-  Gender gender_;
-  Person* mother_;
-  Person* father_;
-  std::set<Person*> children_;
+  // Member Variables
+
+  // Helper Functions
+  std::string p_Name;
+  Gender p_Gender;
+  Person* p_Mother;
+  Person* p_Father;
+  std::set<Person*> kids;
+  void findAncestors(std::set<Person*>& ancestorsSet, PMod pmod) const;
 
 public:
-  Person(const std::string& name, Gender gender);
+  // Constructor
+  Person(const std::string& name, Gender gender, Person* mother = nullptr, Person* father = nullptr);
+  // Destructor?
   ~Person();
 
   // Required Getter Functions
@@ -51,9 +57,9 @@ public:
   std::set<Person*> uncles(PMod pmod = PMod::ANY, SMod smod = SMod::ANY);
 
   // Other Member Functions
-  void addMother(Person* mother);
-  void addFather(Person* father);
   void addChild(Person* child);
+  void setMother(Person* mother);
+  void setFather(Person* father);
 };
 
 #endif

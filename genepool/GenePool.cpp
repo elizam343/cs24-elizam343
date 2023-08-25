@@ -14,9 +14,8 @@ GenePool::~GenePool() {
 
 void GenePool::readFromStream(std::istream& stream) {
     std::string line;
+    // First pass: Create Person objects for everyone
     while (std::getline(stream, line)) {
-        // Parse the TSV lines and create new Person objects.
-        // For simplicity, let's assume the format is "name\tgender".
         std::string name, genderStr;
         std::stringstream ss(line);
 
@@ -25,10 +24,32 @@ void GenePool::readFromStream(std::istream& stream) {
 
         Gender gender = (genderStr == "Male" ? Gender::MALE : Gender::FEMALE);
         
-        // For now, creating a new Person with just name and gender.
         Person* person = new Person(name, gender);
         
         people_[name] = person;
+    }
+
+    // Reset stream position to beginning for second pass
+    stream.clear();  // Clear EOF flag
+    stream.seekg(0, std::ios::beg); 
+
+    // Second pass: Establish parent-child relationships
+    while (std::getline(stream, line)) {
+        std::string name, genderStr, motherName, fatherName;
+        std::stringstream ss(line);
+
+        std::getline(ss, name, '\t');
+        std::getline(ss, genderStr, '\t');
+        std::getline(ss, motherName, '\t');
+        std::getline(ss, fatherName, '\t');
+
+        if (people_.find(motherName) != people_.end()) {
+            people_[name]->setMother(people_[motherName]);
+        }
+
+        if (people_.find(fatherName) != people_.end()) {
+            people_[name]->setFather(people_[fatherName]);
+        }
     }
 }
 

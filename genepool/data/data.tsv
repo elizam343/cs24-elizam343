@@ -1,0 +1,14 @@
+# Data File: genedata.txt
+# Format: Name,Gender,Mother,Father
+# Note: "NONE" indicates no known parent
+
+Eliseo,M,NONE,NONE
+Maria,F,NONE,NONE
+Tomas,M,Maria,Eliseo
+Sofia,F,Maria,Eliseo
+Juan,M,NONE,NONE
+Anita,F,Julia,Francisco
+
+# Notes:
+# 1. Eliseo and Maria are parents to Tomas and Sofia.
+# 2. Juan and Anita are just additional entries and are not directly related to the other four.
