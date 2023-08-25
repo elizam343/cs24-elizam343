@@ -28,10 +28,7 @@ Person* Person::father() {
 
 void Person::addChild(Person* child) {
     kids.insert(child);
-    std::cout << p_Name << " added child: " << child->name() 
-              << " with gender: " << (child->gender() == Gender::MALE ? "Male" : "Female") << std::endl;
 }
-
 
 void Person::setMother(Person* mother) {
     p_Mother = mother;
@@ -168,24 +165,29 @@ std::set<Person*> Person::brothers(PMod pmod, SMod smod) {
 std::set<Person*> Person::cousins(PMod pmod, SMod smod) {
     std::set<Person*> cousinSet;
 
-    if (p_Mother) {
-        for (auto auntOrUncle : p_Mother->siblings(PMod::ANY, smod)) {
-            for (auto child : auntOrUncle->children()) {
-                cousinSet.insert(child);
+    if (pmod == PMod::MATERNAL || pmod == PMod::ANY) {
+        if (p_Mother) {
+            for (auto auntOrUncle : p_Mother->siblings(pmod, smod)) {
+                for (auto child : auntOrUncle->children()) {
+                    cousinSet.insert(child);
+                }
             }
         }
     }
 
-    if (pmod != PMod::MATERNAL && p_Father) {
-        for (auto auntOrUncle : p_Father->siblings(PMod::ANY, smod)) {
-            for (auto child : auntOrUncle->children()) {
-                cousinSet.insert(child);
+    if (pmod == PMod::PATERNAL || pmod == PMod::ANY) {
+        if (p_Father) {
+            for (auto auntOrUncle : p_Father->siblings(pmod, smod)) {
+                for (auto child : auntOrUncle->children()) {
+                    cousinSet.insert(child);
+                }
             }
         }
     }
 
     return cousinSet;
 }
+
 
 std::set<Person*> Person::daughters() {
     std::set<Person*> result;
@@ -312,14 +314,12 @@ std::set<Person*> Person::sisters(PMod pmod, SMod smod) {
 
 std::set<Person*> Person::sons() {
     std::set<Person*> result;
-    std::cout << name() << " has children: "; // Debug line
     for (auto child : kids) {
-        std::cout << child->name() << " (" << (child->gender() == Gender::MALE ? "Male" : "Female") << "), "; // Debug line
         if (child->gender() == Gender::MALE) {
             result.insert(child);
         }
     }
-    std::cout << std::endl; // Debug line
     return result;
 }
+
 
