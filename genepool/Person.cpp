@@ -42,19 +42,17 @@ std::set<Person*> Person::children() {
 }
 
 void Person::findAncestors(std::set<Person*>& ancestorsSet, PMod pmod) const {
-    if (pmod == PMod::MATERNAL || pmod == PMod::ANY) {
-        if (p_Mother) {
-            ancestorsSet.insert(p_Mother);
-            p_Mother->findAncestors(ancestorsSet, pmod);
-        }
+    if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
+        ancestorsSet.insert(p_Mother);
+        p_Mother->findAncestors(ancestorsSet, pmod);
     }
-    if (pmod == PMod::PATERNAL || pmod == PMod::ANY) {
-        if (p_Father) {
-            ancestorsSet.insert(p_Father);
-            p_Father->findAncestors(ancestorsSet, pmod);
-        }
+
+    if (p_Father && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
+        ancestorsSet.insert(p_Father);
+        p_Father->findAncestors(ancestorsSet, pmod);
     }
 }
+
 
 std::set<Person*> Person::ancestors(PMod pmod) {
     std::set<Person*> ancestorsSet;
