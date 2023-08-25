@@ -30,11 +30,13 @@ void Person::addChild(Person* child) {
 }
 
 void Person::setMother(Person* mother) {
-    p_Mother = mother;
+    this->p_Mother = mother;
+    mother->kids.insert(this); // Add this person to the mother's children set.
 }
 
 void Person::setFather(Person* father) {
-    p_Father = father;
+    this->p_Father = father;
+    father->kids.insert(this); // Add this person to the father's children set.
 }
 
 std::set<Person*> Person::children() {
@@ -64,15 +66,18 @@ std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
     std::set<Person*> siblingSet;
     
     std::set<Person*> maternalSiblings, paternalSiblings;
-    
-    if (p_Mother) {
+
+    // Fetch maternal siblings if applicable
+    if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
         maternalSiblings = p_Mother->children();
     }
 
-    if (p_Father) {
+    // Fetch paternal siblings if applicable
+    if (p_Father && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
         paternalSiblings = p_Father->children();
     }
 
+    // Determine the siblings based on SMod
     if (smod == SMod::FULL) {
         for (auto& sibling : maternalSiblings) {
             if (paternalSiblings.find(sibling) != paternalSiblings.end()) {
@@ -99,6 +104,7 @@ std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
 
     return siblingSet;
 }
+
 
 
 
