@@ -1,4 +1,5 @@
 #include "Person.h"
+#include <iostream>
 
 // Constructor
 Person::Person(const std::string& name, Gender gender, Person* mother, Person* father)
@@ -308,10 +309,14 @@ std::set<Person*> Person::sisters(PMod pmod, SMod smod) {
 
 std::set<Person*> Person::sons() {
     std::set<Person*> result;
+    std::cout << name() << " has children: "; // Debug line
     for (auto child : kids) {
+        std::cout << child->name() << " (" << (child->gender() == Gender::MALE ? "Male" : "Female") << "), "; // Debug line
         if (child->gender() == Gender::MALE) {
             result.insert(child);
         }
     }
+    std::cout << std::endl; // Debug line
     return result;
 }
+
