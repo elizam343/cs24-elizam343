@@ -47,14 +47,21 @@ void GenePool::readFromStream(std::istream& stream) {
         std::getline(ss, motherName, '\t');
         std::getline(ss, fatherName, '\t');
 
-        if (people_.find(motherName) != people_.end()) {
+        if (!motherName.empty() && people_.find(motherName) != people_.end()) {
             people_[name]->setMother(people_[motherName]);
+            std::cout << name << "'s mother is set to: " << motherName << std::endl;  // debug output
+        } else if (!motherName.empty()) {
+            std::cout << "Could not find mother: " << motherName << " for person: " << name << std::endl;  // debug output
         }
 
-        if (people_.find(fatherName) != people_.end()) {
+        if (!fatherName.empty() && people_.find(fatherName) != people_.end()) {
             people_[name]->setFather(people_[fatherName]);
+            std::cout << name << "'s father is set to: " << fatherName << std::endl;  // debug output
+        } else if (!fatherName.empty()) {
+            std::cout << "Could not find father: " << fatherName << " for person: " << name << std::endl;  // debug output
         }
     }
+}
 }
 
 
