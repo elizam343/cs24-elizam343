@@ -30,14 +30,15 @@ void Person::addChild(Person* child) {
 }
 
 void Person::setMother(Person* mother) {
-    this->p_Mother = mother;
-    mother->kids.insert(this); // Add this person to the mother's children set.
+    p_Mother = mother;
+    mother->kids.insert(this);
 }
 
 void Person::setFather(Person* father) {
-    this->p_Father = father;
-    father->kids.insert(this); // Add this person to the father's children set.
+    p_Father = father;
+    father->kids.insert(this);
 }
+
 
 std::set<Person*> Person::children() {
     return kids;
@@ -142,18 +143,21 @@ std::set<Person*> Person::uncles(PMod pmod, SMod smod) {
     return result;
 }
 
+
 std::set<Person*> Person::brothers(PMod pmod, SMod smod) {
-    std::set<Person*> brotherSet;
-
-    auto siblingsSet = siblings(pmod, smod);
-    for (auto sibling : siblingsSet) {
-        if (sibling->gender() == Gender::MALE) {
-            brotherSet.insert(sibling);
-        }
+    std::set<Person*> result;
+    if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
+        auto maternalBrothers = p_Mother->sons();
+        result.insert(maternalBrothers.begin(), maternalBrothers.end());
     }
-
-    return brotherSet;
+    if (p_Father && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
+        auto paternalBrothers = p_Father->sons();
+        result.insert(paternalBrothers.begin(), paternalBrothers.end());
+    }
+    result.erase(this); // Ensure we don't include the current person if they're part of the list.
+    return result;
 }
+
 
 std::set<Person*> Person::cousins(PMod pmod, SMod smod) {
     std::set<Person*> cousinSet;
