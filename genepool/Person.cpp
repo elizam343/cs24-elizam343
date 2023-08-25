@@ -227,21 +227,25 @@ std::set<Person*> Person::grandsons() {
 
 std::set<Person*> Person::nephews(PMod pmod, SMod smod) {
     std::set<Person*> result;
-    for (auto sibling : siblings(pmod, smod)) {
+    auto sibs = siblings(pmod, smod);
+    for (auto sibling : sibs) {
         auto sibSons = sibling->sons();
         result.insert(sibSons.begin(), sibSons.end());
     }
     return result;
 }
 
+
 std::set<Person*> Person::nieces(PMod pmod, SMod smod) {
     std::set<Person*> result;
-    for (auto sibling : siblings(pmod, smod)) {
+    auto sibs = siblings(pmod, smod);
+    for (auto sibling : sibs) {
         auto sibDaughters = sibling->daughters();
         result.insert(sibDaughters.begin(), sibDaughters.end());
     }
     return result;
 }
+
 
 std::set<Person*> Person::parents(PMod pmod) {
     std::set<Person*> result;
@@ -256,13 +260,15 @@ std::set<Person*> Person::parents(PMod pmod) {
 
 std::set<Person*> Person::sisters(PMod pmod, SMod smod) {
     std::set<Person*> result;
-    for (auto sibling : siblings(pmod, smod)) {
+    auto sibs = siblings(pmod, smod);
+    for (auto sibling : sibs) {
         if (sibling->gender() == Gender::FEMALE) {
             result.insert(sibling);
         }
     }
     return result;
 }
+
 
 std::set<Person*> Person::sons() {
     std::set<Person*> result;
