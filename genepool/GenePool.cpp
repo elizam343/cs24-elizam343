@@ -1,5 +1,6 @@
 #include "GenePool.h"
 #include <sstream>
+#include <iostream>
 
 GenePool::GenePool(std::istream& stream) {
     readFromStream(stream);
@@ -62,7 +63,7 @@ void GenePool::readFromStream(std::istream& stream) {
         }
     }
 }
-}
+
 
 
 std::set<Person*> GenePool::everyone() const {
