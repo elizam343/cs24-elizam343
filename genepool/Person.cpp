@@ -107,7 +107,6 @@ std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
 
 
 
-
 std::set<Person*> Person::aunts(PMod pmod, SMod smod) {
     std::set<Person*> auntSet;
 
