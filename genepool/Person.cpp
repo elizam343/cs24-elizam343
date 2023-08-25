@@ -28,7 +28,10 @@ Person* Person::father() {
 
 void Person::addChild(Person* child) {
     kids.insert(child);
+    std::cout << p_Name << " added child: " << child->name() 
+              << " with gender: " << (child->gender() == Gender::MALE ? "Male" : "Female") << std::endl;
 }
+
 
 void Person::setMother(Person* mother) {
     p_Mother = mother;
