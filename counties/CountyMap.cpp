@@ -2,7 +2,7 @@
 #include "County.h"
 #include <vector>
 
-CountyMap(vector<County> counties, vector<vector<bool>> adjMatrix) {
+CountyMap::CountyMap(vector<County> counties, vector<vector<bool>> adjMatrix) {
     // TODO
 }
 
@@ -18,7 +18,7 @@ County CountyMap::getCounty(int index) {
     // TODO
 }
 
-int getNumCounties() {
+int CountyMap::getNumCounties() {
     // TODO
 }
 
