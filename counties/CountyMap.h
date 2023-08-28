@@ -9,7 +9,8 @@ using namespace std;
 class CountyMap {
 	private:
 		//storage requirement: O(e), e = number of edges between counties
-
+		vector<County> counties;
+    	vector<vector<bool>> adjacencyMatrix;
 		//add private variables here
 	public:
 		//constructor
