@@ -138,7 +138,7 @@ MyGrove::Node::Node(const char* data) {
 MyGrove::Node::Node(Node* left, Node* right) {
     this->left = left;
     this->right = right;
-    this->data = nullptr; // data is not needed as this is a concatenation of two nodes
+    this->data = nullptr;
     this->length = left->length + right->length;
 }
 
