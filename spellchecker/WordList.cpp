@@ -2,9 +2,19 @@
 #include <cmath>
 
 WordList::WordList(std::istream& stream) {
-    std::string word;
-    while (stream >> word) {
-        mWords.push_back(word);
+    std::string line;
+    while (std::getline(stream, line)) {
+        bool isLowercase = true;
+        for (char c : line) {
+            if (!std::islower(c)) {
+                isLowercase = false;
+                break;
+            }
+        }
+        if (isLowercase) {
+            //std::cout << line << std::endl;
+            mWords.push_back(line);
+        }
     }
 }
 
