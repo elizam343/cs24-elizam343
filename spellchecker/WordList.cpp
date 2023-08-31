@@ -17,8 +17,6 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
             continue;  // Skip words of different lengths
         }
 
-        float totalScore = 0.0;
-
         for (size_t i = 0; i < word.length(); ++i) {
             char c = word[i];
             Point charPoint = QWERTY[c - 'a'];  // assume lowercase letter
