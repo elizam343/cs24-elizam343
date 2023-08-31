@@ -18,16 +18,16 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
             continue; // Skip the word if its length doesn't match the number of points.
         }
 
-        bool isValid = true;  // A flag to check if the word contains only lowercase letters
+        // bool isValid = true;  // A flag to check if the word contains only lowercase letters
 
         for (size_t i = 0; i < str.length(); i++) {
-            if (str[i] < 'a' || str[i] > 'z') {
-                // Handle non-lowercase characters
-                // Assuming you want to continue and ignore this word
-                tot = 0.0;
-                isValid = false;
-                break;
-            }
+            // if (str[i] < 'a' || str[i] > 'z') {
+            //     // Handle non-lowercase characters
+            //     // Assuming you want to continue and ignore this word
+            //     tot = 0.0;
+            //     isValid = false;
+            //     break;
+            // }
 
             Point charStr = QWERTY[str[i] - 'a'];
             float x_distance = charStr.x - points[i].x;
@@ -37,9 +37,9 @@ Heap WordList::correct(const std::vector<Point>& points, size_t maxcount, float 
             tot += score;
         }
 
-        if (!isValid) {
-            continue;
-        }
+        // if (!isValid) {
+        //     continue;
+        // }
 
         float avg = tot / str.length();
 
