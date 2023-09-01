@@ -143,17 +143,19 @@ std::string MyChunkyNode::get(int index) {
     }
 }
 
-void MyChunkyNode::split() {
+MyChunkyNode* MyChunkyNode::split() {
     int total_count = count();
 
+    MyChunkyNode* new_node = nullptr;  // Initialize the new node as nullptr
+
     // Check if the node needs to be split
-    if (total_count == chunkyNodeSize) {
+    if (total_count > chunkyNodeSize) {
         // If the total count is odd, the first node should hold one more item
         int first_node_size = (total_count / 2) + (total_count % 2);
         int second_node_size = total_count - first_node_size;
 
         // Create the new node
-        MyChunkyNode* new_node = new MyChunkyNode(chunkyNodeSize);
+        new_node = new MyChunkyNode(chunkyNodeSize);
 
         // Move items to the new node
         for (int i = 0; i < second_node_size; i++) {
@@ -175,6 +177,8 @@ void MyChunkyNode::split() {
         }
         setNext(new_node);
     }
+
+    return new_node; // Return the newly created node or nullptr if no split was performed
 }
 
 

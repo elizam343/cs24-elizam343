@@ -2,7 +2,6 @@
 #ifndef MYCHUNKYNODE_H
 #define MYCHUNKYNODE_H
 using namespace std;
-
 #include "ChunkyNode.h"
 
 class MyChunkyNode: public ChunkyNode {
@@ -12,6 +11,8 @@ private:
   MyChunkyNode* nextNode;   
   int chunkyNodeSize;    
   int countVariable;    
+  
+
 
 public:
   MyChunkyNode(int chunksize = 1);
@@ -30,11 +31,12 @@ public:
   void insert(int index, const std::string& item);
   void remove(int index);
 
-  void split();
+  MyChunkyNode* MyChunkyNode::split();
   void merge();
   void decrementCount();
   void append(const std::string& item);
   std::string get(int index);
+
 
 };
 
