@@ -34,6 +34,11 @@ public:
   void decrementCount();
   void append(const std::string& item);
   std::string get(int index);
+  void shiftRight(int startIdx);
+  void shiftLeft(int startIdx);
+  void insertInCurrentNode(int index, const std::string& item);
+  void splitAndInsert(int index, const std::string& item);
+  MyChunkyNode* createNewNode();
 
 };
 
