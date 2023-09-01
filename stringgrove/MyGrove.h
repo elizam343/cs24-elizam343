@@ -24,6 +24,7 @@ public:
     void printNode(Node* node);
     char charAt(int id, int index);
     MyGrove* substr(int id, int start, int end);
+    int len(int id) const;
 
 private:
     Node** nodes;

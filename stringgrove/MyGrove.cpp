@@ -81,7 +81,12 @@ MyGrove::Node* MyGrove::substrNode(Node* node, int start, int end) {
     }
 }
 
-
+int MyGrove::len(int id) const {
+    if(id < 0 || id >= nodeCount) {
+        throw std::out_of_range("Invalid node id");
+    }
+    return nodes[id]->length;
+}
 
 
 MyGrove* MyGrove::substr(int id, int start, int end) {
