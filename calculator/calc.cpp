@@ -75,12 +75,14 @@ int main() {
         }
 
         // To skip the rest of the tokens after an error
+        // To skip the rest of the tokens after an error
         if (error) {
             std::string skipRest;
             while (iss >> skipRest);  // Empty loop to exhaust the stream
             mathstack->clear();
             continue;
         }
+
 
         if (mathstack->is_empty()) {
             std::cout << "No expression." << std::endl;
