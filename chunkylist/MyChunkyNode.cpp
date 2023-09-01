@@ -42,65 +42,50 @@ void MyChunkyNode::insert(int index, const std::string& item) {
         throw std::out_of_range("Index out of range");
     }
 
-    // If inserting at the start and the current node is the first node and it's full
-    if (index == 0 && prevNode == nullptr && countVariable == chunkyNodeSize) {
-        MyChunkyNode* newNode = new MyChunkyNode(chunkyNodeSize);
-        newNode->append(item);
-        newNode->setNext(this);
-        this->setPrev(newNode);
-        return;
-    }
-
-    // If inserting at the end and the current node is the last node and it's full
-    if (index == countVariable && nextNode == nullptr && countVariable == chunkyNodeSize) {
-        MyChunkyNode* newNode = new MyChunkyNode(chunkyNodeSize);
-        newNode->append(item);
-        newNode->setPrev(this);
-        this->setNext(newNode);
-        return;
-    }
-
     if (countVariable < chunkyNodeSize) {
         // Shift elements to the right of the insert location to make room for the new element
         for (int i = countVariable; i > index; --i) {
             itemsArray[i] = itemsArray[i - 1];
         }
+
         // Insert the new element and increase the countVariable by one
         itemsArray[index] = item;
         ++countVariable;
     } else {
         // The node is full, so we need to split it
-        MyChunkyNode* newNode = new MyChunkyNode(chunkyNodeSize);
+        int totalItems = countVariable + 1; // Total items after insertion
+        int remainingInCurrent = totalItems / 2; // For even number of totalItems, this will divide them equally
+
+        // If totalItems is odd, then remainingInCurrent will round down (due to integer division), 
+        // meaning the current node will have the extra item.
         
-        // Calculate how many items should remain in the current node after the split
-        int remainingInCurrent = (countVariable + 1) / 2; 
+        MyChunkyNode* newNode = new MyChunkyNode(chunkyNodeSize);
+
         if (index < remainingInCurrent) {
-            // Move items starting from the index of insert to the new node
-            for (int i = index; i < countVariable; ++i) {
+            // The new item should be inserted in the current node
+            for (int i = remainingInCurrent; i < chunkyNodeSize; ++i) {
                 newNode->append(itemsArray[i]);
             }
-            // Adjust count for the current node
-            countVariable = index;
-            // Insert the new item
-            this->insert(index, item);
-        } else {
-            // Move items starting from one position after where we want to insert to the new node
-            for (int i = remainingInCurrent; i < countVariable; ++i) {
-                newNode->append(itemsArray[i]);
-            }
-            // Adjust count for the current node
+            // Adjust the count of the current node to account for the moved items
             countVariable = remainingInCurrent;
-            // Insert the new item in the new node
+            this->insert(index, item); // This will now insert into the current node which has room
+        } else {
+            // The new item should be inserted in the new node
+            for (int i = remainingInCurrent - 1; i < chunkyNodeSize; ++i) {
+                newNode->append(itemsArray[i]);
+            }
+            // Adjust the count of the current node to account for the moved items
+            countVariable = remainingInCurrent - 1;
             newNode->insert(index - remainingInCurrent, item);
         }
 
-        // Adjust the next pointers
-        newNode->setNext(this->next());
-        if (newNode->next() != nullptr) {
-            newNode->next()->setPrev(newNode);
+        // Update next and previous pointers
+        newNode->nextNode = this->nextNode;
+        if (newNode->nextNode != nullptr) {
+            newNode->nextNode->prevNode = newNode;
         }
-        this->setNext(newNode);
-        newNode->setPrev(this);
+        this->nextNode = newNode;
+        newNode->prevNode = this;
     }
 }
 
@@ -147,7 +132,6 @@ void MyChunkyNode::remove(int index) {
         }
     }
 }
-
 
 
 void MyChunkyNode::decrementCount() {
@@ -202,7 +186,6 @@ void MyChunkyNode::split() {
     setNext(new_node);
   }
 }
-
 
 
 void MyChunkyNode::merge() {
