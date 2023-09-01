@@ -1,4 +1,3 @@
-
 #include "MyChunkyList.h"
 #include <stdexcept>
 
@@ -6,12 +5,12 @@ MyChunkyList::MyChunkyList(int chunksize)
     : NodeHead(nullptr), NodeTail(nullptr), chunkyNodeSize(chunksize) {}
 
 MyChunkyList::~MyChunkyList() {
-  MyChunkyNode* current = NodeHead;
-  while (current) {
-    MyChunkyNode* next = current->next();
-    delete current;
-    current = next;
-  }
+    MyChunkyNode* current = NodeHead;
+    while (current) {
+        MyChunkyNode* next = current->next();
+        delete current;
+        current = next;
+    }
 }
 
 int MyChunkyList::count() const {
@@ -25,65 +24,79 @@ int MyChunkyList::count() const {
 }
 
 void MyChunkyList::splitAndMerge() {
-  // First, merge nodes as necessary
-  MyChunkyNode* current = head();
-  while (current) {
-    current->merge();
-    current = current->next();
-  }
-
-  // Then, split nodes as necessary
-  current = head();
-  while (current) {
-    current->split();
-    current = current->next();
-  }
-}
-
-void MyChunkyList::insert(int index, const std::string& item) {
-    if (index < 0 || index > count()) {
-        throw std::out_of_range("Index out of range");
-    }
-
-    // Create a new node if list is empty
-    if (!NodeHead) {
-        NodeHead = NodeTail = new MyChunkyNode(chunkyNodeSize);
-        NodeHead->insert(0, item);
-        return;
-    }
-
-    // Find the node to insert into
-    MyChunkyNode* current = NodeHead;
-    int current_index = 0;
+    // Merging nodes as necessary
+    MyChunkyNode* current = head();
     while (current) {
-        int nodeCount = current->count();
+        current->merge();
+        current = current->next();
+    }
 
-        // If this is the right node for insertion
-        if (index <= current_index + nodeCount) {
-            current->insert(index - current_index, item);
-
-            // If the node is overfull after insertion, split it
-            if (current->count() > chunkyNodeSize) {
-                MyChunkyNode* newNode = current->split();  // This should return the new node
-                
-                // Link the new node to the list
-                newNode->setNext(current->next());
-                newNode->setPrev(current);
-                if (current->next()) {
-                    current->next()->setPrev(newNode);
-                } else {
-                    NodeTail = newNode;  // If current was the tail, update tail
-                }
-                current->setNext(newNode);
-            }
-            return;
-        }
-        
-        current_index += nodeCount;
+    // Split nodes as necessary
+    current = head();
+    while (current) {
+        current->split();
         current = current->next();
     }
 }
 
+void MyChunkyList::insert(int index, const std::string& item) {
+  if (index < 0 || index > count()) {
+    throw std::out_of_range("Index out of range");
+  }
+
+  // Create a new node if list is empty
+  if (!NodeHead) {
+    NodeHead = NodeTail = new MyChunkyNode(chunkyNodeSize);
+    NodeHead->insert(0, item);
+    return;
+  }
+
+  // If inserting at the start of the list and the head node is full, create a new head node
+  if (index == 0 && NodeHead->count() == chunkyNodeSize) {
+    MyChunkyNode* new_node = new MyChunkyNode(chunkyNodeSize);
+    new_node->setNext(NodeHead);
+    NodeHead->setPrev(new_node);
+    NodeHead = new_node;
+    NodeHead->insert(0, item);
+    return;
+  }
+
+  // If inserting at the end of the list and the tail node is full, create a new tail node
+  if (index == count() && NodeTail->count() == chunkyNodeSize) {
+    MyChunkyNode* new_node = new MyChunkyNode(chunkyNodeSize);
+    new_node->setPrev(NodeTail);
+    NodeTail->setNext(new_node);
+    NodeTail = new_node;
+    NodeTail->insert(0, item);
+    return;
+  }
+
+  // Find the node to insert into and insert the item
+  MyChunkyNode* current = NodeHead;
+  int current_index = 0;
+  while (current) {
+    if (index <= current_index + current->count()) {
+      if (current->count() < chunkyNodeSize) {
+        // Insert into this node if there's room
+        current->insert(index - current_index, item);
+        return;
+      } else {
+        // If the node is full, split it before inserting
+        current->split();
+        current->insert(index - current_index, item);
+        return;
+      }
+    }
+    current_index += current->count();
+    current = current->next();
+  }
+  if (current) {
+    current->merge();
+    if (current->next()) {
+      current->next()->merge();
+    }
+  }
+}
 
 std::string& MyChunkyList::lookup(int index) {
   if (index < 0 || index >= count()) {
@@ -105,58 +118,57 @@ std::string& MyChunkyList::lookup(int index) {
 }
 
 void MyChunkyList::remove(int index) {
-  if (index < 0 || index >= count()) {
-    throw std::out_of_range("Index out of range");
-  }
-
-  MyChunkyNode* current = NodeHead;
-  int current_index = 0;
-
-  while (current) {
-    if (index < current_index + current->count()) {
-      current->remove(index - current_index); // This function should adjust countVariable
-
-      // If the current node is empty, remove it
-      if (current->count() == 0) {
-        MyChunkyNode* prevNode = current->prev();
-        MyChunkyNode* nextNode = current->next();
-
-        if (prevNode) {
-          prevNode->setNext(nextNode);
-        } else { // the current node was the head
-          NodeHead = nextNode;
-        }
-
-        if (nextNode) {
-          nextNode->setPrev(prevNode);
-        } else { // the current node was the tail
-          NodeTail = prevNode;
-        }
-
-        delete current;
-        current = nullptr;
-
-        // If prevNode and nextNode exist and can be merged, do so
-        if (prevNode && nextNode && prevNode->count() + nextNode->count() <= chunkyNodeSize) {
-          prevNode->merge(); // This function should handle merging and deleting nodes
-          if (nextNode->next()) { // the nextNode was not the tail
-            nextNode->next()->setPrev(prevNode);
-          }
-          prevNode->setNext(nextNode->next());
-        }
-      }
-
-      // If the current node is not empty but can be merged with previous node, merge them
-      else if (current->prev() && current->prev()->count() + current->count() <= chunkyNodeSize) {
-        MyChunkyNode* prevNode = current->prev();
-        prevNode->merge(); // This function should handle merging and deleting nodes
-        current = prevNode; // as current might have been deleted, step back
-      }
-      break;
+    if (index < 0 || index >= count()) {
+        throw std::out_of_range("Index out of range");
     }
-    current_index += current->count();
-    current = current->next();
-  }
+
+    MyChunkyNode* current = NodeHead;
+    int current_index = 0;
+
+    while (current) {
+        if (index < current_index + current->count()) {
+            current->remove(index - current_index);
+
+            // If the current node is empty, remove it
+            if (current->count() == 0) {
+                MyChunkyNode* prevNode = current->prev();
+                MyChunkyNode* nextNode = current->next();
+
+                if (prevNode) {
+                    prevNode->setNext(nextNode);
+                } else { // the current node was the head
+                    NodeHead = nextNode;
+                }
+
+                if (nextNode) {
+                    nextNode->setPrev(prevNode);
+                } else { // the current node was the tail
+                    NodeTail = prevNode;
+                }
+
+                delete current;
+                current = nullptr;
+
+                // If prevNode and nextNode exist and can be merged, merge them
+                if (prevNode && nextNode && prevNode->count() + nextNode->count() <= chunkyNodeSize) {
+                    prevNode->merge();
+                    if (nextNode->next()) {
+                        nextNode->next()->setPrev(prevNode);
+                    }
+                    prevNode->setNext(nextNode->next());
+                }
+            }
+            // If current node can be merged with the previous one, merge them
+            else if (current->prev() && current->prev()->count() + current->count() <= chunkyNodeSize) {
+                MyChunkyNode* prevNode = current->prev();
+                prevNode->merge();
+                current = prevNode;
+            }
+            break;
+        }
+        current_index += current->count();
+        current = current->next();
+    }
 }
 
 

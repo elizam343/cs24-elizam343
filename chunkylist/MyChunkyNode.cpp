@@ -1,3 +1,4 @@
+
 #include "MyChunkyNode.h"
 #include <stdexcept>
 
@@ -143,44 +144,36 @@ std::string MyChunkyNode::get(int index) {
     }
 }
 
-MyChunkyNode* MyChunkyNode::split() {
-    int total_count = count();
+void MyChunkyNode::split() {
+  int total_count = count();
 
-    MyChunkyNode* new_node = nullptr;  // Initialize the new node as nullptr
+  if (total_count > chunkyNodeSize) {
+    // If the total count is odd, the first node should hold one more item
+    int first_node_size = (total_count / 2) + (total_count % 2);
+    int second_node_size = total_count - first_node_size;
 
-    // Check if the node needs to be split
-    if (total_count > chunkyNodeSize) {
-        // If the total count is odd, the first node should hold one more item
-        int first_node_size = (total_count / 2) + (total_count % 2);
-        int second_node_size = total_count - first_node_size;
+    // Create the new node
+    MyChunkyNode* new_node = new MyChunkyNode(chunkyNodeSize);
 
-        // Create the new node
-        new_node = new MyChunkyNode(chunkyNodeSize);
-
-        // Move items to the new node
-        for (int i = 0; i < second_node_size; i++) {
-            new_node->itemsArray[i] = itemsArray[first_node_size + i];
-            // Assuming itemsArray is a simple array, you can't really "clear" an element
-            // Instead, if the data is string, assign an empty string.
-            itemsArray[first_node_size + i] = ""; 
-        }
-
-        // Update counts
-        countVariable = first_node_size;
-        new_node->countVariable = second_node_size;
-
-        // Update the next and prev pointers
-        new_node->setNext(nextNode);
-        new_node->setPrev(this);
-        if (nextNode) {
-            nextNode->setPrev(new_node);
-        }
-        setNext(new_node);
+    // Move items to the new node
+    for (int i = 0; i < second_node_size; i++) {
+      new_node->itemsArray[i] = itemsArray[first_node_size + i];
+      itemsArray[first_node_size + i].clear();
     }
 
-    return new_node; // Return the newly created node or nullptr if no split was performed
-}
+    // Update counts
+    countVariable = first_node_size;
+    new_node->countVariable = second_node_size;
 
+    // Update the next and prev pointers
+    new_node->setNext(nextNode);
+    new_node->setPrev(this);
+    if (nextNode) {
+      nextNode->setPrev(new_node);
+    }
+    setNext(new_node);
+  }
+}
 
 
 
