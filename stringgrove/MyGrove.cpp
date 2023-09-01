@@ -30,24 +30,27 @@ void MyGrove::create(const char* str) {
     nodes[nodeCount++] = new Node(str);
 }
 
-void MyGrove::concat(const MyGrove* otherGrove) {
+MyGrove* MyGrove::concat(const MyGrove* otherGrove) const {
+    MyGrove* newGrove = new MyGrove();
     int newSize = this->nodeCount + otherGrove->nodeCount;
-    MyGrove::Node** newNodes = new MyGrove::Node*[newSize];
+
+    newGrove->nodes = new MyGrove::Node*[newSize];
 
     // Copy nodes from the current grove
     for (int i = 0; i < this->nodeCount; ++i) {
-        newNodes[i] = this->nodes[i];
+        newGrove->nodes[i] = this->nodes[i];
     }
 
     // Copy nodes from the other grove
     for (int i = 0; i < otherGrove->nodeCount; ++i) {
-        newNodes[this->nodeCount + i] = new Node(*(otherGrove->nodes[i])); // Assuming Node has a copy constructor.
+        newGrove->nodes[this->nodeCount + i] = new Node(*(otherGrove->nodes[i])); // Assuming Node has a copy constructor.
     }
 
-    delete[] this->nodes; // Free old memory
-    this->nodes = newNodes; // Point to new memory
-    this->nodeCount = newSize;
+    newGrove->nodeCount = newSize;
+
+    return newGrove;
 }
+
 
 
 
