@@ -11,7 +11,9 @@ MyChunkyNode::MyChunkyNode(int chunksize)
 
 MyChunkyNode::~MyChunkyNode() {
   delete[] itemsArray;
+  itemsArray = nullptr;  // Prevent dangling pointer
 }
+
 
 int MyChunkyNode::count() const {
     return countVariable;
@@ -234,8 +236,5 @@ void MyChunkyNode::merge() {
         nodeToDelete = nullptr; // To avoid dangling pointers
     }
 }
-
-
-
 
 
