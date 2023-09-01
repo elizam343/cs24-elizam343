@@ -30,13 +30,19 @@ void MyGrove::create(const char* str) {
     nodes[nodeCount++] = new Node(str);
 }
 
-void MyGrove::concat(int id1, int id2) {
-    if(id1 < 0 || id1 >= nodeCount || id2 < 0 || id2 >= nodeCount) {
-        std::cout << "Invalid node id" << std::endl;
+void MyGrove::concat(const MyGrove* otherGrove) {
+    if(!otherGrove || otherGrove->nodeCount <= 0) {
+        std::cout << "Invalid MyGrove reference or empty grove" << std::endl;
         return;
     }
-    nodes[nodeCount++] = new Node(nodes[id1], nodes[id2]);
+
+    // Using the fully qualified name for Node
+    nodes[nodeCount] = new MyGrove::Node(nodes[nodeCount - 1], otherGrove->nodes[0]);
+    // Increase the node count.
+    nodeCount++;
 }
+
+
 
 
 

@@ -19,7 +19,7 @@ public:
     ~MyGrove();
 
     void create(const char* str);
-    void concat(int id1, int id2);
+    void concat(const MyGrove* otherGrove);
     void print(int id);
     void printNode(Node* node);
     char charAt(int index) const;
