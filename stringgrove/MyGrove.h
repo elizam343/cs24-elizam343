@@ -22,14 +22,15 @@ public:
     void concat(int id1, int id2);
     void print(int id);
     void printNode(Node* node);
-    char charAt(int id, int index);
-    MyGrove* substr(int id, int start, int end);
-    int len(int id) const;
+    char charAt(int index);
+    MyGrove* substr(int start, int end);
+    int len() const;
 
 private:
     Node** nodes;
     int nodeCount;
     int nodeCapacity;
+    int nodeCount;
 
     char charAtNode(Node* node, int index);
     Node* substrNode(Node* node, int start, int end);

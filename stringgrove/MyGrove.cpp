@@ -38,12 +38,17 @@ void MyGrove::concat(int id1, int id2) {
     nodes[nodeCount++] = new Node(nodes[id1], nodes[id2]);
 }
 
-char MyGrove::charAt(int id, int index) {
-    if(id < 0 || id >= nodeCount) {
-        throw std::out_of_range("Invalid node id");
+
+
+
+char MyGrove::charAt(int index) {
+    if (nodeCount <= 0) {
+        throw std::out_of_range("No nodes available");
     }
-    return charAtNode(nodes[id], index);
+    return charAtNode(nodes[nodeCount - 1], index);
 }
+
+
 
 char MyGrove::charAtNode(Node* node, int index) {
     if(index < 0 || index >= node->length) {
@@ -81,27 +86,27 @@ MyGrove::Node* MyGrove::substrNode(Node* node, int start, int end) {
     }
 }
 
-int MyGrove::len(int id) const {
-    if(id < 0 || id >= nodeCount) {
-        throw std::out_of_range("Invalid node id");
+int MyGrove::len() const {
+    if (nodeCount <= 0) {
+        throw std::out_of_range("No nodes available");
     }
-    return nodes[id]->length;
+    return nodes[nodeCount - 1]->length;
 }
 
 
-MyGrove* MyGrove::substr(int id, int start, int end) {
-    if(id < 0 || id >= nodeCount) {
-        throw std::out_of_range("Invalid node id");
-    }
-    if(start < 0 || end > nodes[id]->length || start >= end) {
-        std::cerr << "Error: start=" << start << ", end=" << end << ", length=" << nodes[id]->length << std::endl;
-        throw std::out_of_range("Index out of range");
+
+
+
+MyGrove* MyGrove::substr(int start, int end) {
+    if (nodeCount <= 0) {
+        throw std::out_of_range("No nodes available");
     }
     MyGrove* newGrove = new MyGrove();
     newGrove->create("");
-    newGrove->nodes[0] = substrNode(nodes[id], start, end);
+    newGrove->nodes[0] = substrNode(nodes[nodeCount - 1], start, end);
     return newGrove;
 }
+
 
 
 void MyGrove::print(int id) {
