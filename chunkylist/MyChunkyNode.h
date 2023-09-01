@@ -31,7 +31,7 @@ public:
   void insert(int index, const std::string& item);
   void remove(int index);
 
-  MyChunkyNode* MyChunkyNode::split();
+  MyChunkyNode* split();
   void merge();
   void decrementCount();
   void append(const std::string& item);
