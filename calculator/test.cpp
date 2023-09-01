@@ -1,16 +1,35 @@
 #include "MyStack.h"
 #include <iostream>
-
-
-// Use this file to test your MyStack class!
-// This file won't be graded - do whatever you want.
+#include <cstdio>
+#include <string>
+#include <vector>
 
 int main() {
-  MyStack* stack = new MyStack();
+    const char* cmd = "./calc";
+    std::vector<std::string> testCases = {
+        "-",
+        "2 +",
+        "- Unknown",
+        "7.5 2.5 *",
+        "0.7 0.3 %",
+        "+ Unknown",
+        "+"
+    };
 
-  // TODO: Replace this with something useful!
-  std::cout << "This program doesn't do anything yet...\n";
+    for (const auto& testCase : testCases) {
+        std::cout << "Testing: " << testCase << std::endl;
+        
+        FILE* pipe = popen(cmd, "w");
+        if (!pipe) {
+            std::cerr << "Failed to run the command." << std::endl;
+            return 1;
+        }
+        
+        fprintf(pipe, "%s\n", testCase.c_str());
+        pclose(pipe);
+    }
 
-  delete stack;
-  return 0;
+    std::cout << "Testing completed." << std::endl;
+    return 0;
 }
+
