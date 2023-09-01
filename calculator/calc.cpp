@@ -1,4 +1,3 @@
-// This is calc.cpp
 #include "Stack.h"
 #include <iostream>
 #include <sstream>
@@ -8,7 +7,23 @@ bool is_operator(const std::string& token) {
     return token == "+" || token == "-" || token == "*" || token == "/" || token == "%" || token == "^" || token == "~";
 }
 
-double apply_operator(double a, double b, const std::string& op) {
+double apply_operator(Stack* mathstack, const std::string& op) {
+    if (mathstack->is_empty()) {
+        throw std::runtime_error("Not enough operands.");
+    }
+    
+    double b = mathstack->pop();
+    
+    if (op == "~") {
+        return -b;
+    }
+
+    if (mathstack->is_empty()) {
+        throw std::runtime_error("Not enough operands.");
+    }
+
+    double a = mathstack->pop();
+
     if (op == "+") return a + b;
     if (op == "-") return a - b;
     if (op == "*") return a * b;
@@ -36,41 +51,45 @@ int main() {
         std::istringstream iss(line);
         std::string token;
         bool error = false;
-        int operand_count = 0;  
 
         while (iss >> token) {
             if (is_operator(token)) {
-                // ... (existing code)
+                try {
+                    double result = apply_operator(mathstack, token);
+                    mathstack->push(result);
+                } catch (const std::runtime_error& e) {
+                    std::cout << e.what() << std::endl;
+                    error = true;
+                    break;
+                }
             } else {
                 try {
                     double value = std::stod(token);
                     mathstack->push(value);
-                    operand_count++;  
                 } catch (std::invalid_argument&) {
                     std::cout << "Unknown token." << std::endl;
                     error = true;
-                    break;  // Break out of the token-processing loop
+                    break;
                 }
             }
         }
 
         if (error) {
             mathstack->clear();
-            operand_count = 0;  
-            continue;  // Move to the next line of input without processing further.
+            continue;
         }
 
         if (mathstack->is_empty()) {
             std::cout << "No expression." << std::endl;
+            continue;
+        }
+
+        double result = mathstack->pop();
+        if(mathstack->is_empty()) {
+            std::cout << "= " << result << std::endl;
         } else {
-            if (operand_count > 1) {
-                std::cout << "Too many operands." << std::endl;
-            } else {
-                double result = mathstack->top();
-                std::cout << "= " << result << std::endl;
-            }
+            std::cout << "Too many operands." << std::endl;
             mathstack->clear();
-            operand_count = 0;  
         }
     }
 
