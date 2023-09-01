@@ -51,42 +51,39 @@ void MyChunkyNode::insert(int index, const std::string& item) {
         // Insert the new element and increase the countVariable by one
         itemsArray[index] = item;
         ++countVariable;
-    } else {
-        // The node is full, so we need to split it
+    } 
+    else {
         MyChunkyNode* newNode = new MyChunkyNode(chunkyNodeSize);
 
-        int totalItemsAfterInsert = countVariable + 1;
-        int itemsInFirstAfterSplit;
+        int total_items = countVariable + 1; // +1 for the new item
+        int split_point = total_items / 2;
 
-        if (totalItemsAfterInsert % 2 == 0) { // Even number of items
-            itemsInFirstAfterSplit = totalItemsAfterInsert / 2;
-        } else { // Odd number of items
-            itemsInFirstAfterSplit = (totalItemsAfterInsert / 2) + 1;
-        }
-
-        if (index < itemsInFirstAfterSplit) {
-            // Insertion happens in the original (this) node
-            for (int i = itemsInFirstAfterSplit; i < chunkyNodeSize; ++i) {
+        if (index <= split_point) {
+            // The new item goes to the original node
+            for (int i = split_point; i < countVariable; ++i) {
                 newNode->append(itemsArray[i]);
             }
-            countVariable = itemsInFirstAfterSplit;
-            this->insert(index, item); // Recursion will not lead to infinite loop, as we've made room
+            countVariable = split_point;
+            insert(index, item);
         } else {
-            // Insertion happens in the new node
-            for (int i = itemsInFirstAfterSplit - 1; i < chunkyNodeSize; ++i) {
-                newNode->append(itemsArray[i]);
+            // The new item goes to the new node
+            for (int i = split_point; i <= countVariable; ++i) {
+                if (i != index) {
+                    newNode->append(itemsArray[i]);
+                } else {
+                    newNode->append(item);
+                }
             }
-            countVariable = itemsInFirstAfterSplit - 1;
-            newNode->insert(index - itemsInFirstAfterSplit, item);
+            countVariable = split_point;
         }
 
-        // Update the next and previous pointers for the new node
-        newNode->nextNode = this->nextNode;
-        if (newNode->nextNode != nullptr) {
-            newNode->nextNode->prevNode = newNode;
+        // Update the next and previous pointers
+        if (this->nextNode != nullptr) {
+            this->nextNode->prevNode = newNode;
         }
-        this->nextNode = newNode;
+        newNode->nextNode = this->nextNode;
         newNode->prevNode = this;
+        this->nextNode = newNode;
     }
 }
 
