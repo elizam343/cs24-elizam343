@@ -1,4 +1,6 @@
+// This is calc.cpp
 #include "Stack.h"
+
 #include <iostream>
 #include <sstream>
 #include <cmath>
@@ -35,7 +37,7 @@ int main() {
         std::istringstream iss(line);
         std::string token;
         bool error = false;
-        int operand_count = 0;
+        int operand_count = 0;  
 
         while (iss >> token) {
             if (is_operator(token)) {
@@ -63,7 +65,7 @@ int main() {
                     try {
                         double result = apply_operator(a, b, token);
                         mathstack->push(result);
-                        operand_count++;
+                        operand_count++;  
                     } catch (std::runtime_error& e) {
                         std::cout << e.what() << std::endl;
                         error = true;
@@ -74,7 +76,7 @@ int main() {
                 try {
                     double value = std::stod(token);
                     mathstack->push(value);
-                    operand_count++;
+                    operand_count++;  
                 } catch (std::invalid_argument&) {
                     std::cout << "Unknown token." << std::endl;
                     error = true;
@@ -83,29 +85,26 @@ int main() {
             }
         }
 
-        // Debug statement to view operand count
-        //std::cout << "[DEBUG] Operand count: " << operand_count << std::endl;
-
         if (error) {
             mathstack->clear();
-            operand_count = 0;  // Ensure operand count reset
+            operand_count = 0;  
             continue;
         }
 
-        if (mathstack->is_empty()) {
+        if (operand_count > 1) {
+            std::cout << "Too many operands." << std::endl;
+            mathstack->clear();
+            operand_count = 0;  
+        } else if (mathstack->is_empty()) {
             std::cout << "No expression." << std::endl;
         } else {
-            if (operand_count > 1) {
-                std::cout << "Too many operands." << std::endl;
-            } else {
-                double result = mathstack->top();
-                std::cout << "= " << result << std::endl;
-            }
+            double result = mathstack->top();
+            std::cout << "= " << result << std::endl;
             mathstack->clear();
-            operand_count = 0;  // Ensure operand count reset
+            operand_count = 0;  
         }
     }
 
-    delete mathstack;
+    delete mathstack; 
     return 0;
 }
