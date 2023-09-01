@@ -2,6 +2,7 @@
 #define MYGROVE_H
 
 class MyGrove {
+const int INITIAL_CAPACITY = 10;  // or whatever value you see fit
 public:
     class Node {
     public:
