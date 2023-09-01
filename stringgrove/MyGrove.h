@@ -30,7 +30,6 @@ private:
     Node** nodes;
     int nodeCount;
     int nodeCapacity;
-    int nodeCount;
 
     char charAtNode(Node* node, int index);
     Node* substrNode(Node* node, int start, int end);
