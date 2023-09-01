@@ -20,15 +20,21 @@ MyGrove::~MyGrove() {
 }
 
 void MyGrove::create(const char* str) {
-    if(nodeCount == nodeCapacity) {
-        Node** newNodes = new Node*[nodeCapacity*2];
-        for(int i = 0; i < nodeCount; i++) newNodes[i] = nodes[i];
+    // Check and expand the nodes array if necessary
+    if (nodeCount == nodeCapacity) {
+        nodeCapacity *= 2;
+        Node** newNodes = new Node*[nodeCapacity];
+        for (int i = 0; i < nodeCount; i++) {
+            newNodes[i] = nodes[i];
+        }
         delete[] nodes;
         nodes = newNodes;
-        nodeCapacity *= 2;
     }
+    
+    // Add the new Node
     nodes[nodeCount++] = new Node(str);
 }
+
 
 MyGrove* MyGrove::concat(const MyGrove* otherGrove) const {
     MyGrove* newGrove = new MyGrove();
