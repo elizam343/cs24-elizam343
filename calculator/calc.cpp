@@ -52,6 +52,25 @@ int main() {
         std::string token;
         bool error = false;
 
+        // First pass: check for unknown tokens
+        std::istringstream checkIss(line);  // Create a new istringstream to not disrupt the main one
+        while (checkIss >> token) {
+            if (!is_operator(token)) {
+                try {
+                    std::stod(token);  // Check if it can be converted to double
+                } catch (std::invalid_argument&) {
+                    std::cout << "Unknown token." << std::endl;
+                    error = true;
+                    break;
+                }
+            }
+        }
+
+        if (error) {
+            continue;
+        }
+
+        // Now that we've checked for unknown tokens, let's evaluate the expression.
         while (iss >> token) {
             if (is_operator(token)) {
                 try {
@@ -67,7 +86,8 @@ int main() {
                     double value = std::stod(token);
                     mathstack->push(value);
                 } catch (std::invalid_argument&) {
-                    //std::cout << "[DEBUG] Inside invalid_argument catch block." << std::endl;
+                    // We've already checked for unknown tokens, so this part shouldn't be reached.
+                    // But it's good practice to keep it for robustness.
                     std::cout << "Unknown token." << std::endl;
                     error = true;
                     break;
@@ -75,10 +95,7 @@ int main() {
             }
         }
 
-        // To skip the rest of the tokens after an error
         if (error) {
-            std::string skipRest;
-            while (iss >> skipRest);  // Empty loop to exhaust the stream
             mathstack->clear();
             continue;
         }

@@ -13,7 +13,24 @@ int main() {
         "7.5 2.5 *",
         "0.7 0.3 %",
         "+ Unknown",
-        "+"
+        "+",
+        "a",
+        "a b c",
+        "5 a +",
+        "+ a",
+        "5 6 a +",
+        "5 a 6 +",
+        "a 5 6 +",
+        "a b c +",
+        "5 a b +",
+        "5 6 a b +",
+        "5 a b 6 +",
+        "a b 5 6 +",
+        "~ a",
+        "a ~",
+        "# $",
+        "% &",
+        "* @"
     };
 
     for (const auto& testCase : testCases) {
@@ -32,4 +49,3 @@ int main() {
     std::cout << "Testing completed." << std::endl;
     return 0;
 }
-
