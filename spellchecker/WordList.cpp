@@ -12,7 +12,6 @@ WordList::WordList(std::istream& stream) {
             }
         }
         if (isLowercase) {
-            //std::cout << line << std::endl;
             mWords.push_back(line);
         }
     }
