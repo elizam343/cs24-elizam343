@@ -53,33 +53,34 @@ void MyChunkyNode::insert(int index, const std::string& item) {
         ++countVariable;
     } else {
         // The node is full, so we need to split it
-        int totalItems = countVariable + 1; // Total items after insertion
-        int remainingInCurrent = totalItems / 2; // For even number of totalItems, this will divide them equally
-
-        // If totalItems is odd, then remainingInCurrent will round down (due to integer division), 
-        // meaning the current node will have the extra item.
-        
         MyChunkyNode* newNode = new MyChunkyNode(chunkyNodeSize);
 
-        if (index < remainingInCurrent) {
-            // The new item should be inserted in the current node
-            for (int i = remainingInCurrent; i < chunkyNodeSize; ++i) {
-                newNode->append(itemsArray[i]);
-            }
-            // Adjust the count of the current node to account for the moved items
-            countVariable = remainingInCurrent;
-            this->insert(index, item); // This will now insert into the current node which has room
-        } else {
-            // The new item should be inserted in the new node
-            for (int i = remainingInCurrent - 1; i < chunkyNodeSize; ++i) {
-                newNode->append(itemsArray[i]);
-            }
-            // Adjust the count of the current node to account for the moved items
-            countVariable = remainingInCurrent - 1;
-            newNode->insert(index - remainingInCurrent, item);
+        int totalItemsAfterInsert = countVariable + 1;
+        int itemsInFirstAfterSplit;
+
+        if (totalItemsAfterInsert % 2 == 0) { // Even number of items
+            itemsInFirstAfterSplit = totalItemsAfterInsert / 2;
+        } else { // Odd number of items
+            itemsInFirstAfterSplit = (totalItemsAfterInsert / 2) + 1;
         }
 
-        // Update next and previous pointers
+        if (index < itemsInFirstAfterSplit) {
+            // Insertion happens in the original (this) node
+            for (int i = itemsInFirstAfterSplit; i < chunkyNodeSize; ++i) {
+                newNode->append(itemsArray[i]);
+            }
+            countVariable = itemsInFirstAfterSplit;
+            this->insert(index, item); // Recursion will not lead to infinite loop, as we've made room
+        } else {
+            // Insertion happens in the new node
+            for (int i = itemsInFirstAfterSplit - 1; i < chunkyNodeSize; ++i) {
+                newNode->append(itemsArray[i]);
+            }
+            countVariable = itemsInFirstAfterSplit - 1;
+            newNode->insert(index - itemsInFirstAfterSplit, item);
+        }
+
+        // Update the next and previous pointers for the new node
         newNode->nextNode = this->nextNode;
         if (newNode->nextNode != nullptr) {
             newNode->nextNode->prevNode = newNode;
