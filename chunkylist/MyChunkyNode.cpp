@@ -211,31 +211,30 @@ void MyChunkyNode::split() {
 
 
 void MyChunkyNode::merge() {
-    // Check if next node exists and if merging doesn't exceed the maximum chunk size
     if (nextNode && (countVariable + nextNode->countVariable) <= chunkyNodeSize) {
-
-        // Move items from the next node to this node
+        // Transfer items
         for (int i = 0; i < nextNode->countVariable; i++) {
             if (countVariable + i >= chunkyNodeSize) {
-                throw std::runtime_error("Attempting to write past the end of itemsArray");
+                throw std::runtime_error("Overflowing itemsArray during merge");
             }
             itemsArray[countVariable + i] = nextNode->itemsArray[i];
         }
 
-        // Update item count for current node
         countVariable += nextNode->countVariable;
 
-        // Update the linked list pointers
-        MyChunkyNode* toDelete = nextNode;  // Temporary pointer for later deletion
-        nextNode = nextNode->nextNode;      
+        // Adjust pointers
+        MyChunkyNode* nodeToDelete = nextNode;
+        nextNode = nodeToDelete->nextNode;
+
         if (nextNode) {
             nextNode->prevNode = this;
         }
 
-        // Delete the merged node
-        delete toDelete;
+        delete nodeToDelete;
+        nodeToDelete = nullptr; // To avoid dangling pointers
     }
 }
+
 
 
 
