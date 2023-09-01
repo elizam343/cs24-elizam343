@@ -24,16 +24,10 @@ int MyChunkyList::count() const {
 }
 
 void MyChunkyList::splitAndMerge() {
-    // Merging nodes as necessary
-    MyChunkyNode* current = head();
+    // Split and Merge nodes as necessary
+    MyChunkyNode* current = NodeHead;
     while (current) {
         current->merge();
-        current = current->next();
-    }
-
-    // Split nodes as necessary
-    current = head();
-    while (current) {
         current->split();
         current = current->next();
     }
@@ -148,22 +142,8 @@ void MyChunkyList::remove(int index) {
 
                 delete current;
                 current = nullptr;
-
-                // If prevNode and nextNode exist and can be merged, merge them
-                if (prevNode && nextNode && prevNode->count() + nextNode->count() <= chunkyNodeSize) {
-                    prevNode->merge();
-                    if (nextNode->next()) {
-                        nextNode->next()->setPrev(prevNode);
-                    }
-                    prevNode->setNext(nextNode->next());
-                }
             }
-            // If current node can be merged with the previous one, merge them
-            else if (current->prev() && current->prev()->count() + current->count() <= chunkyNodeSize) {
-                MyChunkyNode* prevNode = current->prev();
-                prevNode->merge();
-                current = prevNode;
-            }
+            // If the remaining code in the MyChunkyNode::remove was efficient, you wouldn't need further adjustments here, as node merging and splitting are already handled in the node's remove method.
             break;
         }
         current_index += current->count();
