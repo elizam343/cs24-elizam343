@@ -31,17 +31,23 @@ void MyGrove::create(const char* str) {
 }
 
 void MyGrove::concat(const MyGrove* otherGrove) {
-    if(!otherGrove || otherGrove->nodeCount <= 0) {
-        std::cout << "Invalid MyGrove reference or empty grove" << std::endl;
-        return;
+    int newSize = this->nodeCount + otherGrove->nodeCount;
+    MyGrove::Node** newNodes = new MyGrove::Node*[newSize];
+
+    // Copy nodes from the current grove
+    for (int i = 0; i < this->nodeCount; ++i) {
+        newNodes[i] = this->nodes[i];
     }
 
-    // Using the fully qualified name for Node
-    nodes[nodeCount] = new MyGrove::Node(nodes[nodeCount - 1], otherGrove->nodes[0]);
-    // Increase the node count.
-    nodeCount++;
-}
+    // Copy nodes from the other grove
+    for (int i = 0; i < otherGrove->nodeCount; ++i) {
+        newNodes[this->nodeCount + i] = new Node(*(otherGrove->nodes[i])); // Assuming Node has a copy constructor.
+    }
 
+    delete[] this->nodes; // Free old memory
+    this->nodes = newNodes; // Point to new memory
+    this->nodeCount = newSize;
+}
 
 
 
