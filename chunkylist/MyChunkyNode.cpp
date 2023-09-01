@@ -143,35 +143,25 @@ std::string MyChunkyNode::get(int index) {
     }
 }
 
-void MyChunkyNode::split() {
-  int total_count = count();
-
-  if (total_count > chunkyNodeSize) {
-    // If the total count is odd, the first node should hold one more item
-    int first_node_size = (total_count / 2) + (total_count % 2);
-    int second_node_size = total_count - first_node_size;
-
-    // Create the new node
+MyChunkyNode* MyChunkyNode::split() {
     MyChunkyNode* new_node = new MyChunkyNode(chunkyNodeSize);
+    int midpoint = (count() + 1) / 2;  // Split at middle. If odd, original node gets extra.
 
-    // Move items to the new node
-    for (int i = 0; i < second_node_size; i++) {
-      new_node->itemsArray[i] = itemsArray[first_node_size + i];
-      itemsArray[first_node_size + i].clear();
+    // Transfer elements from this node to new_node
+    for (int i = midpoint; i < count(); i++) {
+        new_node->items().push_back(items()[i]);
     }
+    items().resize(midpoint);  // Truncate current items to midpoint
 
-    // Update counts
-    countVariable = first_node_size;
-    new_node->countVariable = second_node_size;
-
-    // Update the next and prev pointers
-    new_node->setNext(nextNode);
+    // Adjust linked list pointers
+    new_node->setNext(this->next());
+    if (this->next()) {
+        this->next()->setPrev(new_node);
+    }
+    this->setNext(new_node);
     new_node->setPrev(this);
-    if (nextNode) {
-      nextNode->setPrev(new_node);
-    }
-    setNext(new_node);
-  }
+
+    return new_node;
 }
 
 
