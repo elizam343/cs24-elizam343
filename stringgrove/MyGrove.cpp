@@ -41,16 +41,17 @@ void MyGrove::concat(int id1, int id2) {
 
 
 
-char MyGrove::charAt(int index) {
-    if (nodeCount <= 0) {
-        throw std::out_of_range("No nodes available");
+char MyGrove::charAt(int index) const {
+    if (!this->node || index < 0 || index >= this->node->length) {
+        throw std::out_of_range("Index out of range");
     }
-    return charAtNode(nodes[nodeCount - 1], index);
+    return charAtNode(this->node, index);
 }
 
 
 
-char MyGrove::charAtNode(Node* node, int index) {
+
+char MyGrove::charAtNode(const Node* node, int index) const {
     if(index < 0 || index >= node->length) {
         throw std::out_of_range("Index out of range");
     }
@@ -66,23 +67,29 @@ char MyGrove::charAtNode(Node* node, int index) {
 }
 
 
-MyGrove::Node* MyGrove::substrNode(Node* node, int start, int end) {
-    if(!node || start < 0 || start >= end || end > node->length) {
-        std::cerr << "Error: start=" << start << ", end=" << end << ", node->length=" << node->length << std::endl;
-        throw std::out_of_range("Index out of range");
-    }
 
-    if(node->left || node->right) {
-        int leftLength = node->left ? node->left->length : 0;
-        Node* left = (start < leftLength) ? substrNode(node->left, start, std::min(end, leftLength)) : nullptr;
-        Node* right = (end > leftLength) ? substrNode(node->right, std::max(0, start - leftLength), end - leftLength) : nullptr;
-        return new Node(left, right);
+MyGrove::Node* MyGrove::substrNode(const Node* current, int start, int end) const {
+    if (start >= end) {
+        return nullptr; // base case
     }
-    else {
+    
+    if (!current->left && !current->right) { // leaf node
         char* substring = new char[end - start + 1];
-        std::copy(node->data + start, node->data + end, substring);
-        substring[end - start] = '\0';  
+        std::copy(current->data + start, current->data + end, substring);
+        substring[end - start] = '\0';
         return new Node(substring);
+    } else {
+        int leftLength = current->left ? current->left->length : 0;
+        
+        if (end <= leftLength) {
+            return substrNode(current->left, start, end);
+        } else if (start >= leftLength) {
+            return substrNode(current->right, start - leftLength, end - leftLength);
+        } else {
+            Node* leftSubstr = substrNode(current->left, start, leftLength);
+            Node* rightSubstr = substrNode(current->right, 0, end - leftLength);
+            return new Node(leftSubstr, rightSubstr);
+        }
     }
 }
 
@@ -97,13 +104,13 @@ int MyGrove::len() const {
 
 
 
-MyGrove* MyGrove::substr(int start, int end) {
-    if (nodeCount <= 0) {
-        throw std::out_of_range("No nodes available");
+MyGrove* MyGrove::substr(int start, int end) const {
+    if (start < 0 || end > len() || start >= end) {
+        throw std::out_of_range("Index out of range");
     }
+    
     MyGrove* newGrove = new MyGrove();
-    newGrove->create("");
-    newGrove->nodes[0] = substrNode(nodes[nodeCount - 1], start, end);
+    newGrove->node = substrNode(node, start, end);
     return newGrove;
 }
 
