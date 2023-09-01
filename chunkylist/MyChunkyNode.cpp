@@ -211,32 +211,32 @@ void MyChunkyNode::split() {
 
 
 void MyChunkyNode::merge() {
-  // Only merge if the next node exists and the total number of items in this node and the next node is less than or equal to chunkyNodeSize
-  if ((nextNode && (countVariable + nextNode->countVariable) <= chunkyNodeSize)) {
-    // Move items from the next node to this node
-    for (int i = 0; i < nextNode->countVariable; i++) {
-      if(countVariable + i >= chunkyNodeSize) {
-        throw std::runtime_error("Attempting to write past the end of itemsArray");
-      }
-      itemsArray[countVariable + i] = nextNode->itemsArray[i];
+    // Check if next node exists and if merging doesn't exceed the maximum chunk size
+    if (nextNode && (countVariable + nextNode->countVariable) <= chunkyNodeSize) {
+
+        // Move items from the next node to this node
+        for (int i = 0; i < nextNode->countVariable; i++) {
+            if (countVariable + i >= chunkyNodeSize) {
+                throw std::runtime_error("Attempting to write past the end of itemsArray");
+            }
+            itemsArray[countVariable + i] = nextNode->itemsArray[i];
+        }
+
+        // Update item count for current node
+        countVariable += nextNode->countVariable;
+
+        // Update the linked list pointers
+        MyChunkyNode* toDelete = nextNode;  // Temporary pointer for later deletion
+        nextNode = nextNode->nextNode;      
+        if (nextNode) {
+            nextNode->prevNode = this;
+        }
+
+        // Delete the merged node
+        delete toDelete;
     }
-
-    // Adjust the count variables
-    countVariable += nextNode->countVariable;
-
-    // Hold the nextNode in a temp pointer
-    MyChunkyNode* toDelete = nextNode;
-
-    // Update the next pointer of this node and prev pointer of nextNode's next node
-    nextNode = nextNode->nextNode;
-    if (nextNode) {
-      nextNode->prevNode = this;
-    }
-
-    // Deleting the node that has been merged
-    delete toDelete;
-  }
 }
+
 
 
 
