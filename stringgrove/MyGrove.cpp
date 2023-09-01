@@ -7,7 +7,7 @@ MyGrove::MyGrove(const char* str) {
 
 MyGrove::MyGrove() {
     nodeCount = 0;
-    nodeCapacity = INITIAL_CAPACITY; // Assuming you have a defined INITIAL_CAPACITY, otherwise replace with a starting value.
+    nodeCapacity = INITIAL_CAPACITY;
     nodes = new Node*[nodeCapacity];
 }
 
