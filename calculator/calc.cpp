@@ -67,7 +67,7 @@ int main() {
                     double value = std::stod(token);
                     mathstack->push(value);
                 } catch (std::invalid_argument&) {
-                    std::cout << "[DEBUG] Inside invalid_argument catch block." << std::endl;
+                    //std::cout << "[DEBUG] Inside invalid_argument catch block." << std::endl;
                     std::cout << "Unknown token." << std::endl;
                     error = true;
                     break;
