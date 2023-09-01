@@ -1,9 +1,9 @@
 #ifndef MYGROVE_H
 #define MYGROVE_H
 
-class MyGrove {
-const int INITIAL_CAPACITY = 10;  // or whatever value you see fit
+class MyGrove { 
 public:
+    static constexpr int INITIAL_CAPACITY = 10;
     class Node {
     public:
         char* data;
@@ -11,7 +11,6 @@ public:
         Node* right;
         int length;
 
-        Node(const char* str);
         Node(Node* leftNode, Node* rightNode);
     };
 
@@ -26,6 +25,9 @@ public:
     char charAt(int index) const;
     MyGrove* substr(int start, int end) const;
     int len() const;
+    int getNodeCount() const {
+        return nodeCount;
+    }
 
 private:
     Node** nodes;

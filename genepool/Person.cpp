@@ -162,6 +162,7 @@ std::set<Person*> Person::brothers(PMod pmod, SMod smod) {
 
 
 
+
 std::set<Person*> Person::cousins(PMod pmod, SMod smod) {
     std::set<Person*> cousinSet;
 
@@ -312,6 +313,7 @@ std::set<Person*> Person::sisters(PMod pmod, SMod smod) {
 }
 
 
+
 std::set<Person*> Person::sons() {
     std::set<Person*> result;
     for (auto child : kids) {
@@ -321,5 +323,7 @@ std::set<Person*> Person::sons() {
     }
     return result;
 }
+
+
 
 

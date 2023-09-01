@@ -1,11 +1,13 @@
 #include "MyGrove.h"
 #include <iostream>
+#include <cstring>
 
 MyGrove::MyGrove(const char* str) {
     create(str);
 }
 
 MyGrove::MyGrove() {
+    nodes = new Node*[INITIAL_CAPACITY];
     nodeCount = 0;
     nodeCapacity = INITIAL_CAPACITY;
     nodes = new Node*[nodeCapacity];
@@ -19,6 +21,27 @@ MyGrove::~MyGrove() {
     }
     delete[] nodes;
 }
+
+
+
+MyGrove::Node::Node(Node* leftNode, Node* rightNode) {
+    left = leftNode;
+    right = rightNode;
+    
+    // Assuming you want to concatenate the data from both nodes:
+    int leftLength = (leftNode) ? strlen(leftNode->data) : 0;
+    int rightLength = (rightNode) ? strlen(rightNode->data) : 0;
+    
+    data = new char[leftLength + rightLength + 1]; // +1 for null terminator
+    if(leftNode) strcpy(data, leftNode->data);
+    if(rightNode) strcpy(data + leftLength, rightNode->data);
+    
+    // Set the length of the new node
+    length = leftLength + rightLength;
+}
+
+
+
 
 void MyGrove::create(const char* str) {
     // Check and expand the nodes array if necessary
@@ -43,22 +66,20 @@ MyGrove* MyGrove::concat(const MyGrove* otherGrove) const {
 
     newGrove->nodes = new MyGrove::Node*[newSize];
 
-    // Copy nodes from the current grove
+    // Deep copy nodes from the current grove
     for (int i = 0; i < this->nodeCount; ++i) {
-        newGrove->nodes[i] = this->nodes[i];
+        newGrove->nodes[i] = new Node(*(this->nodes[i]));
     }
 
-    // Copy nodes from the other grove
+    // Deep copy nodes from the other grove
     for (int i = 0; i < otherGrove->nodeCount; ++i) {
-        newGrove->nodes[this->nodeCount + i] = new Node(*(otherGrove->nodes[i])); // Assuming Node has a copy constructor.
+        newGrove->nodes[this->nodeCount + i] = new Node(*(otherGrove->nodes[i]));
     }
 
     newGrove->nodeCount = newSize;
 
     return newGrove;
 }
-
-
 
 
 
