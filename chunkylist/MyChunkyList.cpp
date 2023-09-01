@@ -33,6 +33,18 @@ void MyChunkyList::splitAndMerge() {
     }
 }
 
+MyChunkyNode* MyChunkyList::lastNode(MyChunkyNode* startNode) const {
+    MyChunkyNode* currentNode = startNode;
+    while (currentNode->next() != nullptr) {
+        currentNode = currentNode->next();
+    }
+    return currentNode;
+}
+
+
+
+
+
 void MyChunkyList::insert(int index, const std::string& item) {
   if (index < 0 || index > count()) {
     throw std::out_of_range("Index out of range");

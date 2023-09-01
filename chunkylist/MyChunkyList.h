@@ -25,6 +25,7 @@ public:
   MyChunkyNode* tail() const;
 
   void splitAndMerge();
+  MyChunkyNode* lastNode(MyChunkyNode* startNode) const;
 
 
 };
