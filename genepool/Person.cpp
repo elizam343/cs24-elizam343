@@ -1,10 +1,5 @@
 #include "Person.h"
 
-// Constructor
-Person::Person(const std::string& name, Gender gender)
-    : mName(name), mGender(gender), mMother(nullptr), mFather(nullptr) {}
-
-
 std::set<Person*> Person::ancestors(PMod pmod) {
     std::set<Person*> result;
 
