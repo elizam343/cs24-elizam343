@@ -4,33 +4,6 @@
 Person::Person(const std::string& name, Gender gender)
     : mName(name), mGender(gender), mMother(nullptr), mFather(nullptr) {}
 
-const std::string& Person::name() const {
-    return mName;
-}
-
-Gender Person::gender() const {
-    return mGender;
-}
-
-Person* Person::mother() {
-    return mMother;
-}
-
-Person* Person::father() {
-    return mFather;
-}
-
-void Person::setMother(Person* mother) {
-    mMother = mother;
-}
-
-void Person::setFather(Person* father) {
-    mFather = father;
-}
-
-void Person::addChild(Person* child) {
-    mChildren.insert(child);
-}
 
 std::set<Person*> Person::ancestors(PMod pmod) {
     std::set<Person*> result;
