@@ -12,9 +12,6 @@
 // You can edit it if you want, but you shouldn't need to.
 // Gradescope will use the original version.
 
-/*
-
-
 
 // Helper class to sort person pointers by name:
 struct Compare {
@@ -84,56 +81,3 @@ int main(int argc, char** argv) {
   delete pool;
   return 0;
 }
-
-*/
-
-#include <cassert>
-
-void testGenePool() {
-    // Assuming you've a file named "data.tsv" with content:
-    // Alice   Female  -   Bob
-    // Bob     Male    -   -
-    // Charlie Male    Alice Bob
-    // Dana    Female  Alice Bob
-
-    std::ifstream inputFile("data.tsv");
-    GenePool genePool(inputFile);
-
-    // Let's test some basic functionality
-    Person* alice = genePool.find("Alice");
-    Person* bob = genePool.find("Bob");
-    Person* charlie = genePool.find("Charlie");
-    Person* dana = genePool.find("Dana");
-
-    // Basic assertions
-    assert(alice && alice->gender() == Gender::FEMALE);
-    assert(bob && bob->gender() == Gender::MALE);
-    assert(charlie && charlie->gender() == Gender::MALE);
-    assert(dana && dana->gender() == Gender::FEMALE);
-
-    // Parental relationships
-    assert(charlie->mother() == alice);
-    assert(charlie->father() == bob);
-    assert(dana->mother() == alice);
-    assert(dana->father() == bob);
-
-    // Children relationships
-    std::set<Person*> aliceChildren = alice->children();
-    assert(aliceChildren.find(charlie) != aliceChildren.end());
-    assert(aliceChildren.find(dana) != aliceChildren.end());
-
-    // Siblings
-    std::set<Person*> charlieSiblings = charlie->siblings();
-    assert(charlieSiblings.find(dana) != charlieSiblings.end());
-
-    std::set<Person*> danaSiblings = dana->siblings();
-    assert(danaSiblings.find(charlie) != danaSiblings.end());
-
-    std::cout << "All tests passed!" << std::endl;
-}
-
-int main() {
-    testGenePool();
-    return 0;
-}
-

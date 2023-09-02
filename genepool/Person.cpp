@@ -1,198 +1,117 @@
 #include "Person.h"
-#include <iostream>
 
 // Constructor
-Person::Person(const std::string& name, Gender gender, Person* mother, Person* father)
-    : p_Name(name), p_Gender(gender), p_Mother(mother), p_Father(father) {}
-
-// Destructor
-Person::~Person() {
-    // any cleanup logic, if necessary
-}
+Person::Person(const std::string& name, Gender gender)
+    : mName(name), mGender(gender), mMother(nullptr), mFather(nullptr) {}
 
 const std::string& Person::name() const {
-    return p_Name;
+    return mName;
 }
 
 Gender Person::gender() const {
-    return p_Gender;
+    return mGender;
 }
 
 Person* Person::mother() {
-    return p_Mother;
+    return mMother;
 }
 
 Person* Person::father() {
-    return p_Father;
-}
-
-void Person::addChild(Person* child) {
-    kids.insert(child);
+    return mFather;
 }
 
 void Person::setMother(Person* mother) {
-    p_Mother = mother;
-    mother->kids.insert(this);
+    mMother = mother;
 }
 
 void Person::setFather(Person* father) {
-    p_Father = father;
-    father->kids.insert(this);
+    mFather = father;
 }
 
-
-std::set<Person*> Person::children() {
-    return kids;
-}
-
-void Person::findAncestors(std::set<Person*>& ancestorsSet, PMod pmod) const {
-    if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
-        ancestorsSet.insert(p_Mother);
-        p_Mother->findAncestors(ancestorsSet, pmod);
-    }
-
-    if (p_Father && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
-        ancestorsSet.insert(p_Father);
-        p_Father->findAncestors(ancestorsSet, pmod);
-    }
+void Person::addChild(Person* child) {
+    mChildren.insert(child);
 }
 
 
 std::set<Person*> Person::ancestors(PMod pmod) {
-    std::set<Person*> ancestorsSet;
-    findAncestors(ancestorsSet, pmod);
-    return ancestorsSet;
+    std::set<Person*> result;
+
+    if ((pmod == PMod::ANY || pmod == PMod::MATERNAL) && mMother) {
+        result.insert(mMother);
+        auto maternalAncestors = mMother->ancestors(PMod::ANY);
+        result.insert(maternalAncestors.begin(), maternalAncestors.end());
+    }
+
+    if ((pmod == PMod::ANY || pmod == PMod::PATERNAL) && mFather) {
+        result.insert(mFather);
+        auto paternalAncestors = mFather->ancestors(PMod::ANY);
+        result.insert(paternalAncestors.begin(), paternalAncestors.end());
+    }
+
+    return result;
 }
 
+// Siblings
 std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
-    std::set<Person*> siblingSet;
-    
-    std::set<Person*> maternalSiblings, paternalSiblings;
-
-    // Fetch maternal siblings if applicable
-    if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
-        maternalSiblings = p_Mother->children();
-    }
-
-    // Fetch paternal siblings if applicable
-    if (p_Father && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
-        paternalSiblings = p_Father->children();
-    }
-
-    // Determine the siblings based on SMod
-    if (smod == SMod::FULL) {
-        for (auto& sibling : maternalSiblings) {
-            if (paternalSiblings.find(sibling) != paternalSiblings.end()) {
-                siblingSet.insert(sibling);
-            }
-        }
-    } else if (smod == SMod::HALF) {
-        for (auto& sibling : maternalSiblings) {
-            if (paternalSiblings.find(sibling) == paternalSiblings.end()) {
-                siblingSet.insert(sibling);
-            }
-        }
-        for (auto& sibling : paternalSiblings) {
-            if (maternalSiblings.find(sibling) == maternalSiblings.end()) {
-                siblingSet.insert(sibling);
-            }
-        }
-    } else {  // SMod::ANY
-        siblingSet.insert(maternalSiblings.begin(), maternalSiblings.end());
-        siblingSet.insert(paternalSiblings.begin(), paternalSiblings.end());
-    }
-
-    siblingSet.erase(this); // Remove self from the set of siblings
-
-    return siblingSet;
-}
-
-
-
-std::set<Person*> Person::aunts(PMod pmod, SMod smod) {
-    std::set<Person*> auntSet;
-
-    if (p_Mother) {
-        for (auto sibling : p_Mother->siblings(PMod::ANY, smod)) {
-            if (sibling->gender() == Gender::FEMALE) {
-                auntSet.insert(sibling);
-            }
-        }
-    }
-
-    if (pmod != PMod::MATERNAL && p_Father) {
-        for (auto sibling : p_Father->siblings(PMod::ANY, smod)) {
-            if (sibling->gender() == Gender::FEMALE) {
-                auntSet.insert(sibling);
-            }
-        }
-    }
-
-    return auntSet;
-}
-
-std::set<Person*> Person::uncles(PMod pmod, SMod smod) {
     std::set<Person*> result;
-    if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
-        auto maternalUncles = p_Mother->brothers(pmod, smod);
-        result.insert(maternalUncles.begin(), maternalUncles.end());
-    }
-    if (p_Father && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
-        auto paternalUncles = p_Father->brothers(pmod, smod);
-        result.insert(paternalUncles.begin(), paternalUncles.end());
-    }
-    return result;
-}
-
-
-
-std::set<Person*> Person::brothers(PMod pmod, SMod smod) {
-    std::set<Person*> result;
-    if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
-        auto maternalBrothers = p_Mother->sons();
-        result.insert(maternalBrothers.begin(), maternalBrothers.end());
-    }
-    if (p_Father && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
-        auto paternalBrothers = p_Father->sons();
-        result.insert(paternalBrothers.begin(), paternalBrothers.end());
-    }
-    result.erase(this); // Ensure we don't include the current person if they're part of the list.
-    return result;
-}
-
-
-
-
-std::set<Person*> Person::cousins(PMod pmod, SMod smod) {
-    std::set<Person*> cousinSet;
 
     if (pmod == PMod::MATERNAL || pmod == PMod::ANY) {
-        if (p_Mother) {
-            for (auto auntOrUncle : p_Mother->siblings(pmod, smod)) {
-                for (auto child : auntOrUncle->children()) {
-                    cousinSet.insert(child);
-                }
+        for (auto sib : mMother->children()) {
+            if (sib != this && 
+                (smod == SMod::ANY || 
+                 (smod == SMod::FULL && sib->father() == mFather) ||
+                 (smod == SMod::HALF && sib->father() != mFather))) {
+                result.insert(sib);
             }
         }
     }
 
     if (pmod == PMod::PATERNAL || pmod == PMod::ANY) {
-        if (p_Father) {
-            for (auto auntOrUncle : p_Father->siblings(pmod, smod)) {
-                for (auto child : auntOrUncle->children()) {
-                    cousinSet.insert(child);
-                }
+        for (auto sib : mFather->children()) {
+            if (sib != this && 
+                (smod == SMod::ANY || 
+                 (smod == SMod::FULL && sib->mother() == mMother) ||
+                 (smod == SMod::HALF && sib->mother() != mMother))) {
+                result.insert(sib);
             }
         }
     }
 
-    return cousinSet;
+    return result;
 }
+
+std::set<Person*> Person::children() {
+    return mChildren;
+}
+
+std::set<Person*> Person::cousins(PMod pmod, SMod smod) {
+    std::set<Person*> result;
+
+    // Using SMod::ANY to get all aunts and uncles, irrespective of FULL or HALF
+    auto auntsAndUncles = this->aunts(pmod, SMod::ANY);
+    auto uncles = this->uncles(pmod, SMod::ANY);
+    auntsAndUncles.insert(uncles.begin(), uncles.end()); // Combine aunts and uncles
+
+    for (auto relative : auntsAndUncles) {
+        for (auto child : relative->children()) { // Assuming you have children function for Person class
+            if (smod == SMod::ANY ||
+                (smod == SMod::FULL && 
+                 (child->mother() == relative->mother() && child->father() == relative->father())) ||
+                (smod == SMod::HALF && 
+                 !(child->mother() == relative->mother() && child->father() == relative->father()))) {
+                result.insert(child);
+            }
+        }
+    }
+
+    return result;
+}
+
 
 
 std::set<Person*> Person::daughters() {
     std::set<Person*> result;
-    for (auto child : kids) {
+    for (auto child : mChildren) {
         if (child->gender() == Gender::FEMALE) {
             result.insert(child);
         }
@@ -200,123 +119,9 @@ std::set<Person*> Person::daughters() {
     return result;
 }
 
-std::set<Person*> Person::descendants() {
-    std::set<Person*> result;
-    for (auto child : kids) {
-        result.insert(child);
-        auto grandChildren = child->descendants();
-        result.insert(grandChildren.begin(), grandChildren.end());
-    }
-    return result;
-}
-
-std::set<Person*> Person::grandchildren() {
-    std::set<Person*> result;
-    for (auto child : kids) {
-        auto grandChildren = child->children();
-        result.insert(grandChildren.begin(), grandChildren.end());
-    }
-    return result;
-}
-
-std::set<Person*> Person::granddaughters() {
-    std::set<Person*> result;
-    for (auto child : kids) {
-        auto childDaughters = child->daughters();
-        result.insert(childDaughters.begin(), childDaughters.end());
-    }
-    return result;
-}
-
-std::set<Person*> Person::grandfathers(PMod pmod) {
-    std::set<Person*> result;
-    if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
-        if (p_Mother->father()) result.insert(p_Mother->father());
-    }
-    if (p_Father && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
-        if (p_Father->father()) result.insert(p_Father->father());
-    }
-    return result;
-}
-
-std::set<Person*> Person::grandmothers(PMod pmod) {
-    std::set<Person*> result;
-    if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
-        if (p_Mother->mother()) result.insert(p_Mother->mother());
-    }
-    if (p_Father && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
-        if (p_Father->mother()) result.insert(p_Father->mother());
-    }
-    return result;
-}
-
-std::set<Person*> Person::grandparents(PMod pmod) {
-    std::set<Person*> result;
-    auto gFathers = grandfathers(pmod);
-    auto gMothers = grandmothers(pmod);
-    result.insert(gFathers.begin(), gFathers.end());
-    result.insert(gMothers.begin(), gMothers.end());
-    return result;
-}
-
-std::set<Person*> Person::grandsons() {
-    std::set<Person*> result;
-    for (auto child : kids) {
-        auto childSons = child->sons();
-        result.insert(childSons.begin(), childSons.end());
-    }
-    return result;
-}
-
-std::set<Person*> Person::nephews(PMod pmod, SMod smod) {
-    std::set<Person*> result;
-    auto sibs = siblings(pmod, smod);
-    for (auto sibling : sibs) {
-        auto sibSons = sibling->sons();
-        result.insert(sibSons.begin(), sibSons.end());
-    }
-    return result;
-}
-
-
-std::set<Person*> Person::nieces(PMod pmod, SMod smod) {
-    std::set<Person*> result;
-    auto sibs = siblings(pmod, smod);
-    for (auto sibling : sibs) {
-        auto sibDaughters = sibling->daughters();
-        result.insert(sibDaughters.begin(), sibDaughters.end());
-    }
-    return result;
-}
-
-
-std::set<Person*> Person::parents(PMod pmod) {
-    std::set<Person*> result;
-    if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
-        result.insert(p_Mother);
-    }
-    if (p_Father && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
-        result.insert(p_Father);
-    }
-    return result;
-}
-
-std::set<Person*> Person::sisters(PMod pmod, SMod smod) {
-    std::set<Person*> result;
-    auto sibs = siblings(pmod, smod);
-    for (auto sibling : sibs) {
-        if (sibling->gender() == Gender::FEMALE) {
-            result.insert(sibling);
-        }
-    }
-    return result;
-}
-
-
-
 std::set<Person*> Person::sons() {
     std::set<Person*> result;
-    for (auto child : kids) {
+    for (auto child : mChildren) {
         if (child->gender() == Gender::MALE) {
             result.insert(child);
         }
@@ -324,6 +129,143 @@ std::set<Person*> Person::sons() {
     return result;
 }
 
+// Descendants (Direct children + descendants of children)
+std::set<Person*> Person::descendants() {
+    std::set<Person*> result = mChildren;
+    for (auto child : mChildren) {
+        auto grandChildren = child->descendants();
+        result.insert(grandChildren.begin(), grandChildren.end());
+    }
+    return result;
+}
 
+// Grandchildren
+std::set<Person*> Person::grandchildren() {
+    std::set<Person*> result;
+    for (auto child : mChildren) {
+        result.insert(child->children().begin(), child->children().end());
+    }
+    return result;
+}
 
+// Granddaughters and Grandsons
+std::set<Person*> Person::granddaughters() {
+    std::set<Person*> result;
+    for (auto grandchild : grandchildren()) {
+        if (grandchild->gender() == Gender::FEMALE) {
+            result.insert(grandchild);
+        }
+    }
+    return result;
+}
 
+std::set<Person*> Person::grandsons() {
+    std::set<Person*> result;
+    for (auto grandchild : grandchildren()) {
+        if (grandchild->gender() == Gender::MALE) {
+            result.insert(grandchild);
+        }
+    }
+    return result;
+}
+
+// Grandparents
+std::set<Person*> Person::grandparents(PMod pmod) {
+    std::set<Person*> result;
+    if ((pmod == PMod::ANY || pmod == PMod::MATERNAL) && mMother) {
+        result.insert(mMother->parents(PMod::ANY).begin(), mMother->parents(PMod::ANY).end());
+    }
+    if ((pmod == PMod::ANY || pmod == PMod::PATERNAL) && mFather) {
+        result.insert(mFather->parents(PMod::ANY).begin(), mFather->parents(PMod::ANY).end());
+    }
+    return result;
+}
+
+// Specific Grandparents
+std::set<Person*> Person::grandfathers(PMod pmod) {
+    std::set<Person*> result;
+    for (auto gp : grandparents(pmod)) {
+        if (gp->gender() == Gender::MALE) {
+            result.insert(gp);
+        }
+    }
+    return result;
+}
+
+std::set<Person*> Person::grandmothers(PMod pmod) {
+    std::set<Person*> result;
+    for (auto gp : grandparents(pmod)) {
+        if (gp->gender() == Gender::FEMALE) {
+            result.insert(gp);
+        }
+    }
+    return result;
+}
+
+// Aunts and Uncles
+std::set<Person*> Person::aunts(PMod pmod, SMod smod) {
+    std::set<Person*> result;
+    auto sibs = siblings(pmod, smod);
+    for (auto sib : sibs) {
+        if (sib->gender() == Gender::FEMALE) {
+            result.insert(sib);
+        }
+    }
+    return result;
+}
+
+std::set<Person*> Person::uncles(PMod pmod, SMod smod) {
+    std::set<Person*> result;
+    auto sibs = siblings(pmod, smod);
+    for (auto sib : sibs) {
+        if (sib->gender() == Gender::MALE) {
+            result.insert(sib);
+        }
+    }
+    return result;
+}
+
+// Nephews and Nieces
+std::set<Person*> Person::nephews(PMod pmod, SMod smod) {
+    std::set<Person*> result;
+    auto sibs = siblings(pmod, SMod::ANY); // Getting all siblings irrespective of FULL/HALF
+    for (auto sib : sibs) {
+        for (auto child : sib->children()) {
+            if (child->gender() == Gender::MALE && 
+                (smod == SMod::ANY || 
+                 (smod == SMod::FULL && (child->mother() == sib->mother() && child->father() == sib->father())) ||
+                 (smod == SMod::HALF && !(child->mother() == sib->mother() && child->father() == sib->father())))) {
+                result.insert(child);
+            }
+        }
+    }
+    return result;
+}
+
+std::set<Person*> Person::nieces(PMod pmod, SMod smod) {
+    std::set<Person*> result;
+    auto sibs = siblings(pmod, SMod::ANY); // Getting all siblings irrespective of FULL/HALF
+    for (auto sib : sibs) {
+        for (auto child : sib->children()) {
+            if (child->gender() == Gender::FEMALE && 
+                (smod == SMod::ANY || 
+                 (smod == SMod::FULL && (child->mother() == sib->mother() && child->father() == sib->father())) ||
+                 (smod == SMod::HALF && !(child->mother() == sib->mother() && child->father() == sib->father())))) {
+                result.insert(child);
+            }
+        }
+    }
+    return result;
+}
+
+// Parents
+std::set<Person*> Person::parents(PMod pmod) {
+    std::set<Person*> result;
+    if ((pmod == PMod::ANY || pmod == PMod::MATERNAL) && mMother) {
+        result.insert(mMother);
+    }
+    if ((pmod == PMod::ANY || pmod == PMod::PATERNAL) && mFather) {
+        result.insert(mFather);
+    }
+    return result;
+}

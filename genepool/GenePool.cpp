@@ -1,76 +1,88 @@
 #include "GenePool.h"
-#include <sstream>
-#include <iostream>
+
+#include "GenePool.h"
 
 GenePool::GenePool(std::istream& stream) {
-    readFromStream(stream);
+    std::map<std::string, std::pair<std::string, std::string>> parentNames;  // to store mother and father names for each person
+
+    std::string line;
+    while (std::getline(stream, line)) {
+        std::istringstream iss(line);
+        std::string name, genderStr, motherName, fatherName;
+        Gender gender;
+
+        std::getline(iss, name, '\t');
+        std::getline(iss, genderStr, '\t');
+        std::getline(iss, motherName, '\t');
+        std::getline(iss, fatherName, '\t');
+
+        if (genderStr == "MALE") {
+            gender = Gender::MALE;
+        } else if (genderStr == "FEMALE") {
+            gender = Gender::FEMALE;
+        } else {
+            // Error handling or skip
+            continue;
+        }
+
+        Person* person = new Person(name, gender);  // Assuming Person has this constructor
+        mPeople[name] = person;
+        
+        parentNames[name] = {motherName, fatherName};  // store mother and father names for linkage later
+    }
+
+    // Link parents after populating all persons
+    for (const auto& [name, person] : mPeople) {
+        const auto& [motherName, fatherName] = parentNames[name];  // extract mother and father names
+
+        if (mPeople.find(motherName) != mPeople.end()) {
+            person->setMother(mPeople[motherName]);  // set mother
+        }
+        if (mPeople.find(fatherName) != mPeople.end()) {
+            person->setFather(mPeople[fatherName]);  // set father
+        }
+    }
 }
 
 GenePool::~GenePool() {
-    // Delete the people allocated on the heap.
-    for (auto& pair : people_) {
-        delete pair.second;
+    for (auto& [name, person] : mPeople) {
+        delete person;
     }
 }
-
-void GenePool::readFromStream(std::istream& stream) {
-    std::string line;
-    // First pass: Create Person objects for everyone
-    while (std::getline(stream, line)) {
-        std::string name, genderStr;
-        std::stringstream ss(line);
-
-        std::getline(ss, name, '\t');
-        std::getline(ss, genderStr, '\t');
-
-        Gender gender = (genderStr == "Male" ? Gender::MALE : Gender::FEMALE);
-        
-        if (people_.find(name) == people_.end()) {
-            Person* person = new Person(name, gender);
-            people_[name] = person;
-        } else {
-            // Handle duplicate person or simply skip
-            // For now, we'll just skip.
-        }
-    }
-
-    // Reset stream position to beginning for second pass
-    stream.clear();  // Clear EOF flag
-    stream.seekg(0, std::ios::beg); 
-
-    // Second pass: Establish parent-child relationships
-    while (std::getline(stream, line)) {
-        std::string name, genderStr, motherName, fatherName;
-        std::stringstream ss(line);
-
-        std::getline(ss, name, '\t');
-        std::getline(ss, genderStr, '\t');
-        std::getline(ss, motherName, '\t');
-        std::getline(ss, fatherName, '\t');
-
-        if (people_.find(motherName) != people_.end()) {
-            people_[name]->setMother(people_[motherName]);
-        }
-
-        if (people_.find(fatherName) != people_.end()) {
-            people_[name]->setFather(people_[fatherName]);
-        }
-    }
-}
-
 
 std::set<Person*> GenePool::everyone() const {
     std::set<Person*> result;
-    for (const auto& pair : people_) {
-        result.insert(pair.second);
+    for (const auto& [name, person] : mPeople) {
+        result.insert(person);
     }
     return result;
 }
 
 Person* GenePool::find(const std::string& name) const {
-    auto it = people_.find(name);
-    if (it != people_.end()) {
-        return it->second;
+    if (mPeople.find(name) != mPeople.end()) {
+        return mPeople.at(name);
+    }
+    return nullptr;
+}
+
+
+GenePool::~GenePool() {
+    for (auto& [name, person] : mPeople) {
+        delete person;
+    }
+}
+
+std::set<Person*> GenePool::everyone() const {
+    std::set<Person*> result;
+    for (const auto& [name, person] : mPeople) {
+        result.insert(person);
+    }
+    return result;
+}
+
+Person* GenePool::find(const std::string& name) const {
+    if (mPeople.find(name) != mPeople.end()) {
+        return mPeople.at(name);
     }
     return nullptr;
 }

@@ -7,32 +7,24 @@
 #include <set>
 #include <string>
 #include <map>
-
-// This is the database class you need to implement.
-// It stores a collection of people and supports lookup by name.
-// It reads people from a TSV-like file in the constructor.
+#include <sstream>  // required for std::istringstream
 
 class GenePool {
-  // Member Variables
-
-  // Helper Functions
 private:
-    std::map<std::string, Person*> people_;
-    void readFromStream(std::istream& stream);
+    std::map<std::string, Person*> mPeople;
 
 public:
-  // Build a database of people from a TSV file.
-  GenePool(std::istream& stream);
+    // Constructor to build a database of people from a TSV file.
+    GenePool(std::istream& stream);
 
-  // Clean it up.
-  ~GenePool();
+    // Destructor to clean up allocated memory.
+    ~GenePool();
 
-  // List all the people in the database.
-  std::set<Person*> everyone() const;
+    // Function to list all the people in the database.
+    std::set<Person*> everyone() const;
 
-  // Find a person in the database by name.
-  // Return nullptr if there is no such person.
-  Person* find(const std::string& name) const;
+    // Function to find a person in the database by name.
+    Person* find(const std::string& name) const;
 };
 
 #endif

@@ -15,18 +15,28 @@ class Person {
   // Member Variables
 
   // Helper Functions
-  std::string p_Name;
-  Gender p_Gender;
-  Person* p_Mother;
-  Person* p_Father;
-  std::set<Person*> kids;
-  void findAncestors(std::set<Person*>& ancestorsSet, PMod pmod) const;
+private:
+    std::string mName;
+    Gender mGender;
+    Person* mMother;
+    Person* mFather;
+    std::set<Person*> mChildren;
+
 
 public:
   // Constructor
-  Person(const std::string& name, Gender gender, Person* mother = nullptr, Person* father = nullptr);
   // Destructor?
-  ~Person();
+  Person(const std::string& name, Gender gender) : 
+        mName(name), mGender(gender), mMother(nullptr), mFather(nullptr) {}
+
+    const std::string& name() const { return mName; }
+    Gender gender() const { return mGender; }
+    Person* mother() { return mMother; }
+    Person* father() { return mFather; }
+
+    void setMother(Person* mother) { mMother = mother; }
+    void setFather(Person* father) { mFather = father; }
+    void addChild(Person* child) { mChildren.insert(child); }
 
   // Required Getter Functions
   const std::string& name()   const;
@@ -57,9 +67,6 @@ public:
   std::set<Person*> uncles(PMod pmod = PMod::ANY, SMod smod = SMod::ANY);
 
   // Other Member Functions
-  void addChild(Person* child);
-  void setMother(Person* mother);
-  void setFather(Person* father);
 };
 
 #endif
