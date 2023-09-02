@@ -1,7 +1,5 @@
 #include "GenePool.h"
 
-#include "GenePool.h"
-
 GenePool::GenePool(std::istream& stream) {
     std::string line;
 
@@ -52,21 +50,6 @@ Person* GenePool::find(const std::string& name) const {
     auto it = mPeople.find(name);
     if (it != mPeople.end()) {
         return it->second;
-    }
-    return nullptr;
-}
-
-std::set<Person*> GenePool::everyone() const {
-    std::set<Person*> result;
-    for (const auto& [name, person] : mPeople) {
-        result.insert(person);
-    }
-    return result;
-}
-
-Person* GenePool::find(const std::string& name) const {
-    if (mPeople.find(name) != mPeople.end()) {
-        return mPeople.at(name);
     }
     return nullptr;
 }
