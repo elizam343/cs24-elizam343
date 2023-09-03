@@ -1,3 +1,9 @@
+#ifndef MYGROVE_H
+#define MYGROVE_H
+
+#include "StringGrove.h"
+#include <string>
+
 class MyGrove {
 public:
     MyGrove(const char* str);
@@ -10,6 +16,7 @@ public:
     int len() const;
     MyGrove* substr(int start, int end) const;
     void print() const;
+    std::string toString() const;
 
 private:
     class Node {
@@ -17,6 +24,9 @@ private:
         Node(const char* data);
         Node(Node* leftNode, Node* rightNode);
         ~Node();
+
+        std::string asString() const;
+
 
         Node* left;
         Node* right;
@@ -31,4 +41,10 @@ private:
 
     char charAtNode(const Node* node, int index) const;
     Node* substrNode(const Node* current, int start, int end) const;
+
+
+    
 };
+
+
+#endif

@@ -21,7 +21,7 @@ MyGrove::~MyGrove() {
 }
 
 MyGrove::Node::~Node() {
-    
+
 }
 
 MyGrove::Node::Node(const char* data) {
@@ -177,4 +177,26 @@ void MyGrove::print() const {
         if(nodes[i]->data) std::cout << nodes[i]->data;
     }
     std::cout << std::endl;
+}
+
+
+std::string MyGrove::toString() const {
+    std::string result;
+    for (int i = 0; i < nodeCount; ++i) {
+        result += nodes[i]->asString();
+    }
+    return result;
+}
+
+
+
+std::string MyGrove::Node::asString() const {
+    // I don't know the exact structure of your Node class, so this is a simple placeholder.
+    // You'll need to adjust this based on how your Node class is structured.
+    std::string result;
+    if (this->left) result += this->left->asString();
+    // Assuming you have some 'data' member in the Node class.
+    result += this->data;
+    if (this->right) result += this->right->asString();
+    return result;
 }
