@@ -125,34 +125,36 @@ char MyGrove::charAtNode(const Node* node, int index) const {
 }
 
 MyGrove::Node* MyGrove::substrNode(const Node* current, int start, int end) const {
-    if (!current) return nullptr;
+    if (start >= end) {
+        return nullptr; // base case
+    }
     
     int currentLength = current->length;
 
     // Adjust start and end indices to valid range
     if (start < 0) start = 0;
     if (end > currentLength) end = currentLength;
-    if (start >= end) return nullptr; // Empty substring
-    
+
     if (!current->left && !current->right) { // leaf node
         char* substring = new char[end - start + 1];
-        strncpy(substring, current->data + start, end - start);
+        std::copy(current->data + start, current->data + end, substring);
         substring[end - start] = '\0';
         return new Node(substring);
-    } 
-
-    int leftLength = current->left ? current->left->length : 0;
-
-    if (end <= leftLength) {
-        return substrNode(current->left, start, end);
-    } else if (start >= leftLength) {
-        return substrNode(current->right, start - leftLength, end - leftLength);
     } else {
-        Node* leftSubstr = substrNode(current->left, start, leftLength);
-        Node* rightSubstr = substrNode(current->right, 0, end - leftLength);
-        return concatNodes(leftSubstr, rightSubstr);
+        int leftLength = current->left ? current->left->length : 0;
+
+        if (end <= leftLength) {
+            return substrNode(current->left, start, end);
+        } else if (start >= leftLength) {
+            return substrNode(current->right, start - leftLength, end - leftLength);
+        } else {
+            Node* leftSubstr = substrNode(current->left, start, leftLength);
+            Node* rightSubstr = substrNode(current->right, 0, end - leftLength);
+            return concatNodes(leftSubstr, rightSubstr);
+        }
     }
 }
+
 
 
 
