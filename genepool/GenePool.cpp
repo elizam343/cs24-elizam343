@@ -23,7 +23,16 @@ void GenePool::readFromStream(std::istream& stream) {
         std::getline(ss, name, '\t');
         std::getline(ss, genderStr, '\t');
 
-        Gender gender = (genderStr == "Male" ? Gender::MALE : Gender::FEMALE);
+        Gender gender;
+        if (genderStr == "female") {
+            gender = Gender::FEMALE;
+        } else if (genderStr == "male") {
+            gender = Gender::MALE;
+        } else {
+            gender = Gender::ANY;
+        }
+
+
         
         if (people_.find(name) == people_.end()) {
             Person* person = new Person(name, gender);
