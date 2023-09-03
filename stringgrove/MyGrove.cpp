@@ -139,6 +139,43 @@ MyGrove::Node* MyGrove::substrNode(const Node* current, int start, int end) cons
         substring[end - start] = '\0';
         return new Node(substring);
     } else {
+        // Find the leaf nodes that correspond to the start and end positions
+        Node* startNode = nullptr;
+        Node* endNode = nullptr;
+        int accumulatedLength = 0;
+
+        // Traverse the nodes to find the start and end leaf nodes
+        for (int i = 0; i < nodeCount; ++i) {
+            accumulatedLength += nodes[i]->length;
+            if (!startNode && start < accumulatedLength) {
+                startNode = nodes[i];
+            }
+            if (!endNode && end <= accumulatedLength) {
+                endNode = nodes[i];
+                break;
+            }
+        }
+
+        // Handle the case where the substring falls between two leaf nodes
+        if (startNode && endNode && startNode != endNode) {
+            int startOffset = start - (accumulatedLength - startNode->length);
+            int endOffset = end - (accumulatedLength - endNode->length);
+
+            // Create substrings for the two leaf nodes
+            Node* startSubstr = substrNode(startNode, startOffset, startNode->length);
+            Node* endSubstr = substrNode(endNode, 0, endOffset);
+
+            // Concatenate the substrings
+            Node* finalSubstr = concatNodes(startSubstr, endSubstr);
+
+            // Clean up memory
+            delete startSubstr;
+            delete endSubstr;
+
+            return finalSubstr;
+        }
+
+        // If the substring spans multiple nodes, use the existing approach
         Node* leftSubstr = substrNode(current->left, start, leftLength);
         Node* middleSubstr = substrNode(current, leftLength, leftLength + current->length);
         Node* rightSubstr = substrNode(current->right, 0, end - leftLength - current->length);
@@ -156,7 +193,6 @@ MyGrove::Node* MyGrove::substrNode(const Node* current, int start, int end) cons
         return finalSubstr;
     }
 }
-
 
 
 
