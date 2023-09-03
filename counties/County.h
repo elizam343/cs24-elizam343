@@ -7,7 +7,7 @@ class County {
 		int population;
 		std::string name;
 
-		County::County(const std::string& _name) : name(_name) {}
+		County(const std::string& _name) : name(_name) {}
 
 		std::string getName() const;
 
