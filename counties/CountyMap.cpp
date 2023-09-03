@@ -49,7 +49,3 @@ bool CountyMap::checkValidItinerary(std::vector<int> itinerary) {
     }
     return true;
 }
-
-std::string County::getName() const {
-    return name;
-}
