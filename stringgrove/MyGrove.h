@@ -1,44 +1,34 @@
-#ifndef MYGROVE_H
-#define MYGROVE_H
-
-class MyGrove { 
+class MyGrove {
 public:
-    static constexpr int INITIAL_CAPACITY = 10;
-    class Node {
-    public:
-        char* data;
-        Node* left;
-        Node* right;
-        int length;
-
-        Node(Node* leftNode, Node* rightNode);
-    };
-
-    MyGrove();
     MyGrove(const char* str);
+    MyGrove();
     ~MyGrove();
 
     void create(const char* str);
-    MyGrove* concat(const MyGrove* otherGrove) const;
-    void print(int id);
-    void printNode(Node* node);
+    MyGrove* concat(const MyGrove* other) const;
     char charAt(int index) const;
-    MyGrove* substr(int start, int end) const;
     int len() const;
-    int getNodeCount() const {
-        return nodeCount;
-    }
+    MyGrove* substr(int start, int end) const;
+    void print() const;
 
 private:
+    class Node {
+    public:
+        Node(const char* data);
+        Node(Node* leftNode, Node* rightNode);
+        ~Node();
+
+        Node* left;
+        Node* right;
+        char* data;
+        int length;
+    };
+
     Node** nodes;
-    Node* node; 
     int nodeCount;
     int nodeCapacity;
+    static const int INITIAL_CAPACITY = 10;
 
     char charAtNode(const Node* node, int index) const;
-    Node* substrNode(const Node* node, int start, int end) const;
-
+    Node* substrNode(const Node* current, int start, int end) const;
 };
-
-
-#endif
