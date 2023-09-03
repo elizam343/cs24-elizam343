@@ -4,7 +4,6 @@
 #include <climits>
 
 // Constructors
-County::County(const std::string& _name) : name(_name) {}
 CountyMap::CountyMap(std::vector<County> _counties, std::vector<std::vector<bool>> adjMatrix)
     : counties(_counties), adjacencyList(_counties.size()) {
     for(size_t i = 0; i < adjMatrix.size(); i++) {
