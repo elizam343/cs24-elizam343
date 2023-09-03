@@ -20,6 +20,10 @@ MyGrove::~MyGrove() {
     delete[] nodes;
 }
 
+MyGrove::Node::~Node() {
+    
+}
+
 MyGrove::Node::Node(const char* data) {
     length = strlen(data);
     this->data = new char[length + 1];
@@ -174,4 +178,3 @@ void MyGrove::print() const {
     }
     std::cout << std::endl;
 }
-
