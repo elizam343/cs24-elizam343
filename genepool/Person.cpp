@@ -154,17 +154,25 @@ std::set<Person*> Person::uncles(PMod pmod, SMod smod) {
 
 std::set<Person*> Person::brothers(PMod pmod, SMod smod) {
     std::set<Person*> result;
+
+    // Fetch maternal brothers if applicable
     if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
         auto maternalBrothers = p_Mother->sons();
         result.insert(maternalBrothers.begin(), maternalBrothers.end());
     }
+
+    // Fetch paternal brothers if applicable
     if (p_Father && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
         auto paternalBrothers = p_Father->sons();
         result.insert(paternalBrothers.begin(), paternalBrothers.end());
     }
+
     result.erase(this); // Ensure we don't include the current person if they're part of the list.
     return result;
 }
+
+
+
 
 
 std::set<Person*> Person::cousins(PMod pmod, SMod smod) {

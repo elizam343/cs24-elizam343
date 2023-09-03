@@ -12,26 +12,17 @@ void printAncestors(const std::set<Person*>& ancestors) {
 }
 
 void testBrothers() {
-    // Create the GenePool from a sample TSV file
-    std::ifstream inputFile("sample_family_tree.tsv");
-    GenePool genePool(inputFile);
-
-    // Find the Person you want to test
+    GenePool genePool("data/simpsons_family.tsv");
     Person* homer = genePool.find("Homer");
-
-    // Test brothers for Homer
+    assert(homer);
     std::set<Person*> homerBrothers = homer->brothers(PMod::ANY, SMod::ANY);
 
-    // Print out the results
-    std::cout << "Brothers of Homer:" << std::endl;
+    std::cout << "Homer's brothers:" << std::endl;
     for (const auto& brother : homerBrothers) {
         std::cout << " - " << brother->name() << std::endl;
     }
-
-    // You can now add assertions based on your expected results
-    // For example:
-    assert(homerBrothers.size() == 2); // Homer has two brothers: Herbert and Abbey
 }
+
 
 int main() {
     std::ifstream inputFile("data/Simpsons.tsv");
