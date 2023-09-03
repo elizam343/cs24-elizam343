@@ -7,13 +7,16 @@ MyGrove::MyGrove(const char* str) {
 }
 
 MyGrove::MyGrove() {
+    nodes = new Node*[INITIAL_CAPACITY];
     nodeCount = 0;
     nodeCapacity = INITIAL_CAPACITY;
     nodes = new Node*[nodeCapacity];
 }
 
+
 MyGrove::~MyGrove() {
-    for (int i = 0; i < nodeCount; i++) {
+    for(int i = 0; i < nodeCount; i++) {
+        delete[] nodes[i]->data;
         delete nodes[i];
     }
     delete[] nodes;
@@ -34,10 +37,20 @@ MyGrove::Node::Node(const char* data) {
     right = nullptr;
 }
 
-MyGrove::Node::Node(Node* leftNode, Node* rightNode) 
-    : left(leftNode), right(rightNode) {
-    length = (left ? left->length : 0) + (right ? right->length : 0);
-    data = nullptr;  // Since we're not storing actual data for parent nodes
+MyGrove::Node::Node(Node* leftNode, Node* rightNode) {
+    left = leftNode;
+    right = rightNode;
+    
+    // Assuming you want to concatenate the data from both nodes:
+    int leftLength = (leftNode) ? strlen(leftNode->data) : 0;
+    int rightLength = (rightNode) ? strlen(rightNode->data) : 0;
+    
+    data = new char[leftLength + rightLength + 1]; // +1 for null terminator
+    if(leftNode) strcpy(data, leftNode->data);
+    if(rightNode) strcpy(data + leftLength, rightNode->data);
+    
+    // Set the length of the new node
+    length = leftLength + rightLength;
 }
 
 
@@ -47,15 +60,17 @@ void MyGrove::create(const char* str) {
         nodeCapacity *= 2;
         Node** newNodes = new Node*[nodeCapacity];
         for (int i = 0; i < nodeCount; i++) {
-            newNodes[i] = new Node(*(nodes[i])); // Create a new Node with copied data
+            newNodes[i] = nodes[i];
         }
         delete[] nodes;
         nodes = newNodes;
     }
     
-    // Create a new Node and add it to the nodes array
+    // Add the new Node
     nodes[nodeCount++] = new Node(str);
 }
+
+
 
 
 MyGrove* MyGrove::concat(const MyGrove* otherGrove) const {
@@ -193,3 +208,26 @@ std::string MyGrove::Node::asString() const {
     if (this->right) result += this->right->asString();
     return result;
 }
+
+
+MyGrove::Node* MyGrove::createNode(const char* data) const {
+    Node* newNode = new Node(data);
+    return newNode;
+}
+
+MyGrove::Node* MyGrove::concatNodes(Node* leftNode, Node* rightNode) const {
+    Node* newNode = new Node(leftNode, rightNode);
+    return newNode;
+}
+
+MyGrove::Node* MyGrove::copyNode(const Node* node) const {
+    if (!node) {
+        return nullptr;
+    }
+    Node* newNode = new Node(node->data);
+    newNode->left = copyNode(node->left);
+    newNode->right = copyNode(node->right);
+    newNode->length = node->length;
+    return newNode;
+}
+

@@ -17,6 +17,7 @@ public:
     MyGrove* substr(int start, int end) const;
     void print() const;
     std::string toString() const;
+    
 
 private:
     class Node {
@@ -33,6 +34,13 @@ private:
         char* data;
         int length;
     };
+    
+    Node* createNode(const char* data) const;
+    Node* concatNodes(Node* leftNode, Node* rightNode) const;
+    Node* copyNode(const Node* node) const;
+    Node* substrNode(const Node* current, int start, int end) const;
+
+    Node* root;  // The root of the binary tree
 
     Node** nodes;
     int nodeCount;
@@ -40,9 +48,6 @@ private:
     static const int INITIAL_CAPACITY = 10;
 
     char charAtNode(const Node* node, int index) const;
-    Node* substrNode(const Node* current, int start, int end) const;
-
-
     
 };
 

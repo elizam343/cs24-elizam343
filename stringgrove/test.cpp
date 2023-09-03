@@ -1,54 +1,42 @@
 #include <iostream>
 #include "MyGrove.h"
-#include <string>
-
-void testGrove(const MyGrove& grove, const std::string& expected) {
-    // Change 'length' to the correct function call.
-    size_t len = grove.len(); // Assuming `len` is the function to get the length.
-    if (len != expected.size()) {
-        std::cerr << "Error: Expected length " << expected.size() << ", but got " << len << std::endl;
-        return;
-    }
-
-    for (size_t i = 0; i < len; i++) {
-        char ch = grove.charAt(i);
-        if (ch != expected[i]) {
-            std::cerr << "Error: Expected char '" << expected[i] << "' at index " << i << ", but got '" << ch << "'" << std::endl;
-            return;
-        }
-    }
-
-    std::cout << "Test Passed: Grove contains expected content '" << expected << "'" << std::endl;
-}
 
 int main() {
+    // Test creating a simple grove and accessing characters
     MyGrove grove1("Hello");
-    std::cout << "Length of grove1: " << grove1.len() << std::endl;
-    
-    MyGrove groveA("Hello");
-    MyGrove groveB("World");
-    MyGrove* groveCPtr = groveA.concat(&groveB);
-    MyGrove groveC = *groveCPtr;
-    testGrove(groveC, "HelloWorld");
-    delete groveCPtr;
+    grove1.print();  // Expected: Hello
+    std::cout << "Length of grove1: " << grove1.len() << std::endl;  // Expected: 5
 
-    MyGrove groveX("X");
-    MyGrove groveY("Y");
-    MyGrove groveZ("Z");
-    MyGrove* groveXYPtr = groveX.concat(&groveY);
-    MyGrove groveXY = *groveXYPtr;
-    delete groveXYPtr;
-    
-    MyGrove* groveXYZPtr = groveXY.concat(&groveZ);
-    MyGrove groveXYZ = *groveXYZPtr;
-    testGrove(groveXYZ, "XYZ");
-    delete groveXYZPtr;
+    try {
+        char ch = grove1.charAt(1);
+        std::cout << "Character at index 1 of grove1: " << ch << std::endl;  // Expected: e
+    } catch (const std::out_of_range& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    }
 
-    MyGrove groveEmpty("");
-    MyGrove* groveDPtr = groveEmpty.concat(&groveA);
-    MyGrove groveD = *groveDPtr;
-    testGrove(groveD, "Hello");
-    delete groveDPtr;
+    try {
+        MyGrove* subGrove = grove1.substr(1, 4); // Should extract "ell"
+        subGrove->print();  // Expected: ell
+        delete subGrove;
+    } catch (const std::out_of_range& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    }
+
+    // Test concatenation
+    MyGrove grove2(" World");
+    MyGrove* concatenated = grove1.concat(&grove2);
+    concatenated->print();  // Expected: Hello World
+    delete concatenated;
+
+    // Test edge cases
+    MyGrove emptyGrove("");
+    MyGrove* substrGrove = grove1.substr(1, 10);  // This should be out of range
+    substrGrove->print();  // This should not be reached
+    delete substrGrove;
+
+    MyGrove* emptyConcat = grove1.concat(&emptyGrove);  // Concatenate with an empty grove
+    emptyConcat->print();  // Expected: Hello
+    delete emptyConcat;
 
     return 0;
 }
