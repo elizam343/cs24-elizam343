@@ -114,16 +114,20 @@ std::set<Person*> Person::aunts(PMod pmod, SMod smod) {
     std::set<Person*> auntSet;
 
     if (p_Mother) {
+        std::cout << "Checking mother's siblings" << std::endl;
         for (auto sibling : p_Mother->siblings(PMod::ANY, smod)) {
             if (sibling->gender() == Gender::FEMALE) {
+                std::cout << "Found female sibling: " << sibling->name() << std::endl;
                 auntSet.insert(sibling);
             }
         }
     }
 
     if (pmod != PMod::MATERNAL && p_Father) {
+        std::cout << "Checking father's siblings" << std::endl;
         for (auto sibling : p_Father->siblings(PMod::ANY, smod)) {
             if (sibling->gender() == Gender::FEMALE) {
+                std::cout << "Found female sibling: " << sibling->name() << std::endl;
                 auntSet.insert(sibling);
             }
         }
