@@ -125,75 +125,44 @@ char MyGrove::charAtNode(const Node* node, int index) const {
 }
 
 MyGrove::Node* MyGrove::substrNode(const Node* current, int start, int end) const {
-    if (start >= end || !current) return nullptr;
-
-    int leftLength = current->left ? current->left->length : 0;
-
-    if (end <= leftLength) {
-        return substrNode(current->left, start, end);
-    } else if (start >= leftLength + current->length) {
-        return substrNode(current->right, start - leftLength - current->length, end - leftLength - current->length);
-    } else if (!current->left && !current->right) { // leaf node
-        char* substring = new char[end - start + 1];
-        strncpy(substring, current->data + start - leftLength, end - start);
-        substring[end - start] = '\0';
+    if (!current) {
+        return nullptr; // base case: leaf node not found
+    }
+    
+    int nodeLength = current->length;
+    
+    if (start >= end || end <= 0) {
+        return nullptr; // base case: no valid substring
+    }
+    
+    if (start < 0) {
+        start = 0; // Adjust start if it's negative
+    }
+    
+    if (!current->left && !current->right) { // leaf node
+        int substringLength = end - start;
+        if (substringLength > nodeLength - start) {
+            substringLength = nodeLength - start;
+        }
+        
+        char* substring = new char[substringLength + 1];
+        std::copy(current->data + start, current->data + start + substringLength, substring);
+        substring[substringLength] = '\0';
         return new Node(substring);
     } else {
-        // Find the leaf nodes that correspond to the start and end positions
-        Node* startNode = nullptr;
-        Node* endNode = nullptr;
-        int accumulatedLength = 0;
-
-        // Traverse the nodes to find the start and end leaf nodes
-        for (int i = 0; i < nodeCount; ++i) {
-            accumulatedLength += nodes[i]->length;
-            if (!startNode && start < accumulatedLength) {
-                startNode = nodes[i];
-            }
-            if (!endNode && end <= accumulatedLength) {
-                endNode = nodes[i];
-                break;
-            }
+        int leftLength = current->left ? current->left->length : 0;
+        
+        if (end <= leftLength) {
+            return substrNode(current->left, start, end);
+        } else if (start >= leftLength) {
+            return substrNode(current->right, start - leftLength, end - leftLength);
+        } else {
+            Node* leftSubstr = substrNode(current->left, start, leftLength);
+            Node* rightSubstr = substrNode(current->right, 0, end - leftLength);
+            return new Node(leftSubstr, rightSubstr);
         }
-
-        // Handle the case where the substring falls between two leaf nodes
-        if (startNode && endNode && startNode != endNode) {
-            int startOffset = start - (accumulatedLength - startNode->length);
-            int endOffset = end - (accumulatedLength - endNode->length);
-
-            // Create substrings for the two leaf nodes
-            Node* startSubstr = substrNode(startNode, startOffset, startNode->length);
-            Node* endSubstr = substrNode(endNode, 0, endOffset);
-
-            // Concatenate the substrings
-            Node* finalSubstr = concatNodes(startSubstr, endSubstr);
-
-            // Clean up memory
-            delete startSubstr;
-            delete endSubstr;
-
-            return finalSubstr;
-        }
-
-        // If the substring spans multiple nodes, use the existing approach
-        Node* leftSubstr = substrNode(current->left, start, leftLength);
-        Node* middleSubstr = substrNode(current, leftLength, leftLength + current->length);
-        Node* rightSubstr = substrNode(current->right, 0, end - leftLength - current->length);
-
-        // Concatenate the substrings
-        Node* leftMiddleConcat = concatNodes(leftSubstr, middleSubstr);
-        Node* finalSubstr = concatNodes(leftMiddleConcat, rightSubstr);
-
-        // Clean up memory
-        delete leftSubstr;
-        delete middleSubstr;
-        delete rightSubstr;
-        delete leftMiddleConcat;
-
-        return finalSubstr;
     }
 }
-
 
 
 
