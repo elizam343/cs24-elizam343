@@ -18,6 +18,7 @@ std::set<Person*> Person::ancestors(PMod pmod) {
     return result;
 }
 
+
 std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
     std::set<Person*> result;
 
