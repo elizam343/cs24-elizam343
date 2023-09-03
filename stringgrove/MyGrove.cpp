@@ -125,7 +125,14 @@ char MyGrove::charAtNode(const Node* node, int index) const {
 }
 
 MyGrove::Node* MyGrove::substrNode(const Node* current, int start, int end) const {
-    if (start >= end || !current) return nullptr;
+    if (!current) return nullptr;
+    
+    int currentLength = current->length;
+
+    // Adjust start and end indices to valid range
+    if (start < 0) start = 0;
+    if (end > currentLength) end = currentLength;
+    if (start >= end) return nullptr; // Empty substring
     
     if (!current->left && !current->right) { // leaf node
         char* substring = new char[end - start + 1];
@@ -143,9 +150,10 @@ MyGrove::Node* MyGrove::substrNode(const Node* current, int start, int end) cons
     } else {
         Node* leftSubstr = substrNode(current->left, start, leftLength);
         Node* rightSubstr = substrNode(current->right, 0, end - leftLength);
-        return new Node(leftSubstr, rightSubstr);
+        return concatNodes(leftSubstr, rightSubstr);
     }
 }
+
 
 
 int MyGrove::len() const {
