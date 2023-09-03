@@ -83,14 +83,8 @@ std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
         paternalSiblings = p_Father->children();
     }
 
-    // Determine the siblings based on SMod
-    if (smod == SMod::FULL) {
-        for (auto& sibling : maternalSiblings) {
-            if (paternalSiblings.find(sibling) != paternalSiblings.end()) {
-                siblingSet.insert(sibling);
-            }
-        }
-    } else if (smod == SMod::HALF) {
+    // Handle HALF siblings
+    if (smod == SMod::HALF) {
         for (auto& sibling : maternalSiblings) {
             if (paternalSiblings.find(sibling) == paternalSiblings.end()) {
                 siblingSet.insert(sibling);
@@ -101,7 +95,8 @@ std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
                 siblingSet.insert(sibling);
             }
         }
-    } else {  // SMod::ANY
+    } else {  // FULL or ANY
+        // Insert maternal and paternal siblings
         siblingSet.insert(maternalSiblings.begin(), maternalSiblings.end());
         siblingSet.insert(paternalSiblings.begin(), paternalSiblings.end());
     }
@@ -110,11 +105,6 @@ std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
 
     return siblingSet;
 }
-
-
-
-
-
 
 
 
