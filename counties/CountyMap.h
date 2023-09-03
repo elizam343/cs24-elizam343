@@ -11,7 +11,6 @@ class CountyMap {
 private:
     vector<County> counties;
     vector<vector<int>> adjacencyList; // Using adjacency list representation
-    std::string name;
 
     // Private helper functions
     int findNodeWithFewestNeighbors(const vector<vector<bool>>& adjMatrix);
@@ -37,7 +36,7 @@ public:
 
     bool checkValidItinerary(vector<int> itinerary);
 
-    std::string getName() const { return name; }
+
 };
 
 #endif
