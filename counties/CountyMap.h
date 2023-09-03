@@ -7,34 +7,32 @@
 using namespace std;
 
 class CountyMap {
-	private:
-		//storage requirement: O(e), e = number of edges between counties
-		vector<County> counties;
-    	vector<vector<bool>> adjacencyMatrix;
-		//add private variables here
-	public:
-		//constructor
-		//performance: O(n^2), n = number of counties
-		CountyMap(vector<County> counties, vector<vector<bool>> adjacencyMatrix);
+private:
+    vector<County> counties;
+    vector<vector<int>> adjacencyList; // Changed to adjacency list representation
 
-		CountyMap(const CountyMap& other) ;
+    // Private helper functions
+    int findNodeWithFewestNeighbors(const vector<vector<bool>>& adjMatrix);
+    bool allNodesProcessed(const vector<vector<bool>>& adjMatrix);
+    int count(const vector<bool>& vec, bool value);
 
-		~CountyMap();
+public:
+    //constructor
+    CountyMap(vector<County> counties, vector<vector<bool>> adjacencyMatrix);
 
-		//performance: O(1)
-		County getCounty(int countyID);
+    CountyMap(const CountyMap& other);
 
-		//performance: O(1)
-		bool countyAdjacency(int countyID1, int countyID2);
+    ~CountyMap();
 
-		//performance: O(1)
-		int getNumCounties();
-		
-		//performance: O(n), n = number of counties
-		vector<int> getAdjacentCounties(int countyID);
+    County getCounty(int countyID);
 
-		//performance: O(n), n = number of counties in the itinerary
-		bool checkValidItinerary(vector<int> itinerary);
+    bool countyAdjacency(int countyID1, int countyID2);
+
+    int getNumCounties();
+    
+    vector<int> getAdjacentCounties(int countyID);
+
+    bool checkValidItinerary(vector<int> itinerary);
 };
 
 #endif

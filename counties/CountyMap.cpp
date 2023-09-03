@@ -2,9 +2,47 @@
 #include "County.h"
 #include <vector>
 
-CountyMap::CountyMap(vector<County> counties, vector<vector<bool>> adjMatrix) 
-    : counties(counties), adjacencyMatrix(adjMatrix) {}
+CountyMap::CountyMap(vector<County> counties, vector<vector<bool>> adjMatrix)
+    : counties(counties) {
+    // Initialize adjacencyList for each county.
+    adjacencyList.resize(counties.size());
 
+    while(!allNodesProcessed(adjMatrix)) {
+        int node = findNodeWithFewestNeighbors(adjMatrix);
+        for(size_t i = 0; i < adjMatrix[node].size(); i++) {
+            if(adjMatrix[node][i]) {
+                adjacencyList[node].push_back(i);
+                // remove the edge
+                adjMatrix[node][i] = false;
+                adjMatrix[i][node] = false;
+            }
+        }
+    }
+}
+
+int CountyMap::findNodeWithFewestNeighbors(const vector<vector<bool>>& adjMatrix) {
+    int minNeighbors = INT_MAX;
+    int minNode = -1;
+
+    for(size_t i = 0; i < adjMatrix.size(); i++) {
+        int neighbors = count(adjMatrix[i].begin(), adjMatrix[i].end(), true);
+        if(neighbors < minNeighbors) {
+            minNeighbors = neighbors;
+            minNode = i;
+        }
+    }
+
+    return minNode;
+}
+
+bool CountyMap::allNodesProcessed(const vector<vector<bool>>& adjMatrix) {
+    for(const auto& row : adjMatrix) {
+        for(bool val : row) {
+            if(val) return false;  // Edge found
+        }
+    }
+    return true;
+}
 
 CountyMap::CountyMap(const CountyMap& other) {
     counties = other.counties;
