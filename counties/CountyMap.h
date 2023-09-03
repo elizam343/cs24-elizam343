@@ -2,6 +2,7 @@
 #define COUNTYMAP_H
 
 #include <vector>
+#include <string>
 #include "County.h"
 
 using namespace std;
@@ -9,30 +10,34 @@ using namespace std;
 class CountyMap {
 private:
     vector<County> counties;
-    vector<vector<int>> adjacencyList; // Changed to adjacency list representation
+    vector<vector<int>> adjacencyList; // Using adjacency list representation
+    std::string name;
 
     // Private helper functions
     int findNodeWithFewestNeighbors(const vector<vector<bool>>& adjMatrix);
     bool allNodesProcessed(const vector<vector<bool>>& adjMatrix);
-    int count(const vector<bool>& vec, bool value);
 
 public:
-    //constructor
-    CountyMap(vector<County> counties, vector<vector<bool>> adjacencyMatrix);
+    // Constructors
+    CountyMap(vector<County> _counties, vector<vector<bool>> adjMatrix);
 
     CountyMap(const CountyMap& other);
 
+    // Destructor
     ~CountyMap();
 
-    County getCounty(int countyID);
+    // Member Functions
+    County getCounty(int index);
 
-    bool countyAdjacency(int countyID1, int countyID2);
+    bool countyAdjacency(int index1, int index2);
 
     int getNumCounties();
     
-    vector<int> getAdjacentCounties(int countyID);
+    vector<int> getAdjacentCounties(int index);
 
     bool checkValidItinerary(vector<int> itinerary);
+
+    std::string getName() const { return name; }
 };
 
 #endif
