@@ -211,7 +211,7 @@ MyGrove* MyGrove::substr(int start, int end) const {
     if (start < 0 || end > len() || start >= end) {
         throw std::out_of_range("Index out of range");
     }
-    
+
     // Check if the substring is entirely within a single leaf node
     Node* singleNode = nullptr;
     for (int i = 0; i < nodeCount; ++i) {
@@ -237,6 +237,34 @@ MyGrove* MyGrove::substr(int start, int end) const {
         return newGrove;
     }
 
+    // If the substring spans multiple nodes, find the leaf nodes for start and end positions
+    Node* startNode = nullptr;
+    Node* endNode = nullptr;
+    int accumulatedLength = 0;
+
+    for (int i = 0; i < nodeCount; ++i) {
+        accumulatedLength += nodes[i]->length;
+        if (!startNode && start < accumulatedLength) {
+            startNode = nodes[i];
+        }
+        if (!endNode && end <= accumulatedLength) {
+            endNode = nodes[i];
+            break;
+        }
+    }
+
+    if (startNode && endNode && startNode != endNode) {
+        int startOffset = start - (accumulatedLength - startNode->length);
+        int endOffset = end - (accumulatedLength - endNode->length);
+
+        MyGrove* newGrove = new MyGrove();
+        Node* newSubstrNode = substrNode(startNode, startOffset, endOffset);
+        newGrove->create(newSubstrNode->data);
+        delete newSubstrNode; // Clean up memory
+
+        return newGrove;
+    }
+
     // If the substring spans multiple nodes, use your existing approach
     MyGrove* newGrove = new MyGrove();
     Node* newSubstrNode = substrNode(nodes[nodeCount - 1], start, end);
@@ -246,6 +274,7 @@ MyGrove* MyGrove::substr(int start, int end) const {
     }
     return newGrove;
 }
+
 
 
 
