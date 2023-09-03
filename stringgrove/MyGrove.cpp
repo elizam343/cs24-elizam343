@@ -84,16 +84,12 @@ MyGrove* MyGrove::concat(const MyGrove* otherGrove) const {
 }
 
 char MyGrove::charAt(int index) const {
-    std::cout << "Requested index: " << index << ", Total Length: " << len() << std::endl; // Logging
-
-    if (index < 0 || index >= len()) {  // Assuming len() gives total length of all nodes combined
+    if (index < 0 || index >= len()) {  
         throw std::out_of_range("Index out of range");
     }
 
-    // Traverse through nodes to find which node contains the character at 'index'
     int accumulatedLength = 0;
     for (int i = 0; i < nodeCount; ++i) {
-        // If the index is within the current node's range
         if (index < accumulatedLength + nodes[i]->length) {
             return charAtNode(nodes[i], index - accumulatedLength);
         }
@@ -102,6 +98,7 @@ char MyGrove::charAt(int index) const {
 
     throw std::logic_error("charAt reached an unexpected state");
 }
+
 
 
 
