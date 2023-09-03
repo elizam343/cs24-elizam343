@@ -1,54 +1,75 @@
 #include "GenePool.h"
+#include <sstream>
+#include <iostream>
 
 GenePool::GenePool(std::istream& stream) {
-    std::string line;
-
-    while (std::getline(stream, line)) {
-        std::istringstream iss(line);
-        std::string name, genderStr;
-        Gender gender;
-
-        // Assuming the input format is: NAME GENDER
-        if (!(iss >> name >> genderStr)) {
-            // Error in parsing, handle or continue to next line
-            continue;
-        }
-
-        if (genderStr == "MALE") {
-            gender = Gender::MALE;
-        } else if (genderStr == "FEMALE") {
-            gender = Gender::FEMALE;
-        } else {
-            // Invalid gender, handle or continue to next line
-            continue;
-        }
-
-        Person* person = new Person(name, gender);
-        mPeople[name] = person;
-    }
-
-    // After all people are created, you can loop again to assign relationships if needed.
-    // Example: If you have mother and father names in the file, you would loop through again 
-    // and use `find` to locate and assign the mother and father to each person.
+    readFromStream(stream);
 }
 
 GenePool::~GenePool() {
-    for (auto& entry : mPeople) {
-        delete entry.second;
+    // Delete the people allocated on the heap.
+    for (auto& pair : people_) {
+        delete pair.second;
     }
 }
 
-std::set<Person*> GenePool::everyone() const {
-    std::set<Person*> allPeople;
-    for (const auto& pair : mPeople) {
-        allPeople.insert(pair.second);
+void GenePool::readFromStream(std::istream& stream) {
+    std::string line;
+    // First pass: Create Person objects for everyone
+    while (std::getline(stream, line)) {
+        std::string name, genderStr;
+        std::stringstream ss(line);
+
+        std::getline(ss, name, '\t');
+        std::getline(ss, genderStr, '\t');
+
+        Gender gender = (genderStr == "Male" ? Gender::MALE : Gender::FEMALE);
+        
+        if (people_.find(name) == people_.end()) {
+            Person* person = new Person(name, gender);
+            people_[name] = person;
+        } else {
+            // Handle duplicate person or simply skip
+            // For now, we'll just skip.
+        }
     }
-    return allPeople;
+
+    // Reset stream position to beginning for second pass
+    stream.clear();  // Clear EOF flag
+    stream.seekg(0, std::ios::beg); 
+
+    // Second pass: Establish parent-child relationships
+    while (std::getline(stream, line)) {
+        std::string name, genderStr, motherName, fatherName;
+        std::stringstream ss(line);
+
+        std::getline(ss, name, '\t');
+        std::getline(ss, genderStr, '\t');
+        std::getline(ss, motherName, '\t');
+        std::getline(ss, fatherName, '\t');
+
+        if (people_.find(motherName) != people_.end()) {
+            people_[name]->setMother(people_[motherName]);
+        }
+
+        if (people_.find(fatherName) != people_.end()) {
+            people_[name]->setFather(people_[fatherName]);
+        }
+    }
+}
+
+
+std::set<Person*> GenePool::everyone() const {
+    std::set<Person*> result;
+    for (const auto& pair : people_) {
+        result.insert(pair.second);
+    }
+    return result;
 }
 
 Person* GenePool::find(const std::string& name) const {
-    auto it = mPeople.find(name);
-    if (it != mPeople.end()) {
+    auto it = people_.find(name);
+    if (it != people_.end()) {
         return it->second;
     }
     return nullptr;

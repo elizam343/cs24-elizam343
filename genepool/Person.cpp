@@ -136,6 +136,7 @@ std::set<Person*> Person::aunts(PMod pmod, SMod smod) {
     return auntSet;
 }
 
+
 std::set<Person*> Person::uncles(PMod pmod, SMod smod) {
     std::set<Person*> result;
     if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
@@ -164,8 +165,6 @@ std::set<Person*> Person::brothers(PMod pmod, SMod smod) {
     result.erase(this); // Ensure we don't include the current person if they're part of the list.
     return result;
 }
-
-
 
 
 std::set<Person*> Person::cousins(PMod pmod, SMod smod) {
