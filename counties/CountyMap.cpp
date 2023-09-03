@@ -2,7 +2,6 @@
 #include <algorithm> // for std::find, std::count
 #include <climits>
 
-
 // Constructors
 CountyMap::CountyMap(std::vector<County> _counties, std::vector<std::vector<bool>> adjMatrix)
     : counties(_counties), adjacencyList(_counties.size()) {
@@ -48,28 +47,4 @@ bool CountyMap::checkValidItinerary(std::vector<int> itinerary) {
         }
     }
     return true;
-}
-
-// Helper functions (if you decide to use them)
-bool CountyMap::allNodesProcessed(const std::vector<std::vector<bool>>& adjMatrix) {
-    for(const auto& row : adjMatrix) {
-        for(bool val : row) {
-            if(val) return false;  // Edge found
-        }
-    }
-    return true;
-}
-
-int CountyMap::findNodeWithFewestNeighbors(const std::vector<std::vector<bool>>& adjMatrix) {
-    int minNeighbors = INT_MAX;
-    int minNode = -1;
-
-    for(size_t i = 0; i < adjMatrix.size(); i++) {
-        int neighbors = std::count(adjMatrix[i].begin(), adjMatrix[i].end(), true);
-        if(neighbors < minNeighbors) {
-            minNeighbors = neighbors;
-            minNode = i;
-        }
-    }
-    return minNode;
 }
