@@ -128,7 +128,6 @@ MyGrove::Node* MyGrove::substrNode(const Node* current, int start, int end) cons
     if (start >= end || !current) return nullptr;
 
     int leftLength = current->left ? current->left->length : 0;
-    int rightLength = current->right ? current->right->length : 0;
 
     if (end <= leftLength) {
         return substrNode(current->left, start, end);
@@ -157,6 +156,7 @@ MyGrove::Node* MyGrove::substrNode(const Node* current, int start, int end) cons
         return finalSubstr;
     }
 }
+
 
 
 
