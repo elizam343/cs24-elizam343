@@ -3,8 +3,6 @@
 #include <string>
 
 class County {
-	private:
-    	std::string name;
 	public:
 		int population;
 		std::string name;
