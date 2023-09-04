@@ -75,77 +75,34 @@ std::set<Person*> Person::ancestors(PMod pmod) {
 
 
 std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
-    std::set<Person*> siblingSet;
+    std::set<Person*> siblings;
     std::set<Person*> me;
     me.insert(this);
 
     if (pmod == PMod::PATERNAL) {
         if (p_Father == nullptr) {
-            return siblingSet;
+            return siblings;
         }
-        
-        if (smod == SMod::FULL) {
-            siblingSet = p_Father->kids & p_Mother->kids;
-        } else if (smod == SMod::HALF) {
-            siblingSet = p_Father->kids - p_Mother->kids;
-        } else {
-            siblingSet = p_Father->kids;
-        }
+        // Sibling logic based on pmod and smod
+        siblings.erase(this); // Remove the current person from siblings
+        return siblings;
     } else if (pmod == PMod::MATERNAL) {
         if (p_Mother == nullptr) {
-            return siblingSet;
+            return siblings;
         }
-        
-        if (smod == SMod::FULL) {
-            siblingSet = p_Mother->kids & p_Father->kids;
-        } else if (smod == SMod::HALF) {
-            siblingSet = p_Mother->kids - p_Father->kids;
-        } else {
-            siblingSet = p_Mother->kids;
-        }
+        // Sibling logic based on pmod and smod
+        siblings.erase(this); // Remove the current person from siblings
+        return siblings;
     } else {
         if (p_Father == nullptr && p_Mother == nullptr) {
-            return siblingSet;
+            return siblings;
         }
-
-        if (p_Father == nullptr) {
-            if (p_Mother == nullptr) {
-                return siblingSet;
-            }
-            
-            if (smod == SMod::HALF) {
-                for (Person* personPtr : p_Mother->kids) {
-                    if (personPtr->father() != this->father()) {
-                        siblingSet.insert(personPtr);
-                    }
-                }
-            } else {
-                siblingSet = p_Mother->kids;
-            }
-        } else if (p_Mother == nullptr) {
-            if (smod == SMod::HALF) {
-                for (Person* personPtr : p_Father->kids) {
-                    if (personPtr->mother() != this->mother()) {
-                        siblingSet.insert(personPtr);
-                    }
-                }
-            } else {
-                siblingSet = p_Father->kids;
-            }
-        } else {
-            if (smod == SMod::FULL) {
-                siblingSet = p_Mother->kids & p_Father->kids;
-            } else if (smod == SMod::HALF) {
-                siblingSet = p_Mother->kids ^ p_Father->kids;
-            } else {
-                for (Person* personPtr : parents()) {
-                    siblingSet |= personPtr->kids;
-                }
-            }
-        }
+        // Sibling logic based on pmod and smod
+        siblings.erase(this); // Remove the current person from siblings
+        return siblings;
     }
 
-    return siblingSet - me;
+    return siblings;
 }
 
 
