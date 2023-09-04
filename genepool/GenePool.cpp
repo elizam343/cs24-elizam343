@@ -82,8 +82,7 @@ void GenePool::readFromStream(std::istream& stream) {
             Person* person = new Person(name, gender);
             people_[name] = person;
         } else {
-            // Handle duplicate person or simply skip
-            // For now, we'll just skip.
+            //we'll just skip might create issues for me later.
         }
     }
 
