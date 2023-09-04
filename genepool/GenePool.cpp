@@ -38,14 +38,32 @@ void GenePool::readFromStream(std::istream& stream) {
         Person* person = new Person(name, gender);
         people_[name] = person;
 
-        if (people_.find(motherName) != people_.end()) {
-            person->setMother(people_[motherName]);
-            people_[motherName]->addChild(person);
+        // Handle unknown mother
+        if (motherName != "???") {
+            if (people_.find(motherName) != people_.end()) {
+                person->setMother(people_[motherName]);
+                people_[motherName]->addChild(person);
+            } else {
+                // Create a placeholder Person for unknown mother
+                Person* unknownMother = new Person(motherName, Gender::ANY);
+                people_[motherName] = unknownMother;
+                person->setMother(unknownMother);
+                unknownMother->addChild(person);
+            }
         }
 
-        if (people_.find(fatherName) != people_.end()) {
-            person->setFather(people_[fatherName]);
-            people_[fatherName]->addChild(person);
+        // Handle unknown father
+        if (fatherName != "???") {
+            if (people_.find(fatherName) != people_.end()) {
+                person->setFather(people_[fatherName]);
+                people_[fatherName]->addChild(person);
+            } else {
+                // Create a placeholder Person for unknown father
+                Person* unknownFather = new Person(fatherName, Gender::ANY);
+                people_[fatherName] = unknownFather;
+                person->setFather(unknownFather);
+                unknownFather->addChild(person);
+            }
         }
     }
 }
