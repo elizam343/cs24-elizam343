@@ -21,7 +21,7 @@ class Person {
   Person* p_Mother;
   Person* p_Father;
   std::set<Person*> kids;
-  void findAncestors(std::set<Person*>& ancestorsSet, PMod pmod) const;
+  void findAncestors(PMod pmod, std::set<Person*>& ancestorsSet);
 
 public:
   // Constructor

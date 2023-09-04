@@ -49,25 +49,25 @@ std::set<Person*> Person::children() {
     return kids;
 }
 
-void Person::findAncestors(std::set<Person*>& ancestorsSet, PMod pmod) const {
+void Person::findAncestors(PMod pmod, std::set<Person*>& ancestorsSet) {
     if (pmod == PMod::MATERNAL || pmod == PMod::ANY) {
         if (p_Mother) {
             ancestorsSet.insert(p_Mother);
-            p_Mother->findAncestors(ancestorsSet, pmod);
+            p_Mother->findAncestors(pmod, ancestorsSet);
         }
     }
 
     if (pmod == PMod::PATERNAL || pmod == PMod::ANY) {
         if (p_Father) {
             ancestorsSet.insert(p_Father);
-            p_Father->findAncestors(ancestorsSet, pmod);
+            p_Father->findAncestors(pmod, ancestorsSet);
         }
     }
 }
 
 std::set<Person*> Person::ancestors(PMod pmod) {
     std::set<Person*> ancestorsSet;
-    findAncestors(ancestorsSet, pmod);
+    findAncestors(pmod, ancestorsSet);
     ancestorsSet.erase(this); // Remove self from the set of ancestors
     return ancestorsSet;
 }
