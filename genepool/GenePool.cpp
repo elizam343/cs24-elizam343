@@ -3,7 +3,50 @@
 #include <iostream>
 
 GenePool::GenePool(std::istream& stream) {
-    readFromStream(stream);
+    std::string line;
+
+    while (std::getline(stream, line)) {
+        if (line.empty() || line[0] == '#') {
+            continue;
+        }
+        std::string name;
+        std::string genderStr; // Assuming Gender is represented as a string
+        std::string fatherName;
+        std::string motherName;
+
+        std::istringstream lineStream(line);
+
+        // Extract tab-separated values from the line
+        std::getline(lineStream, name, '\t');
+        std::getline(lineStream, genderStr, '\t');
+        std::getline(lineStream, motherName, '\t');
+        std::getline(lineStream, fatherName);
+
+        Gender gender; 
+
+        if (genderStr == "male") {
+            gender = Gender::MALE;
+        } else if (genderStr == "female") {
+            gender = Gender::FEMALE;
+        } else {
+            gender = Gender::ANY;
+        }
+
+        // Create and insert the Person object into the people set
+        Person* mother = find(motherName);
+        Person* father = find(fatherName);
+        Person* new_person = new Person(name, gender);
+        people_[name] = new_person;
+
+        if (mother) {
+            new_person->setMother(mother);
+            mother->addChild(new_person);
+        }
+        if (father) {
+            new_person->setFather(father);
+            father->addChild(new_person);
+        }
+    }
 }
 
 GenePool::~GenePool() {
