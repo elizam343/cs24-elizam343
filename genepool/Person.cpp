@@ -77,53 +77,49 @@ std::set<Person*> Person::ancestors(PMod pmod) {
 std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
     std::set<Person*> siblingSet;
 
+    // Fetch maternal and paternal siblings
+    std::set<Person*> maternalSiblings, paternalSiblings;
+
     // Fetch maternal siblings if applicable
     if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
-        for (const auto& sibling : p_Mother->children()) {
-            if (sibling != this) {  // Exclude the person from the set of siblings
-                siblingSet.insert(sibling);
-            }
-        }
+        maternalSiblings = p_Mother->children();
+        maternalSiblings.erase(this); // Exclude the person from maternal siblings
     }
 
     // Fetch paternal siblings if applicable
     if (p_Father && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
-        for (const auto& sibling : p_Father->children()) {
-            if (sibling != this) {  // Exclude the person from the set of siblings
+        paternalSiblings = p_Father->children();
+        paternalSiblings.erase(this); // Exclude the person from paternal siblings
+    }
+
+    // Handle HALF siblings
+    if (smod == SMod::HALF) {
+        for (const auto& sibling : maternalSiblings) {
+            if (paternalSiblings.find(sibling) != paternalSiblings.end()) {
                 siblingSet.insert(sibling);
             }
         }
     }
-
-    // Handle HALF siblings if necessary
-    if (smod == SMod::HALF) {
-        std::set<Person*> maternalSiblings, paternalSiblings;
-        
-        if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
-            maternalSiblings = p_Mother->children();
-            maternalSiblings.erase(this); // Exclude the person from maternal siblings
-        }
-
-        if (p_Father && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
-            paternalSiblings = p_Father->children();
-            paternalSiblings.erase(this); // Exclude the person from paternal siblings
-        }
-
+    // Handle FULL siblings
+    else if (smod == SMod::FULL) {
         for (const auto& sibling : maternalSiblings) {
-            if (paternalSiblings.find(sibling) == paternalSiblings.end()) {
+            if (paternalSiblings.find(sibling) != paternalSiblings.end()) {
                 siblingSet.insert(sibling);
             }
+        }
+    }
+    // Handle ANY siblings (including full and half)
+    else {
+        for (const auto& sibling : maternalSiblings) {
+            siblingSet.insert(sibling);
         }
         for (const auto& sibling : paternalSiblings) {
-            if (maternalSiblings.find(sibling) == maternalSiblings.end()) {
-                siblingSet.insert(sibling);
-            }
+            siblingSet.insert(sibling);
         }
     }
 
     return siblingSet;
 }
-
 
 
 
