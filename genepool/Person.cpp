@@ -1,3 +1,4 @@
+
 #include "Query.h"
 #include "Person.h"
 #include "Enums.h"
@@ -75,61 +76,76 @@ std::set<Person*> Person::ancestors(PMod pmod) {
 
 std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
     std::set<Person*> siblingSet;
+    std::set<Person*> me;
+    me.insert(this);
 
-    // Fetch maternal siblings if applicable
-    if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
-        for (const auto& sibling : p_Mother->children()) {
-            if (sibling != this) {  // Exclude the person from the set of siblings
-                siblingSet.insert(sibling);
+    if (pmod == PMod::PATERNAL) {
+        if (p_Father == nullptr) {
+            return siblingSet;
+        }
+        
+        if (smod == SMod::FULL) {
+            siblingSet = p_Father->kids & p_Mother->kids;
+        } else if (smod == SMod::HALF) {
+            siblingSet = p_Father->kids - p_Mother->kids;
+        } else {
+            siblingSet = p_Father->kids;
+        }
+    } else if (pmod == PMod::MATERNAL) {
+        if (p_Mother == nullptr) {
+            return siblingSet;
+        }
+        
+        if (smod == SMod::FULL) {
+            siblingSet = p_Mother->kids & p_Father->kids;
+        } else if (smod == SMod::HALF) {
+            siblingSet = p_Mother->kids - p_Father->kids;
+        } else {
+            siblingSet = p_Mother->kids;
+        }
+    } else {
+        if (p_Father == nullptr && p_Mother == nullptr) {
+            return siblingSet;
+        }
+
+        if (p_Father == nullptr) {
+            if (p_Mother == nullptr) {
+                return siblingSet;
+            }
+            
+            if (smod == SMod::HALF) {
+                for (Person* personPtr : p_Mother->kids) {
+                    if (personPtr->father() != this->father()) {
+                        siblingSet.insert(personPtr);
+                    }
+                }
+            } else {
+                siblingSet = p_Mother->kids;
+            }
+        } else if (p_Mother == nullptr) {
+            if (smod == SMod::HALF) {
+                for (Person* personPtr : p_Father->kids) {
+                    if (personPtr->mother() != this->mother()) {
+                        siblingSet.insert(personPtr);
+                    }
+                }
+            } else {
+                siblingSet = p_Father->kids;
+            }
+        } else {
+            if (smod == SMod::FULL) {
+                siblingSet = p_Mother->kids & p_Father->kids;
+            } else if (smod == SMod::HALF) {
+                siblingSet = p_Mother->kids ^ p_Father->kids;
+            } else {
+                for (Person* personPtr : parents()) {
+                    siblingSet |= personPtr->kids;
+                }
             }
         }
     }
 
-    // Fetch paternal siblings if applicable
-    if (p_Father && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
-        for (const auto& sibling : p_Father->children()) {
-            if (sibling != this) {  // Exclude the person from the set of siblings
-                siblingSet.insert(sibling);
-            }
-        }
-    }
-
-    // Handle ANY siblings if necessary
-    if (smod == SMod::ANY) {
-        for (const auto& sibling : children()) {
-            if (sibling != this) {  // Exclude the person from the set of siblings
-                siblingSet.insert(sibling);
-            }
-        }
-    }
-
-    // Handle HALF siblings if necessary
-    if (smod == SMod::HALF) {
-        std::set<Person*> maternalSiblings, paternalSiblings;
-
-        if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
-            maternalSiblings = p_Mother->children();
-            maternalSiblings.erase(this); // Exclude the person from maternal siblings
-        }
-
-        if (p_Father && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
-            paternalSiblings = p_Father->children();
-            paternalSiblings.erase(this); // Exclude the person from paternal siblings
-        }
-
-        for (const auto& sibling : maternalSiblings) {
-            if (paternalSiblings.find(sibling) == paternalSiblings.end()) {
-                siblingSet.insert(sibling);
-            }
-        }
-        for (const auto& sibling : paternalSiblings) {
-            if (maternalSiblings.find(sibling) == maternalSiblings.end()) {
-                siblingSet.insert(sibling);
-            }
-        }
-    }
-
-    return siblingSet;
+    return siblingSet - me;
 }
 
 
@@ -177,12 +193,14 @@ std::set<Person*> Person::uncles(PMod pmod, SMod smod) {
 std::set<Person*> Person::brothers(PMod pmod, SMod smod) {
     std::set<Person*> result;
     for (auto sibling : siblings(pmod, smod)) {
-        if (smod == SMod::ANY || sibling->gender() == Gender::MALE) {
+        if (sibling->gender() == Gender::MALE) {
             result.insert(sibling);
         }
     }
     return result;
 }
+
+
 
 
 
@@ -340,7 +358,6 @@ std::set<Person*> Person::sisters(PMod pmod, SMod smod) {
 
     return siblingSet;
 }
-
 
 
 
