@@ -152,50 +152,29 @@ std::set<Person*> Person::aunts(PMod pmod, SMod smod) {
 
 std::set<Person*> Person::uncles(PMod pmod, SMod smod) {
     std::set<Person*> result;
-
     if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
         auto maternalUncles = p_Mother->brothers(pmod, smod);
         result.insert(maternalUncles.begin(), maternalUncles.end());
     }
-
     if (p_Father && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
         auto paternalUncles = p_Father->brothers(pmod, smod);
         result.insert(paternalUncles.begin(), paternalUncles.end());
     }
-
-    // Handle half uncles based on sibling modifier
-    if (smod == SMod::HALF) {
-        if (p_Mother && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
-            auto halfMaternalUncles = p_Mother->halfBrothers(pmod, smod);
-            result.insert(halfMaternalUncles.begin(), halfMaternalUncles.end());
-        }
-
-        if (p_Father && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
-            auto halfPaternalUncles = p_Father->halfBrothers(pmod, smod);
-            result.insert(halfPaternalUncles.begin(), halfPaternalUncles.end());
-        }
-    }
-
     return result;
 }
 
 
 
-
 std::set<Person*> Person::brothers(PMod pmod, SMod smod) {
-    std::set<Person*> siblingSet = siblings(pmod, smod);
-
-    // Filter out female siblings
-    for (auto it = siblingSet.begin(); it != siblingSet.end();) {
-        if ((*it)->gender() != Gender::MALE) {
-            it = siblingSet.erase(it);
-        } else {
-            ++it;
+    std::set<Person*> result;
+    for (auto sibling : siblings(pmod, smod)) {
+        if (sibling->gender() == Gender::MALE) {
+            result.insert(sibling);
         }
     }
-
-    return siblingSet;
+    return result;
 }
+
 
 
 
