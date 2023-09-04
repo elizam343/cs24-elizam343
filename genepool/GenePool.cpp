@@ -17,13 +17,11 @@ void GenePool::readFromStream(std::istream& stream) {
     std::string line;
     // First pass: Create Person objects for everyone
     while (std::getline(stream, line)) {
-        std::string name, genderStr, motherName, fatherName;
+        std::string name, genderStr;
         std::stringstream ss(line);
 
         std::getline(ss, name, '\t');
         std::getline(ss, genderStr, '\t');
-        std::getline(ss, motherName, '\t');
-        std::getline(ss, fatherName, '\t');
 
         Gender gender;
         if (genderStr == "female") {
@@ -34,36 +32,37 @@ void GenePool::readFromStream(std::istream& stream) {
             gender = Gender::ANY;
         }
 
-        // Create and insert the Person object into the people map
-        Person* person = new Person(name, gender);
-        people_[name] = person;
 
-        // Handle unknown mother
-        if (motherName != "???") {
-            if (people_.find(motherName) != people_.end()) {
-                person->setMother(people_[motherName]);
-                people_[motherName]->addChild(person);
-            } else {
-                // Create a placeholder Person for unknown mother
-                Person* unknownMother = new Person(motherName, Gender::ANY);
-                people_[motherName] = unknownMother;
-                person->setMother(unknownMother);
-                unknownMother->addChild(person);
-            }
+        
+        if (people_.find(name) == people_.end()) {
+            Person* person = new Person(name, gender);
+            people_[name] = person;
+        } else {
+            // Handle duplicate person or simply skip
+            // For now, we'll just skip.
+        }
+    }
+
+    // Reset stream position to beginning for second pass
+    stream.clear();  // Clear EOF flag
+    stream.seekg(0, std::ios::beg); 
+
+    // Second pass: Establish parent-child relationships
+    while (std::getline(stream, line)) {
+        std::string name, genderStr, motherName, fatherName;
+        std::stringstream ss(line);
+
+        std::getline(ss, name, '\t');
+        std::getline(ss, genderStr, '\t');
+        std::getline(ss, motherName, '\t');
+        std::getline(ss, fatherName, '\t');
+
+        if (people_.find(motherName) != people_.end()) {
+            people_[name]->setMother(people_[motherName]);
         }
 
-        // Handle unknown father
-        if (fatherName != "???") {
-            if (people_.find(fatherName) != people_.end()) {
-                person->setFather(people_[fatherName]);
-                people_[fatherName]->addChild(person);
-            } else {
-                // Create a placeholder Person for unknown father
-                Person* unknownFather = new Person(fatherName, Gender::ANY);
-                people_[fatherName] = unknownFather;
-                person->setFather(unknownFather);
-                unknownFather->addChild(person);
-            }
+        if (people_.find(fatherName) != people_.end()) {
+            people_[name]->setFather(people_[fatherName]);
         }
     }
 }
