@@ -51,20 +51,30 @@ std::set<Person*> Person::children() {
 }
 
 void Person::findAncestors(PMod pmod, std::set<Person*>& ancestorsSet) {
-    if (pmod == PMod::MATERNAL || pmod == PMod::ANY) {
+    if (pmod == PMod::MATERNAL) {
         if (p_Mother) {
             ancestorsSet.insert(p_Mother);
-            p_Mother->findAncestors(pmod, ancestorsSet);
+            p_Mother->findAncestors(pmod, ancestorsSet);  // Continue with mother's mother
         }
     }
-
-    if (pmod == PMod::PATERNAL || pmod == PMod::ANY) {
+    else if (pmod == PMod::PATERNAL) {
         if (p_Father) {
             ancestorsSet.insert(p_Father);
-            p_Father->findAncestors(pmod, ancestorsSet);
+            p_Father->findAncestors(pmod, ancestorsSet);  // Continue with father's father
+        }
+    }
+    else if (pmod == PMod::ANY) {
+        if (p_Mother) {
+            ancestorsSet.insert(p_Mother);
+            p_Mother->findAncestors(PMod::ANY, ancestorsSet);
+        }
+        if (p_Father) {
+            ancestorsSet.insert(p_Father);
+            p_Father->findAncestors(PMod::ANY, ancestorsSet);
         }
     }
 }
+
 
 std::set<Person*> Person::ancestors(PMod pmod) {
     std::set<Person*> ancestorsSet;
