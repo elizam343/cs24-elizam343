@@ -321,18 +321,13 @@ std::set<Person*> Person::parents(PMod pmod) {
 }
 
 std::set<Person*> Person::sisters(PMod pmod, SMod smod) {
-    std::set<Person*> siblingSet = siblings(pmod, smod);
-
-    // Filter out male siblings and any non-female siblings
-    for (auto it = siblingSet.begin(); it != siblingSet.end();) {
-        if ((*it)->gender() != Gender::FEMALE) {
-            it = siblingSet.erase(it);
-        } else {
-            ++it;
+    std::set<Person*> result;
+    for (auto sibling : siblings(pmod, smod)) {
+        if (sibling->gender() == Gender::FEMALE) {
+            result.insert(sibling);
         }
     }
-
-    return siblingSet;
+    return result;
 }
 
 
