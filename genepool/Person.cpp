@@ -76,32 +76,40 @@ std::set<Person*> Person::ancestors(PMod pmod) {
 
 std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
     std::set<Person*> siblings;
-    std::set<Person*> me;
-    me.insert(this);
 
     if (pmod == PMod::PATERNAL) {
-        if (p_Father == nullptr) {
+        if (p_Father == nullptr || p_Mother == nullptr) {
             return siblings;
         }
-        // Sibling logic based on pmod and smod
-        siblings.erase(this); // Remove the current person from siblings
-        return siblings;
+        
+        if (smod == SMod::FULL) {
+            siblings = p_Father->kids & p_Mother->kids;
+        } else if (smod == SMod::HALF) {
+            siblings = p_Father->kids - p_Mother->kids;
+        } else {
+            siblings = p_Father->kids;
+        }
     } else if (pmod == PMod::MATERNAL) {
-        if (p_Mother == nullptr) {
+        if (p_Mother == nullptr || p_Father == nullptr) {
             return siblings;
         }
-        // Sibling logic based on pmod and smod
-        siblings.erase(this); // Remove the current person from siblings
-        return siblings;
+        
+        if (smod == SMod::FULL) {
+            siblings = p_Mother->kids & p_Father->kids;
+        } else if (smod == SMod::HALF) {
+            siblings = p_Mother->kids - p_Father->kids;
+        } else {
+            siblings = p_Mother->kids;
+        }
     } else {
         if (p_Father == nullptr && p_Mother == nullptr) {
             return siblings;
         }
-        // Sibling logic based on pmod and smod
-        siblings.erase(this); // Remove the current person from siblings
-        return siblings;
+        
+        // Handle the OTHER case based on your logic
     }
-
+    
+    siblings.erase(this); // Remove the current person from siblings
     return siblings;
 }
 
