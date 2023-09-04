@@ -7,12 +7,8 @@
 #include <vector>
 
 // Constructor
-Person::Person(const std::string name, Gender gender, Person* mother, Person* father) {
-    this->p_Name = name;
-    this->p_Gender = gender;
-    this->p_Mother = mother;
-    this->p_Father = father;
-}
+Person::Person(const std::string& name, Gender gender, Person* mother, Person* father)
+    : p_Name(name), p_Gender(gender), p_Mother(mother), p_Father(father) {}
 
 // Destructor
 Person::~Person() {
@@ -98,7 +94,12 @@ std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
     // Handle HALF siblings
     if (smod == SMod::HALF) {
         for (const auto& sibling : maternalSiblings) {
-            if (paternalSiblings.find(sibling) != paternalSiblings.end()) {
+            if (paternalSiblings.find(sibling) == paternalSiblings.end()) {  // only present in maternal
+                siblingSet.insert(sibling);
+            }
+        }
+        for (const auto& sibling : paternalSiblings) {
+            if (maternalSiblings.find(sibling) == maternalSiblings.end()) {  // only present in paternal
                 siblingSet.insert(sibling);
             }
         }
@@ -106,11 +107,12 @@ std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
     // Handle FULL siblings
     else if (smod == SMod::FULL) {
         for (const auto& sibling : maternalSiblings) {
-            if (paternalSiblings.find(sibling) != paternalSiblings.end()) {
+            if (paternalSiblings.find(sibling) != paternalSiblings.end()) {  // present in both maternal and paternal
                 siblingSet.insert(sibling);
             }
         }
     }
+
     // Handle ANY siblings (including full and half)
     else {
         for (const auto& sibling : maternalSiblings) {
