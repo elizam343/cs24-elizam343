@@ -7,8 +7,12 @@
 #include <vector>
 
 // Constructor
-Person::Person(const std::string& name, Gender gender, Person* mother, Person* father)
-    : p_Name(name), p_Gender(gender), p_Mother(mother), p_Father(father) {}
+Person::Person(const std::string name, Gender gender, Person* mother, Person* father) {
+    this->p_Name = name;
+    this->p_Gender = gender;
+    this->p_Mother = mother;
+    this->p_Father = father;
+}
 
 // Destructor
 Person::~Person() {

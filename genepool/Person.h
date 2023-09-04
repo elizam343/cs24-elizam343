@@ -25,7 +25,7 @@ class Person {
 
 public:
   // Constructor
-  Person(const std::string& name, Gender gender, Person* mother = nullptr, Person* father = nullptr);
+  Person(const std::string name, Gender gender, Person* mother, Person* father);
   // Destructor?
   ~Person();
 
