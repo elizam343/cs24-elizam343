@@ -94,10 +94,19 @@ std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
         }
     }
 
+    // Handle ANY siblings if necessary
+    if (smod == SMod::ANY) {
+        for (const auto& sibling : children()) {
+            if (sibling != this) {  // Exclude the person from the set of siblings
+                siblingSet.insert(sibling);
+            }
+        }
+    }
+
     // Handle HALF siblings if necessary
     if (smod == SMod::HALF) {
         std::set<Person*> maternalSiblings, paternalSiblings;
-        
+
         if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
             maternalSiblings = p_Mother->children();
             maternalSiblings.erase(this); // Exclude the person from maternal siblings
@@ -168,14 +177,12 @@ std::set<Person*> Person::uncles(PMod pmod, SMod smod) {
 std::set<Person*> Person::brothers(PMod pmod, SMod smod) {
     std::set<Person*> result;
     for (auto sibling : siblings(pmod, smod)) {
-        if (sibling->gender() == Gender::MALE) {
+        if (smod == SMod::ANY || sibling->gender() == Gender::MALE) {
             result.insert(sibling);
         }
     }
     return result;
 }
-
-
 
 
 
