@@ -50,11 +50,12 @@ GenePool::GenePool(std::istream& stream) {
 }
 
 GenePool::~GenePool() {
-    // Delete the people allocated on the heap.
     for (auto& pair : people_) {
         delete pair.second;
     }
+    people_.clear();
 }
+
 
 void GenePool::readFromStream(std::istream& stream) {
     std::string line;
