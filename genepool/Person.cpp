@@ -104,7 +104,7 @@ std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
     // Handle FULL siblings
     if (smod == SMod::FULL) {
         for (const auto& sibling : maternalSiblings) {
-            if (paternalSiblings.find(sibling) == paternalSiblings.end()) {
+            if (paternalSiblings.find(sibling) != paternalSiblings.end()) {
                 siblingSet.insert(sibling);
             }
         }
