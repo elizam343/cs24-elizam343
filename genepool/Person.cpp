@@ -322,19 +322,17 @@ std::set<Person*> Person::parents(PMod pmod) {
 
 std::set<Person*> Person::sisters(PMod pmod, SMod smod) {
     std::set<Person*> siblingSet = siblings(pmod, smod);
+    std::set<Person*> result;
 
-    // Filter out male siblings and exclude the person itself
-    siblingSet.erase(this); // Remove self from the set of siblings
-    for (auto it = siblingSet.begin(); it != siblingSet.end();) {
-        if ((*it)->gender() == Gender::MALE) {
-            it = siblingSet.erase(it);
-        } else {
-            ++it;
+    for (auto sibling : siblingSet) {
+        if (sibling->gender() == Gender::FEMALE) {
+            result.insert(sibling);
         }
     }
 
-    return siblingSet;
+    return result;
 }
+
 
 
 
