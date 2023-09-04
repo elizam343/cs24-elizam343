@@ -75,42 +75,53 @@ std::set<Person*> Person::ancestors(PMod pmod) {
 
 
 std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
-    std::set<Person*> siblings;
+    std::set<Person*> siblingSet;
 
-    if (pmod == PMod::PATERNAL) {
-        if (p_Father == nullptr || p_Mother == nullptr) {
-            return siblings;
+    // Fetch maternal siblings if applicable
+    if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
+        for (const auto& sibling : p_Mother->children()) {
+            if (sibling != this) {  // Exclude the person from the set of siblings
+                siblingSet.insert(sibling);
+            }
         }
-        
-        if (smod == SMod::FULL) {
-            siblings = p_Father->kids & p_Mother->kids;
-        } else if (smod == SMod::HALF) {
-            siblings = p_Father->kids - p_Mother->kids;
-        } else {
-            siblings = p_Father->kids;
-        }
-    } else if (pmod == PMod::MATERNAL) {
-        if (p_Mother == nullptr || p_Father == nullptr) {
-            return siblings;
-        }
-        
-        if (smod == SMod::FULL) {
-            siblings = p_Mother->kids & p_Father->kids;
-        } else if (smod == SMod::HALF) {
-            siblings = p_Mother->kids - p_Father->kids;
-        } else {
-            siblings = p_Mother->kids;
-        }
-    } else {
-        if (p_Father == nullptr && p_Mother == nullptr) {
-            return siblings;
-        }
-        
-        // Handle the OTHER case based on your logic
     }
-    
-    siblings.erase(this); // Remove the current person from siblings
-    return siblings;
+
+    // Fetch paternal siblings if applicable
+    if (p_Father && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
+        for (const auto& sibling : p_Father->children()) {
+            if (sibling != this) {  // Exclude the person from the set of siblings
+                siblingSet.insert(sibling);
+            }
+        }
+    }
+
+    // Handle HALF siblings if necessary
+    if (smod == SMod::HALF) {
+        std::set<Person*> maternalSiblings, paternalSiblings;
+        
+        if (p_Mother && (pmod == PMod::MATERNAL || pmod == PMod::ANY)) {
+            maternalSiblings = p_Mother->children();
+            maternalSiblings.erase(this); // Exclude the person from maternal siblings
+        }
+
+        if (p_Father && (pmod == PMod::PATERNAL || pmod == PMod::ANY)) {
+            paternalSiblings = p_Father->children();
+            paternalSiblings.erase(this); // Exclude the person from paternal siblings
+        }
+
+        for (const auto& sibling : maternalSiblings) {
+            if (paternalSiblings.find(sibling) == paternalSiblings.end()) {
+                siblingSet.insert(sibling);
+            }
+        }
+        for (const auto& sibling : paternalSiblings) {
+            if (maternalSiblings.find(sibling) == maternalSiblings.end()) {
+                siblingSet.insert(sibling);
+            }
+        }
+    }
+
+    return siblingSet;
 }
 
 
