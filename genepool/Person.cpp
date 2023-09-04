@@ -113,16 +113,6 @@ std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
         }
     }
 
-    // Handle ANY siblings (including full and half)
-    else {
-        for (const auto& sibling : maternalSiblings) {
-            siblingSet.insert(sibling);
-        }
-        for (const auto& sibling : paternalSiblings) {
-            siblingSet.insert(sibling);
-        }
-    }
-
     return siblingSet;
 }
 
