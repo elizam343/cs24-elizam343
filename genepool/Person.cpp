@@ -94,12 +94,12 @@ std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
     // Handle HALF siblings
     if (smod == SMod::HALF) {
         for (const auto& sibling : maternalSiblings) {
-            if (paternalSiblings.find(sibling) == paternalSiblings.end()) {  // only present in maternal
+            if (!sibling->p_Father || sibling->p_Father != this->p_Father) {  // Ensure they don't share the same father
                 siblingSet.insert(sibling);
             }
         }
         for (const auto& sibling : paternalSiblings) {
-            if (maternalSiblings.find(sibling) == maternalSiblings.end()) {  // only present in paternal
+            if (!sibling->p_Mother || sibling->p_Mother != this->p_Mother) {  // Ensure they don't share the same mother
                 siblingSet.insert(sibling);
             }
         }
@@ -110,6 +110,16 @@ std::set<Person*> Person::siblings(PMod pmod, SMod smod) {
             if (paternalSiblings.find(sibling) != paternalSiblings.end()) {  // present in both maternal and paternal
                 siblingSet.insert(sibling);
             }
+        }
+    }
+
+    // Handle ANY siblings (including full and half)
+    else {
+        for (const auto& sibling : maternalSiblings) {
+            siblingSet.insert(sibling);
+        }
+        for (const auto& sibling : paternalSiblings) {
+            siblingSet.insert(sibling);
         }
     }
 
