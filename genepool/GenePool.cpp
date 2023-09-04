@@ -17,11 +17,13 @@ void GenePool::readFromStream(std::istream& stream) {
     std::string line;
     // First pass: Create Person objects for everyone
     while (std::getline(stream, line)) {
-        std::string name, genderStr;
+        std::string name, genderStr, motherName, fatherName;
         std::stringstream ss(line);
 
         std::getline(ss, name, '\t');
         std::getline(ss, genderStr, '\t');
+        std::getline(ss, motherName, '\t');
+        std::getline(ss, fatherName, '\t');
 
         Gender gender;
         if (genderStr == "female") {
@@ -32,37 +34,18 @@ void GenePool::readFromStream(std::istream& stream) {
             gender = Gender::ANY;
         }
 
-
-        
-        if (people_.find(name) == people_.end()) {
-            Person* person = new Person(name, gender);
-            people_[name] = person;
-        } else {
-            // Handle duplicate person or simply skip
-            // For now, we'll just skip.
-        }
-    }
-
-    // Reset stream position to beginning for second pass
-    stream.clear();  // Clear EOF flag
-    stream.seekg(0, std::ios::beg); 
-
-    // Second pass: Establish parent-child relationships
-    while (std::getline(stream, line)) {
-        std::string name, genderStr, motherName, fatherName;
-        std::stringstream ss(line);
-
-        std::getline(ss, name, '\t');
-        std::getline(ss, genderStr, '\t');
-        std::getline(ss, motherName, '\t');
-        std::getline(ss, fatherName, '\t');
+        // Create and insert the Person object into the people map
+        Person* person = new Person(name, gender);
+        people_[name] = person;
 
         if (people_.find(motherName) != people_.end()) {
-            people_[name]->setMother(people_[motherName]);
+            person->setMother(people_[motherName]);
+            people_[motherName]->addChild(person);
         }
 
         if (people_.find(fatherName) != people_.end()) {
-            people_[name]->setFather(people_[fatherName]);
+            person->setFather(people_[fatherName]);
+            people_[fatherName]->addChild(person);
         }
     }
 }

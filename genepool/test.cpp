@@ -57,7 +57,7 @@ int main() {
     GenePool genePool(inputFile);
 
     // Find a specific person in the gene pool
-    Person* personToTest = genePool.find("Zeus"); // Change to the desired person's name
+    Person* personToTest = genePool.find("Rhea"); // Change to the desired person's name
 
     if (personToTest) {
         testPersonQueries(personToTest, genePool);
