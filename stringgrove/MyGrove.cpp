@@ -161,6 +161,7 @@ MyGrove::Node* MyGrove::substrNode(const Node* current, int start, int end) cons
             Node* rightSubstr = substrNode(current->right, 0, end - leftLength);
             return new Node(leftSubstr, rightSubstr);
         }
+
     }
 }
 
